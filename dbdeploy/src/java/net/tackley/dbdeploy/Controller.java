@@ -3,11 +3,8 @@ package net.tackley.dbdeploy;
 public class Controller {
 
 	private Output output;
-
 	private DatabaseSchemaVersion schemaVersion;
-
 	private ChangeScriptRepository changeScriptRepository;
-
 	private ChangeScriptExecuter changeScriptExecuter;
 
 	public Controller(Output output, DatabaseSchemaVersion schemaVersion,
@@ -18,7 +15,7 @@ public class Controller {
 		this.changeScriptExecuter = changeScriptExecuter;
 	}
 
-	public void applyScriptToGetChangesUpToLatestVersion() {
+	public void applyScriptToGetChangesUpToLatestVersion() throws SchemaVersionTrackingException {
 		int currentSchemaVersion = schemaVersion.getCurrentVersion();
 
 		output.info("Current schema version: " + currentSchemaVersion);

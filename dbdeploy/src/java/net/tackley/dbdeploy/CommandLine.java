@@ -1,14 +1,19 @@
 package net.tackley.dbdeploy;
 
+import java.sql.DriverManager;
+
 public class CommandLine {
 
 	public static void main(String[] args) {
 
 		try {
 
-			Output output = new Output();
+			DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
 
-			Controller controller = new Controller(output, null, null, null);
+			Output output = new Output();
+			DatabaseSchemaVersion databaseSchemaVersion = new DatabaseSchemaVersion(null, null, null);
+
+			Controller controller = new Controller(output, databaseSchemaVersion, null, null);
 			controller.applyScriptToGetChangesUpToLatestVersion();
 
 		} catch (Exception ex) {
