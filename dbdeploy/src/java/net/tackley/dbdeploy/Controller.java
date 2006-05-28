@@ -1,5 +1,8 @@
 package net.tackley.dbdeploy;
 
+import net.tackley.dbdeploy.scripts.ChangeScript;
+import net.tackley.dbdeploy.scripts.ChangeScriptRepository;
+
 public class Controller {
 
 	private Output output;
@@ -15,7 +18,7 @@ public class Controller {
 		this.changeScriptExecuter = changeScriptExecuter;
 	}
 
-	public void applyScriptToGetChangesUpToLatestVersion() throws SchemaVersionTrackingException {
+	public void applyScriptToGetChangesUpToLatestVersion() throws SchemaVersionTrackingException, RequiredChangeScriptNotFoundException {
 		int currentSchemaVersion = schemaVersion.getCurrentVersion();
 
 		output.info("Current schema version: " + currentSchemaVersion);

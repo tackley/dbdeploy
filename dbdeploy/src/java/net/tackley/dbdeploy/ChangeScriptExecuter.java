@@ -1,7 +1,11 @@
 package net.tackley.dbdeploy;
 
-public interface ChangeScriptExecuter {
+import net.tackley.dbdeploy.scripts.ChangeScript;
 
-	void applyChangeScript(ChangeScript script);
+public class ChangeScriptExecuter {
+
+	void applyChangeScript(ChangeScript script) {
+		System.out.println("Executing change script " + script);
+	}
 
 }
