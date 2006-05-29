@@ -8,13 +8,13 @@ import java.sql.Statement;
 
 import net.tackley.dbdeploy.exceptions.SchemaVersionTrackingException;
 
-public class DatabaseSchemaVersion {
+public class DatabaseSchemaVersionManager {
 
 	public static final String TABLE_NAME = "DatabaseConfiguration";
 
 	private Connection connection;
 
-	public DatabaseSchemaVersion(String connectionString, String username, String password) throws SQLException {
+	public DatabaseSchemaVersionManager(String connectionString, String username, String password) throws SQLException {
 		connection = DriverManager.getConnection(connectionString, username, password);
 	}
 

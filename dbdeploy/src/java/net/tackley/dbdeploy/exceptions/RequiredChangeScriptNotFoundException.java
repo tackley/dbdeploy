@@ -1,6 +1,6 @@
 package net.tackley.dbdeploy.exceptions;
 
-public class RequiredChangeScriptNotFoundException extends Exception {
+public class RequiredChangeScriptNotFoundException extends DbDeployException {
 
 	private static final long serialVersionUID = 1L;
 

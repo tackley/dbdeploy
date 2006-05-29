@@ -27,7 +27,7 @@ public class ChangeScriptTest extends TestCase {
 	public void testToStringReturnsASensibleValue() throws Exception {
 		File file = new File("abc.txt");
 		ChangeScript changeScript = new ChangeScript(5, file);
-		assertEquals("Change script #5: abc.txt", changeScript.toString());
+		assertEquals("#5: abc.txt", changeScript.toString());
 		
 	}
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dbdeploy" default="all" basedir=".">
+
+	<property name="src.dir" location="src" />
+	<property name="lib.dir" location="lib" />
+	<property name="build.dir" location="build" />
+	<property name="dist.dir" location="dist" />
+	<property name="classes.dir" location="${build.dir}/classes" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}"/>
+	</path>
+
+	<target name="all" depends="clean, compile, test, dist" />
+
+
+	<target name="init">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+
+	<target name="compile" depends="init">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath">
+		</javac>
+	</target>
+
+
+	<target name="clean" description="Delete compiled classes etc">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+
+	<target name="test">
+		<junit printsummary="true" showoutput="true" >
+			<classpath>
+				<path location="${classes.dir}" />
+				<path refid="classpath" />
+			</classpath>
+			<batchtest>
+				<fileset dir="${src.dir}/test">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="dist" depends="init">
+		<jar file="${dist.dir}/dbdeploy.jar">
+	           <fileset dir="${classes.dir}" />
+			<manifest>
+				<attribute name="Main-Class" value="net.tackley.dbdeploy.CommandLine"/>
+			</manifest>
+	 	</jar>
+		
+		<copy file="lib/ojdbc14.jar" todir="${dist.dir}" />
+	</target>
+
+</project>

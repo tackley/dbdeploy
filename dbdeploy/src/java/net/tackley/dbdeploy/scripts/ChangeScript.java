@@ -32,9 +32,9 @@ public class ChangeScript implements Comparable {
 	@Override
 	public String toString() {
 		if (file != null)
-			return "Change script #" + id + ": " + file.getName();
+			return "#" + id + ": " + file.getName();
 		
-		return "Change script #" + id;
+		return "#" + id;
 	}
 
 }

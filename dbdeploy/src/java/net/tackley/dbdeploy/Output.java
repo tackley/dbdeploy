@@ -6,4 +6,8 @@ public class Output {
 		System.out.println(string);
 	}
 
+	public void debug(String string) {
+		System.out.println(string);
+	}
+
 }

@@ -1,6 +1,6 @@
 package net.tackley.dbdeploy.exceptions;
 
-public class SchemaVersionTrackingException extends Exception {
+public class SchemaVersionTrackingException extends DbDeployException {
 
 	private static final long serialVersionUID = 1L;
 

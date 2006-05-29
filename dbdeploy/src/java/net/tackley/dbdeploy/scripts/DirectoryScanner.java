@@ -10,6 +10,10 @@ public class DirectoryScanner {
 	
 	private FilenameParser filenameParser;
 	
+	public DirectoryScanner() {
+		this(new FilenameParser());
+	}
+	
 	public DirectoryScanner(FilenameParser filenameParser) {
 		this.filenameParser = filenameParser;
 	}
@@ -23,7 +27,7 @@ public class DirectoryScanner {
 			scripts.add(new ChangeScript(id, file));
 		}
 		
-		return (ChangeScript[]) scripts.toArray();
+		return scripts.toArray(new ChangeScript[scripts.size()]);
 
 	}
 

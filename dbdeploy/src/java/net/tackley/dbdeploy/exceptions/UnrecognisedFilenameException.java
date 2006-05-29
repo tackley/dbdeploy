@@ -1,6 +1,6 @@
 package net.tackley.dbdeploy.exceptions;
 
-public class UnrecognisedFilenameException extends Exception {
+public class UnrecognisedFilenameException extends DbDeployException {
 
 	private static final long serialVersionUID = 1L;
 

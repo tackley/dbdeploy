@@ -1,38 +1,56 @@
 package net.tackley.dbdeploy;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersion;
-import net.tackley.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
-import net.tackley.dbdeploy.exceptions.SchemaVersionTrackingException;
+import java.io.File;
+import java.io.IOException;
+
+import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.tackley.dbdeploy.exceptions.DbDeployException;
 import net.tackley.dbdeploy.scripts.ChangeScript;
 import net.tackley.dbdeploy.scripts.ChangeScriptRepository;
+import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 public class Controller {
 
 	private Output output;
-	private DatabaseSchemaVersion schemaVersion;
-	private ChangeScriptRepository changeScriptRepository;
+	private DatabaseSchemaVersionManager schemaVersion;
 	private ChangeScriptExecuter changeScriptExecuter;
+	private ChangeScriptRepositoryFactory changeScriptRepositoryFactory;
 
-	public Controller(Output output, DatabaseSchemaVersion schemaVersion,
-			ChangeScriptRepository changeScriptRepository, ChangeScriptExecuter changeScriptExecuter) {
+	public Controller(Output output, 
+			DatabaseSchemaVersionManager schemaVersion,
+			ChangeScriptRepositoryFactory changeScriptRepositoryFactory, 
+			ChangeScriptExecuter changeScriptExecuter) {
 		this.output = output;
 		this.schemaVersion = schemaVersion;
-		this.changeScriptRepository = changeScriptRepository;
+		this.changeScriptRepositoryFactory = changeScriptRepositoryFactory;
 		this.changeScriptExecuter = changeScriptExecuter;
 	}
 
-	public void applyScriptToGetChangesUpToLatestVersion() throws SchemaVersionTrackingException, RequiredChangeScriptNotFoundException {
+	public void applyScriptToGetChangesUpToLatestVersion(File directory) throws DbDeployException, IOException {
+		
+		output.debug("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
+		
+		ChangeScriptRepository changeScriptRepository = changeScriptRepositoryFactory.create(directory);
+
+		int highestSchemaVersionScriptAvailable = changeScriptRepository.getHighestAvailableChangeScript();
+
+		output.info("Change scripts available to schema version: " + highestSchemaVersionScriptAvailable);
+
+		output.debug("Reading current schema version from database...");
+
 		int currentSchemaVersion = schemaVersion.getCurrentVersion();
 
 		output.info("Current schema version: " + currentSchemaVersion);
 
-		int highestSchemaVersionScriptAvailable = changeScriptRepository.getHighestAvailableChangeScript();
 
-		output.info("Change scripts available to version: " + highestSchemaVersionScriptAvailable);
+		for (int scriptNumber = currentSchemaVersion + 1; scriptNumber <= highestSchemaVersionScriptAvailable; scriptNumber++) {
+			
+			ChangeScript changeScript = changeScriptRepository.getChangeScript(scriptNumber);
 
-		for (int scriptNumber = currentSchemaVersion + 1; scriptNumber < highestSchemaVersionScriptAvailable; scriptNumber++) {
-			ChangeScript changeScript = changeScriptRepository.getChangeScript(currentSchemaVersion);
+			output.info("Applying change script " + changeScript);
 			changeScriptExecuter.applyChangeScript(changeScript);
+
+			output.debug("Updating databse schema version to " + scriptNumber);
 			schemaVersion.setCurrentVersion(scriptNumber);
 		}
 

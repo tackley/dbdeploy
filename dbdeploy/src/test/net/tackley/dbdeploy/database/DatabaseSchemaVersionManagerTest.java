@@ -5,23 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersion;
+import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.tackley.dbdeploy.exceptions.SchemaVersionTrackingException;
 
 import junit.framework.TestCase;
 
-public class DatabaseSchemaVersionTest extends TestCase {
+public class DatabaseSchemaVersionManagerTest extends TestCase {
 
 	static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1521:orcl";
 	static final String USERNAME = "dbdeploy";
 	static final String PASSWORD = "dbdeploy";
-	private DatabaseSchemaVersion databaseSchemaVersion;
+	private DatabaseSchemaVersionManager databaseSchemaVersion;
 	
 	@Override
 	protected void setUp() throws Exception {
 		DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
 
-		databaseSchemaVersion = new DatabaseSchemaVersion(CONNECTION_STRING, USERNAME, PASSWORD);
+		databaseSchemaVersion = new DatabaseSchemaVersionManager(CONNECTION_STRING, USERNAME, PASSWORD);
 	}
 	
 	public void testCanRetrieveSchemaVersionFromDatabase() throws Exception {
@@ -68,16 +68,16 @@ public class DatabaseSchemaVersionTest extends TestCase {
 	}
 
 	private void createTable() throws Exception {
-		executeSql("CREATE TABLE " + DatabaseSchemaVersion.TABLE_NAME + " (SchemaVersion NUMBER NOT NULL)");
+		executeSql("CREATE TABLE " + DatabaseSchemaVersionManager.TABLE_NAME + " (SchemaVersion NUMBER NOT NULL)");
 	}
 
 	private void insertRowIntoTable(int i) throws SQLException {
-		executeSql("INSERT INTO " + DatabaseSchemaVersion.TABLE_NAME + " VALUES ( " + i + ")");
+		executeSql("INSERT INTO " + DatabaseSchemaVersionManager.TABLE_NAME + " VALUES ( " + i + ")");
 	}
 
 	private void ensureTableDoesNotExist() {
 		try {
-			executeSql("DROP TABLE " + DatabaseSchemaVersion.TABLE_NAME);
+			executeSql("DROP TABLE " + DatabaseSchemaVersionManager.TABLE_NAME);
 		} catch (Exception e) {
 			// ignore
 		}
