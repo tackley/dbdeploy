@@ -1,4 +1,4 @@
-package net.tackley.dbdeploy;
+package net.tackley.dbdeploy.exceptions;
 
 public class SchemaVersionTrackingException extends Exception {
 

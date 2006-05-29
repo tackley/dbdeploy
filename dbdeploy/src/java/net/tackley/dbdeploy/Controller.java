@@ -1,5 +1,8 @@
 package net.tackley.dbdeploy;
 
+import net.tackley.dbdeploy.database.DatabaseSchemaVersion;
+import net.tackley.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
+import net.tackley.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.tackley.dbdeploy.scripts.ChangeScript;
 import net.tackley.dbdeploy.scripts.ChangeScriptRepository;
 

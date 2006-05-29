@@ -1,5 +1,6 @@
 package net.tackley.dbdeploy.scripts;
 
+import net.tackley.dbdeploy.exceptions.UnrecognisedFilenameException;
 import junit.framework.TestCase;
 
 public class FilenameParserTest extends TestCase {
@@ -18,7 +19,7 @@ public class FilenameParserTest extends TestCase {
 		try {
 		parser.extractIdFromFilename("blah blah blah");
 		fail("expected exception");
-		} catch (UnrecognisedFilename e) {
+		} catch (UnrecognisedFilenameException e) {
 			assertEquals("Could not extract a change script number from filename: blah blah blah", e.getMessage() );
 		}
 	}

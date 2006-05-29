@@ -2,6 +2,8 @@ package net.tackley.dbdeploy;
 
 import java.sql.DriverManager;
 
+import net.tackley.dbdeploy.database.DatabaseSchemaVersion;
+
 public class CommandLine {
 
 	public static void main(String[] args) {

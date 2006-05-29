@@ -1,9 +1,12 @@
-package net.tackley.dbdeploy;
+package net.tackley.dbdeploy.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import net.tackley.dbdeploy.database.DatabaseSchemaVersion;
+import net.tackley.dbdeploy.exceptions.SchemaVersionTrackingException;
 
 import junit.framework.TestCase;
 

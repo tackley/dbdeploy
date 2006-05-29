@@ -1,4 +1,4 @@
-package net.tackley.dbdeploy;
+package net.tackley.dbdeploy.scripts;
 
 import java.io.File;
 
