@@ -1,1 +1,2 @@
-This is the second script.
+INSERT INTO Test VALUES (6)
+/

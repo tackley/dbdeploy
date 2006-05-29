@@ -25,7 +25,7 @@ public class ChangeScriptExecuter {
 
 	public void applySqlToSetSchemaVersion(String sql) {
 		System.out.println();
-		System.out.println("/\n" + sql + "\n/");
+		System.out.println(sql + "\n/");
 		System.out.println();
 	}
 

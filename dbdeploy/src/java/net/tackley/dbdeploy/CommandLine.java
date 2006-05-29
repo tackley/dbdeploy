@@ -8,9 +8,6 @@ import net.tackley.dbdeploy.exceptions.DbDeployException;
 import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 public class CommandLine {
-	static final String CONNECTION_STRING = "jdbc:oracle:thin:@localhost:1521:orcl";
-	static final String USERNAME = "dbdeploy";
-	static final String PASSWORD = "dbdeploy";
 
 	public static void main(String[] args) {
 
@@ -19,8 +16,16 @@ public class CommandLine {
 
 			DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
 
+			if (args.length != 3) {
+				System.err.println("usage: dbdeploy dbConnectionString username password");
+				System.exit(3);
+			}
+			String connectionString = args[0];
+			String username = args[1];
+			String password = args[2];
+			
 			Output output = new Output();
-			DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(CONNECTION_STRING, USERNAME, PASSWORD);
+			DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(connectionString, username, password);
 			ChangeScriptRepositoryFactory repositoryFactory = new ChangeScriptRepositoryFactory();
 			ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter();
 

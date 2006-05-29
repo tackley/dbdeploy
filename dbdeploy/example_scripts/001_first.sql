@@ -1,1 +1,2 @@
-This is the first script!
+CREATE TABLE Test (id NUMBER)
+/
