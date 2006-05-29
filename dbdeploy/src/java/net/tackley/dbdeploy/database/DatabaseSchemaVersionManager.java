@@ -41,7 +41,7 @@ public class DatabaseSchemaVersionManager {
 		try {
 			statement = connection.createStatement();
 			int rowsAffected = statement
-					.executeUpdate("UPDATE " + TABLE_NAME + " SET SchemaVersion = " + versionNumber);
+					.executeUpdate(generateSqlToUpdateSchemaVersion(versionNumber));
 			statement.close();
 
 			if (rowsAffected != 1) {
@@ -54,5 +54,10 @@ public class DatabaseSchemaVersionManager {
 					+ e.getMessage(), e);
 		}
 	}
+
+	public String generateSqlToUpdateSchemaVersion(int versionNumber) {
+		return "UPDATE " + TABLE_NAME + " SET SchemaVersion = " + versionNumber;
+	}
+
 
 }

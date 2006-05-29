@@ -18,13 +18,17 @@ public class DirectoryScanner {
 		this.filenameParser = filenameParser;
 	}
 
-	public ChangeScript[] getChangeScriptsForDirectory(File directory) throws UnrecognisedFilenameException {
+	public ChangeScript[] getChangeScriptsForDirectory(File directory) {
 		List<ChangeScript> scripts = new ArrayList<ChangeScript>();
 		
 		for (File file : directory.listFiles()) {
 			String filename = file.getName();
-			int id = filenameParser.extractIdFromFilename(filename);
-			scripts.add(new ChangeScript(id, file));
+			try {
+				int id = filenameParser.extractIdFromFilename(filename);
+				scripts.add(new ChangeScript(id, file));
+			} catch (UnrecognisedFilenameException e) {
+				System.err.println("ignoring file " + filename + ": cannot parse filename");
+			}
 		}
 		
 		return scripts.toArray(new ChangeScript[scripts.size()]);

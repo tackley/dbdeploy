@@ -50,8 +50,8 @@ public class Controller {
 			output.info("Applying change script " + changeScript);
 			changeScriptExecuter.applyChangeScript(changeScript);
 
-			output.debug("Updating databse schema version to " + scriptNumber);
-			schemaVersion.setCurrentVersion(scriptNumber);
+			String sql = schemaVersion.generateSqlToUpdateSchemaVersion(scriptNumber);
+			changeScriptExecuter.applySqlToSetSchemaVersion(sql);
 		}
 
 	}

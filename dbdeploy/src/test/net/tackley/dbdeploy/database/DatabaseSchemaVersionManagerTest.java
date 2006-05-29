@@ -66,6 +66,10 @@ public class DatabaseSchemaVersionManagerTest extends TestCase {
 		assertEquals(6, databaseSchemaVersion.getCurrentVersion());
 		
 	}
+	
+	public void testCanRetrieveSqlToUpdateTable() throws Exception {
+		assertEquals("UPDATE DatabaseConfiguration SET SchemaVersion = 3", databaseSchemaVersion.generateSqlToUpdateSchemaVersion(3));
+	}
 
 	private void createTable() throws Exception {
 		executeSql("CREATE TABLE " + DatabaseSchemaVersionManager.TABLE_NAME + " (SchemaVersion NUMBER NOT NULL)");
