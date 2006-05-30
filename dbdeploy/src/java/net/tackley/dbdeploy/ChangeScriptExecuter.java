@@ -4,13 +4,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import net.tackley.dbdeploy.scripts.ChangeScript;
 
 public class ChangeScriptExecuter {
 
+	private PrintStream output;
+	
+	public ChangeScriptExecuter(PrintStream printStream) {
+		output = printStream;
+	}
+
 	public void applyChangeScript(ChangeScript script) throws IOException {
-		System.out.println("\n---\n--- Change script: " + script + "\n---\n");
+		output.println("\n---\n--- Change script: " + script + "\n---\n");
 		copyFileContentsToStdOut(script.getFile());
 	}
 
@@ -18,15 +25,15 @@ public class ChangeScriptExecuter {
        BufferedReader in = new BufferedReader(new FileReader(file));
         String str;
         while ((str = in.readLine()) != null) {
-            System.out.println(str);
+        	output.println(str);
         }
         in.close();
 	}
 
 	public void applySqlToSetSchemaVersion(String sql) {
-		System.out.println();
-		System.out.println(sql + "\n/");
-		System.out.println();
+		output.println();
+		output.println(sql + "\n/");
+		output.println();
 	}
 
 }

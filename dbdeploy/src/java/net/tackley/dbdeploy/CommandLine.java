@@ -27,7 +27,7 @@ public class CommandLine {
 			Output output = new Output();
 			DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(connectionString, username, password);
 			ChangeScriptRepositoryFactory repositoryFactory = new ChangeScriptRepositoryFactory();
-			ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter();
+			ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(System.out);
 
 			Controller controller = new Controller(output, databaseSchemaVersion, repositoryFactory, 
 					changeScriptExecuter);

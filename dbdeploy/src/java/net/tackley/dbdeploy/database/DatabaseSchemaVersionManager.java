@@ -24,8 +24,9 @@ public class DatabaseSchemaVersionManager {
 			ResultSet rs = statement.executeQuery("SELECT SchemaVersion FROM " + TABLE_NAME);
 
 			if (!rs.next()) {
-				throw new SchemaVersionTrackingException(
-						"Could not retrieve schema version from database because: table exists but is empty\n");
+				statement.executeUpdate("INSERT INTO "+ TABLE_NAME + " VALUES (0)");
+				statement.close();
+				return 0;
 			}
 
 			return rs.getInt(1);

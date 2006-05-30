@@ -52,6 +52,7 @@
 	           <fileset dir="${classes.dir}" />
 			<manifest>
 				<attribute name="Main-Class" value="net.tackley.dbdeploy.CommandLine"/>
+				<attribute name="Class-Path" value="ojdbc14.jar" />			
 			</manifest>
 	 	</jar>
 		
