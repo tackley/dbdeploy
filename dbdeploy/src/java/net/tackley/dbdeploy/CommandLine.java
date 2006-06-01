@@ -20,11 +20,11 @@ public class CommandLine {
 
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(args[0]));
-			
-			String url = properties.getProperty("url");
-			String userid = properties.getProperty("userid");
-			String password = properties.getProperty("password");
-			String driver = properties.getProperty("driver");
+
+			String url = properties.getProperty("db.location");
+			String userid = properties.getProperty("db.user");
+			String password = properties.getProperty("db.password");
+			String driver = properties.getProperty("db.driver");
 
 			Class.forName(driver);
 			
