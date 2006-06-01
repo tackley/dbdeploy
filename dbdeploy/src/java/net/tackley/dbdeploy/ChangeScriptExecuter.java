@@ -32,7 +32,7 @@ public class ChangeScriptExecuter {
 
 	public void applySqlToSetSchemaVersion(String sql) {
 		output.println();
-		output.println(sql + "\n/");
+		output.println(sql + ";\n");
 		output.println();
 	}
 

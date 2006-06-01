@@ -1,11 +1,10 @@
 package net.tackley.dbdeploy;
 
 import java.io.File;
-import java.sql.DriverManager;
+import java.io.FileInputStream;
+import java.util.Properties;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.tackley.dbdeploy.exceptions.DbDeployException;
-import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 public class CommandLine {
 
@@ -13,26 +12,23 @@ public class CommandLine {
 
 		
 		try {
-
-			DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
-
-			if (args.length != 3) {
-				System.err.println("usage: dbdeploy dbConnectionString username password");
+			
+			if (args.length != 1) {
+				System.err.println("usage: dbdeploy propertyfilename");
 				System.exit(3);
 			}
-			String connectionString = args[0];
-			String username = args[1];
-			String password = args[2];
-			
-			Output output = new Output();
-			DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(connectionString, username, password);
-			ChangeScriptRepositoryFactory repositoryFactory = new ChangeScriptRepositoryFactory();
-			ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(System.out);
 
-			Controller controller = new Controller(output, databaseSchemaVersion, repositoryFactory, 
-					changeScriptExecuter);
+			Properties properties = new Properties();
+			properties.load(new FileInputStream(args[0]));
 			
-			controller.applyScriptToGetChangesUpToLatestVersion(new File("."));
+			String url = properties.getProperty("url");
+			String userid = properties.getProperty("userid");
+			String password = properties.getProperty("password");
+			String driver = properties.getProperty("driver");
+
+			Class.forName(driver);
+			
+			new ToPrintSteamDeployer(url, userid, password, new File("."), System.out).doDeploy();
 
 		} catch (DbDeployException ex) {
 			System.err.println(ex.getMessage());

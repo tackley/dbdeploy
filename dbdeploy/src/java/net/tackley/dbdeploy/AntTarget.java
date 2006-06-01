@@ -3,9 +3,7 @@ package net.tackley.dbdeploy;
 import java.io.File;
 import java.io.PrintStream;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.tackley.dbdeploy.exceptions.DbDeployException;
-import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -28,17 +26,11 @@ public class AntTarget extends Task  {
 
 		try {
 
-			Class.forName(driver);
-
-			Output output = new Output();
-			DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(url, userid, password);
-			ChangeScriptRepositoryFactory repositoryFactory = new ChangeScriptRepositoryFactory();
-
 			PrintStream outputPrintStream = new PrintStream(outputfile);
 
-			ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(outputPrintStream);
-			Controller controller = new Controller(output, databaseSchemaVersion, repositoryFactory,changeScriptExecuter);
-			controller.applyScriptToGetChangesUpToLatestVersion(dir);
+			Class.forName(driver);
+
+			new ToPrintSteamDeployer(url, userid, password, dir, outputPrintStream).doDeploy();
 
 			outputPrintStream.close();
 
