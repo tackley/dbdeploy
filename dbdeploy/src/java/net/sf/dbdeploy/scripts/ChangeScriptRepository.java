@@ -1,8 +1,8 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
 import java.util.Arrays;
 
-import net.tackley.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
+import net.sf.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
 
 
 public class ChangeScriptRepository {

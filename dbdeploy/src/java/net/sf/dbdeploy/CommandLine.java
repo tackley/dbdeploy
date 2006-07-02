@@ -1,10 +1,10 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-import net.tackley.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.exceptions.DbDeployException;
 
 public class CommandLine {
 

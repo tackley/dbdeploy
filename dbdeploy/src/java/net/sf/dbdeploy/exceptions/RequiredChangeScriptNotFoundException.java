@@ -1,4 +1,4 @@
-package net.tackley.dbdeploy.exceptions;
+package net.sf.dbdeploy.exceptions;
 
 public class RequiredChangeScriptNotFoundException extends DbDeployException {
 

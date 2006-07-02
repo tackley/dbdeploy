@@ -1,7 +1,8 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
-import net.tackley.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
-import net.tackley.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
+import net.sf.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
 import junit.framework.TestCase;
 
 public class ChangeScriptRepositoryTest extends TestCase {

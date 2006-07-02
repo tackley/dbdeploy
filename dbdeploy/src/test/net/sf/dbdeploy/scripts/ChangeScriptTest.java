@@ -1,8 +1,8 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
 import java.io.File;
 
-import net.tackley.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.scripts.ChangeScript;
 
 
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 public class Output {
 

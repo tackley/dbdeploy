@@ -1,9 +1,9 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.tackley.dbdeploy.exceptions.UnrecognisedFilenameException;
+import net.sf.dbdeploy.exceptions.UnrecognisedFilenameException;
 
 public class FilenameParser {
 	private final Pattern pattern;

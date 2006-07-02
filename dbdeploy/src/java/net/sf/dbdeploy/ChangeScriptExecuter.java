@@ -1,4 +1,4 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import net.tackley.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.scripts.ChangeScript;
 
 public class ChangeScriptExecuter {
 

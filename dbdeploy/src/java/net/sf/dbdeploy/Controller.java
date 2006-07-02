@@ -1,13 +1,13 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.IOException;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
-import net.tackley.dbdeploy.exceptions.DbDeployException;
-import net.tackley.dbdeploy.scripts.ChangeScript;
-import net.tackley.dbdeploy.scripts.ChangeScriptRepository;
-import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
+import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+import net.sf.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 public class Controller {
 

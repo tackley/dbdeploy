@@ -1,13 +1,13 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.sql.SQLException;
 
-import net.tackley.dbdeploy.database.DatabaseSchemaVersionManager;
-import net.tackley.dbdeploy.exceptions.DbDeployException;
-import net.tackley.dbdeploy.scripts.ChangeScriptRepositoryFactory;
+import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.scripts.ChangeScriptRepositoryFactory;
 
 public class ToPrintSteamDeployer {
 	

@@ -1,8 +1,8 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
 import java.io.File;
 
-import net.tackley.dbdeploy.exceptions.UnrecognisedFilenameException;
+import net.sf.dbdeploy.exceptions.UnrecognisedFilenameException;
 
 public class ChangeScriptRepositoryFactory {
 

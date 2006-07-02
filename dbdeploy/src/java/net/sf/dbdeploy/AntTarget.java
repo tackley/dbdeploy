@@ -1,9 +1,9 @@
-package net.tackley.dbdeploy;
+package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.PrintStream;
 
-import net.tackley.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.exceptions.DbDeployException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;

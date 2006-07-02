@@ -1,6 +1,7 @@
-package net.tackley.dbdeploy.scripts;
+package net.sf.dbdeploy.scripts;
 
-import net.tackley.dbdeploy.exceptions.UnrecognisedFilenameException;
+import net.sf.dbdeploy.exceptions.UnrecognisedFilenameException;
+import net.sf.dbdeploy.scripts.FilenameParser;
 import junit.framework.TestCase;
 
 public class FilenameParserTest extends TestCase {
