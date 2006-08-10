@@ -1,23 +1,12 @@
 package net.sf.dbdeploy.scripts;
 
+import net.sf.dbdeploy.exceptions.DuplicateChangeScriptException;
 import net.sf.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
 import net.sf.dbdeploy.scripts.ChangeScript;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
 import junit.framework.TestCase;
 
 public class ChangeScriptRepositoryTest extends TestCase {
-//	public void testCanReadFilenames() throws Exception {
-//		File file = new File("/home/graham/downloads");
-//		System.out.println("CanonicalPath = " + file.getCanonicalPath());
-//		System.out.println("path = " + file.getPath());
-//		
-//		File[] files = file.listFiles();
-//		for (File file2 : files) {
-//			
-//			System.out.println("file = " + file2);
-//			System.out.println("filename = " + file2.getName() + " isFile? " + file2.isFile());
-//		}
-//	}
 	
 	public void testGivenASetOfChangeScriptsReturnsThemCorrectly() throws Exception {
 		ChangeScript one = new ChangeScript(1);
@@ -63,6 +52,22 @@ public class ChangeScriptRepositoryTest extends TestCase {
 		} catch (RequiredChangeScriptNotFoundException e) {
 			assertEquals("Change script #5 was not found and is required", e.getMessage());
 		}
-				
+	}
+	
+	public void testThrowsWhenConstructedWithAChangeScriptListThatHasDuplicates() throws Exception {
+		ChangeScript two = new ChangeScript(2);
+		ChangeScript three = new ChangeScript(3);
+		ChangeScript anotherTwo = new ChangeScript(2);
+		
+		ChangeScript[] scripts = new ChangeScript[] { three, two, anotherTwo };
+		
+		try {
+			new ChangeScriptRepository(scripts);
+			fail("expected exception");
+		} catch (DuplicateChangeScriptException ex) {
+			assertEquals("There is more than one change script with number 2", ex.getMessage());
+		}
+		
+		
 	}
 }
