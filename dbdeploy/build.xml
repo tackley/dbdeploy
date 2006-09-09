@@ -34,7 +34,7 @@
 
 
 	<target name="test">
-		<junit printsummary="true" showoutput="true" >
+		<junit printsummary="true" showoutput="true" haltonfailure="true">
 			<classpath>
 				<path location="${classes.dir}" />
 				<path refid="classpath" />

@@ -37,25 +37,6 @@ public class DatabaseSchemaVersionManager {
 
 	}
 
-	public void setCurrentVersion(int versionNumber) throws SchemaVersionTrackingException {
-		Statement statement;
-		try {
-			statement = connection.createStatement();
-			int rowsAffected = statement
-					.executeUpdate(generateSqlToUpdateSchemaVersion(versionNumber));
-			statement.close();
-
-			if (rowsAffected != 1) {
-				throw new SchemaVersionTrackingException(
-						"Could not update schema version in the database because: sql reports that " + rowsAffected
-								+ " rows were affected: expected 1 to be affected");
-			}
-		} catch (SQLException e) {
-			throw new SchemaVersionTrackingException("Could not update schema version in the database because: "
-					+ e.getMessage(), e);
-		}
-	}
-
 	public String generateSqlToUpdateSchemaVersion(int versionNumber) {
 		return "UPDATE " + TABLE_NAME + " SET SchemaVersion = " + versionNumber;
 	}

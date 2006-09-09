@@ -44,27 +44,11 @@ public class DatabaseSchemaVersionManagerTest extends TestCase {
 		}
 	}
 	
-	public void testThrowsWhenDatabaseTableExistsButHasNoRows() throws Exception {
+	public void testShouldSetCurrentVersionToZeroWhenTableHasNoRows() throws Exception {
 		ensureTableDoesNotExist();
 		createTable();
 
-		try {
-			databaseSchemaVersion.getCurrentVersion();
-			fail("expected exception");
-		} catch (SchemaVersionTrackingException ex) {
-			assertEquals("Could not retrieve schema version from database because: table exists but is empty\n" , ex.getMessage());
-		}
-
-	}
-	
-	public void testCanUpdateSchemaVersion() throws Exception {
-		ensureTableDoesNotExist();
-		createTable();
-		insertRowIntoTable(5);
-
-		databaseSchemaVersion.setCurrentVersion(6);
-		assertEquals(6, databaseSchemaVersion.getCurrentVersion());
-		
+		assertEquals(0, databaseSchemaVersion.getCurrentVersion());
 	}
 	
 	public void testCanRetrieveSqlToUpdateTable() throws Exception {

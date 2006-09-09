@@ -7,7 +7,8 @@ import java.sql.SQLException;
 
 import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.exceptions.DbDeployException;
-import net.sf.dbdeploy.scripts.ChangeScriptRepositoryFactory;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+import net.sf.dbdeploy.scripts.DirectoryScanner;
 
 public class ToPrintSteamDeployer {
 	
@@ -26,16 +27,11 @@ public class ToPrintSteamDeployer {
 	}
 
 	public void doDeploy() throws SQLException, DbDeployException, IOException {
-		Output output = new Output();
 		DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(url, userid, password);
-		ChangeScriptRepositoryFactory repositoryFactory = new ChangeScriptRepositoryFactory();
-
+		ChangeScriptRepository repository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));
 		ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(outputPrintStream);
-		Controller controller = new Controller(output, databaseSchemaVersion, repositoryFactory,changeScriptExecuter);
-		controller.applyScriptToGetChangesUpToLatestVersion(dir);
+		Controller controller = new Controller(databaseSchemaVersion, repository, changeScriptExecuter);
+		controller.applyScriptsToGetChangesUpToLatestVersion(dir);
 		outputPrintStream.flush();
 	}
-
-
-
 }

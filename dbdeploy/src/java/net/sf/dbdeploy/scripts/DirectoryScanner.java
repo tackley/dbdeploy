@@ -1,6 +1,7 @@
 package net.sf.dbdeploy.scripts;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,13 @@ public class DirectoryScanner {
 		this.filenameParser = filenameParser;
 	}
 
-	public ChangeScript[] getChangeScriptsForDirectory(File directory) {
+	public ChangeScript[] getChangeScriptsForDirectory(File directory)  {
+		try {
+			System.out.println("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
+		} catch (IOException e1) {
+			// ignore
+		}
+
 		List<ChangeScript> scripts = new ArrayList<ChangeScript>();
 		
 		for (File file : directory.listFiles()) {

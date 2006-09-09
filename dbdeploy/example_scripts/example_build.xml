@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dbdeploy_example" default="generate-script" basedir=".">
+	<taskdef name="dbdeploy" classname="net.sf.dbdeploy.AntTarget" classpath="../dist/dbdeploy.jar"/>
+	
+    <target name="generate-script" description="generate a sql upgrade script">
+		 <dbdeploy driver="oracle.jdbc.OracleDriver" url="jdbc:oracle:thin:@localhost:1521:orcl" 
+		 	userid="dbdeploy" password="dbdeploy" dir="." outputfile="output.sql"/>
+    </target>
+</project>
