@@ -1,23 +1,25 @@
 package net.sf.dbdeploy.scripts;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.dbdeploy.exceptions.DuplicateChangeScriptException;
-import net.sf.dbdeploy.exceptions.RequiredChangeScriptNotFoundException;
 
 
 public class ChangeScriptRepository {
 
-	private final ChangeScript[] scripts;
+	private final List<ChangeScript> scripts;
 
-	public ChangeScriptRepository(ChangeScript[] scripts) throws DuplicateChangeScriptException {
+	@SuppressWarnings("unchecked")
+	public ChangeScriptRepository(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
 		this.scripts = scripts;
-		Arrays.sort(this.scripts);
+
+		Collections.sort(this.scripts);
 		
 		checkForDuplicateIds(scripts);
 	}
 	
-	private void checkForDuplicateIds(ChangeScript[] scripts) throws DuplicateChangeScriptException {
+	private void checkForDuplicateIds(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
 		int lastId = 0;
 		
 		for (ChangeScript script : scripts) {
@@ -30,16 +32,8 @@ public class ChangeScriptRepository {
 		
 	}
 
-	public int getHighestAvailableChangeScript() {
-		return scripts[scripts.length - 1].getId();
-	}
-
-	public ChangeScript getChangeScript(int scriptVerison) throws RequiredChangeScriptNotFoundException {
-		for (ChangeScript changeScript : scripts) {
-			if (changeScript.getId() == scriptVerison)
-				return changeScript;
-		}
-		throw new RequiredChangeScriptNotFoundException("Change script #" + scriptVerison + " was not found and is required");
+	public List<ChangeScript> getOrderedListOfChangeScripts() {
+		return Collections.unmodifiableList(scripts);
 	}
 
 }

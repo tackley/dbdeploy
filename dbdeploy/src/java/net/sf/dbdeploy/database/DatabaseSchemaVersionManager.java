@@ -5,12 +5,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
+import net.sf.dbdeploy.scripts.ChangeScript;
 
 public class DatabaseSchemaVersionManager {
 
-	public static final String TABLE_NAME = "DatabaseConfiguration";
+	public static final String TABLE_NAME = "changelog";
 
 	private Connection connection;
 
@@ -18,28 +21,25 @@ public class DatabaseSchemaVersionManager {
 		connection = DriverManager.getConnection(connectionString, username, password);
 	}
 
-	public int getCurrentVersion() throws SchemaVersionTrackingException {
+	public Set<Integer> getAppliedChangeNumbers() throws SchemaVersionTrackingException {
+		Set<Integer> changeNumbers = new HashSet<Integer>();
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT SchemaVersion FROM " + TABLE_NAME);
+			ResultSet rs = statement.executeQuery("SELECT change_number FROM " + TABLE_NAME);
 
-			if (!rs.next()) {
-				statement.executeUpdate("INSERT INTO "+ TABLE_NAME + " VALUES (0)");
-				statement.close();
-				return 0;
+			while (rs.next()) {
+				changeNumbers.add(rs.getInt(1));
 			}
 
-			return rs.getInt(1);
+			return changeNumbers;
 		} catch (SQLException e) {
-			throw new SchemaVersionTrackingException("Could not retrieve schema version from database because: "
+			throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "
 					+ e.getMessage(), e);
 		}
-
 	}
 
-	public String generateSqlToUpdateSchemaVersion(int versionNumber) {
-		return "UPDATE " + TABLE_NAME + " SET SchemaVersion = " + versionNumber;
+	public String generateSqlToUpdateSchemaVersion(ChangeScript changeScript) {
+		return "INSERT INTO " + TABLE_NAME + " (change_number, description)" +
+			" VALUES (" + changeScript.getId() + ", '" + changeScript.getDescription() + "')";
 	}
-
-
 }

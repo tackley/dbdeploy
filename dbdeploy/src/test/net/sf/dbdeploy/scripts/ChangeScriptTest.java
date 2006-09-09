@@ -17,8 +17,8 @@ public class ChangeScriptTest extends TestCase {
 	}
 	
 	public void testChangeScriptsNaturallyOrderById() throws Exception {
-		ChangeScript one = new ChangeScript(1, null);
-		ChangeScript two = new ChangeScript(2, null);
+		ChangeScript one = new ChangeScript(1);
+		ChangeScript two = new ChangeScript(2);
 		
 		assertTrue(one.compareTo(two) < 1);
 		assertTrue(two.compareTo(one) >= 1);

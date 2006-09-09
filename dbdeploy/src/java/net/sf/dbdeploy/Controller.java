@@ -2,6 +2,8 @@ package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.exceptions.DbDeployException;
@@ -24,28 +26,25 @@ public class Controller {
 
 	public void applyScriptsToGetChangesUpToLatestVersion(File directory) throws DbDeployException, IOException {
 		
-		int highestSchemaVersionScriptAvailable = changeScriptRepository.getHighestAvailableChangeScript();
+		List<ChangeScript> changeScripts = changeScriptRepository.getOrderedListOfChangeScripts();
 
-		info("Change scripts available to schema version: " + highestSchemaVersionScriptAvailable);
+		info("Reading changes applied to database...");
 
-		info("Reading current schema version from database...");
+		Set<Integer> appliedChanges = schemaVersion.getAppliedChangeNumbers();
 
-		int currentSchemaVersion = schemaVersion.getCurrentVersion();
+		int count = 0;
+		for (ChangeScript changeScript : changeScripts) {
+			if (!appliedChanges.contains(changeScript.getId())) {
+				count++;
+				info("Need to apply change script " + changeScript);
+				changeScriptExecuter.applyChangeScript(changeScript);
 
-		info("Current schema version: " + currentSchemaVersion);
-
-
-		for (int scriptNumber = currentSchemaVersion + 1; scriptNumber <= highestSchemaVersionScriptAvailable; scriptNumber++) {
-			
-			ChangeScript changeScript = changeScriptRepository.getChangeScript(scriptNumber);
-
-			info("Applying change script " + changeScript);
-			changeScriptExecuter.applyChangeScript(changeScript);
-
-			String sql = schemaVersion.generateSqlToUpdateSchemaVersion(scriptNumber);
-			changeScriptExecuter.applySqlToSetSchemaVersion(sql);
+				String sql = schemaVersion.generateSqlToUpdateSchemaVersion(changeScript);
+				changeScriptExecuter.applySqlToSetSchemaVersion(sql);
+			}
 		}
-
+		
+		info(count + " script(s) selected for application");
 	}
 
 	private void info(String string) {

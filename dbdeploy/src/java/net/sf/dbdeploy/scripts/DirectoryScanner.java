@@ -19,7 +19,7 @@ public class DirectoryScanner {
 		this.filenameParser = filenameParser;
 	}
 
-	public ChangeScript[] getChangeScriptsForDirectory(File directory)  {
+	public List<ChangeScript> getChangeScriptsForDirectory(File directory)  {
 		try {
 			System.out.println("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
 		} catch (IOException e1) {
@@ -38,7 +38,7 @@ public class DirectoryScanner {
 			}
 		}
 		
-		return scripts.toArray(new ChangeScript[scripts.size()]);
+		return scripts;
 
 	}
 
