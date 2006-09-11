@@ -21,7 +21,7 @@ public class DirectoryScanner {
 
 	public List<ChangeScript> getChangeScriptsForDirectory(File directory)  {
 		try {
-			System.out.println("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
+			System.err.println("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
 		} catch (IOException e1) {
 			// ignore
 		}

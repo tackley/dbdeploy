@@ -48,6 +48,6 @@ public class Controller {
 	}
 
 	private void info(String string) {
-		System.out.println(string);
+		System.err.println(string);
 	}
 }
