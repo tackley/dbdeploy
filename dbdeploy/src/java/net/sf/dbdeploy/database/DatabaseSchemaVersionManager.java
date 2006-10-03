@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
@@ -21,11 +21,11 @@ public class DatabaseSchemaVersionManager {
 		connection = DriverManager.getConnection(connectionString, username, password);
 	}
 
-	public Set<Integer> getAppliedChangeNumbers() throws SchemaVersionTrackingException {
-		Set<Integer> changeNumbers = new HashSet<Integer>();
+	public List<Integer> getAppliedChangeNumbers() throws SchemaVersionTrackingException {
+		List<Integer> changeNumbers = new ArrayList<Integer>();
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("SELECT change_number FROM " + TABLE_NAME);
+			ResultSet rs = statement.executeQuery("SELECT change_number FROM " + TABLE_NAME + " ORDER BY change_number");
 
 			while (rs.next()) {
 				changeNumbers.add(rs.getInt(1));

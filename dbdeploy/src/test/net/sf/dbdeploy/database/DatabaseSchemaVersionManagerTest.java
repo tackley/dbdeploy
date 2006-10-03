@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Set;
+import java.util.List;
 
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
@@ -31,7 +31,7 @@ public class DatabaseSchemaVersionManagerTest extends MockObjectTestCase {
 		createTable();
 		insertRowIntoTable(5);
 
-		Set<Integer> appliedChangeNumbers = databaseSchemaVersion.getAppliedChangeNumbers();
+		List<Integer> appliedChangeNumbers = databaseSchemaVersion.getAppliedChangeNumbers();
 		assertEquals(1, appliedChangeNumbers.size());
 		assertThat(new Integer(5), isIn(appliedChangeNumbers));
 	}

@@ -2,8 +2,8 @@ package net.sf.dbdeploy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.exceptions.DbDeployException;
@@ -15,6 +15,7 @@ public class Controller {
 	private final DatabaseSchemaVersionManager schemaVersion;
 	private final ChangeScriptExecuter changeScriptExecuter;
 	private final ChangeScriptRepository changeScriptRepository;
+	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
 
 	public Controller(DatabaseSchemaVersionManager schemaVersion, 
 			ChangeScriptRepository changeScriptRepository,
@@ -28,23 +29,24 @@ public class Controller {
 		
 		List<ChangeScript> changeScripts = changeScriptRepository.getOrderedListOfChangeScripts();
 
-		info("Reading changes applied to database...");
+		List<Integer> appliedChanges = schemaVersion.getAppliedChangeNumbers();
 
-		Set<Integer> appliedChanges = schemaVersion.getAppliedChangeNumbers();
-
-		int count = 0;
+		info("Changes currently applied to database:\n  " + prettyPrinter.format(appliedChanges));
+		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(changeScripts));
+		
+		List<Integer> changesToApply = new ArrayList<Integer>();
+		
 		for (ChangeScript changeScript : changeScripts) {
 			if (!appliedChanges.contains(changeScript.getId())) {
-				count++;
-				info("Need to apply change script " + changeScript);
+				changesToApply.add(changeScript.getId());
 				changeScriptExecuter.applyChangeScript(changeScript);
 
 				String sql = schemaVersion.generateSqlToUpdateSchemaVersion(changeScript);
 				changeScriptExecuter.applySqlToSetSchemaVersion(sql);
 			}
 		}
-		
-		info(count + " script(s) selected for application");
+
+		info("To be applied:\n  " + prettyPrinter.format(changesToApply));
 	}
 
 	private void info(String string) {

@@ -27,7 +27,7 @@ public class ToPrintSteamDeployer {
 	}
 
 	public void doDeploy() throws SQLException, DbDeployException, IOException {
-		System.err.println("dbdeploy v1.5");
+		System.err.println("dbdeploy v1.6");
 		
 		DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(url, userid, password);
 		ChangeScriptRepository repository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));

@@ -34,7 +34,7 @@ public class DirectoryScanner {
 				int id = filenameParser.extractIdFromFilename(filename);
 				scripts.add(new ChangeScript(id, file));
 			} catch (UnrecognisedFilenameException e) {
-				System.err.println("ignoring file " + filename + ": cannot parse filename");
+				// ignore
 			}
 		}
 		
