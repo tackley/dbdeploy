@@ -26,14 +26,14 @@ public class ToPrintSteamDeployer {
 		this.outputPrintStream = outputPrintStream;
 	}
 
-	public void doDeploy() throws SQLException, DbDeployException, IOException {
-		System.err.println("dbdeploy v1.6");
+	public void doDeploy(Integer lastChangeToApply) throws SQLException, DbDeployException, IOException {
+		System.err.println("dbdeploy v1.65");
 		
 		DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(url, userid, password);
 		ChangeScriptRepository repository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));
 		ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(outputPrintStream);
 		Controller controller = new Controller(databaseSchemaVersion, repository, changeScriptExecuter);
-		controller.applyScriptsToGetChangesUpToLatestVersion(dir);
+		controller.applyScriptsToGetChangesUpToVersion(lastChangeToApply, dir);
 		outputPrintStream.flush();
 	}
 }

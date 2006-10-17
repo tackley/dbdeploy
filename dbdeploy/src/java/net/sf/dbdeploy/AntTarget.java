@@ -16,6 +16,7 @@ public class AntTarget extends Task  {
 	private String password;
 	private File dir;
 	private File outputfile;
+	private Integer lastChangeToApply = Integer.MAX_VALUE;
 
 	public void setDir(File dir) {
 		this.dir = dir;
@@ -30,7 +31,7 @@ public class AntTarget extends Task  {
 
 			Class.forName(driver);
 
-			new ToPrintSteamDeployer(url, userid, password, dir, outputPrintStream).doDeploy();
+			new ToPrintSteamDeployer(url, userid, password, dir, outputPrintStream).doDeploy(lastChangeToApply);
 
 			outputPrintStream.close();
 
@@ -64,6 +65,10 @@ public class AntTarget extends Task  {
 
 	public void setOutputfile(File outputfile) {
 		this.outputfile = outputfile;
+	}
+
+	public void setLastChangeToApply(Integer maxNumberToApply) {
+		this.lastChangeToApply = maxNumberToApply;
 	}
 	
 }

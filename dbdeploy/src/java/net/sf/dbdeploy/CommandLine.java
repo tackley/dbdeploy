@@ -28,7 +28,7 @@ public class CommandLine {
 
 			Class.forName(driver);
 			
-			new ToPrintSteamDeployer(url, userid, password, new File("."), System.out).doDeploy();
+			new ToPrintSteamDeployer(url, userid, password, new File("."), System.out).doDeploy(Integer.MAX_VALUE);
 
 		} catch (DbDeployException ex) {
 			System.err.println(ex.getMessage());

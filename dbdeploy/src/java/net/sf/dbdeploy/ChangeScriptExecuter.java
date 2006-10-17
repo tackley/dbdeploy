@@ -28,12 +28,8 @@ public class ChangeScriptExecuter {
 	}
 
 	public void applyChangeScript(ChangeScript script) throws IOException {
-		/* SQL*Plus will treat the C-style comments as documentation and
-		 * print it out to the terminal as it executes. */
 		output.println();
-		output.println("/*");
-		output.println("Change script: " + script);
-		output.println("*/");
+		output.println("PROMPT " + script);
 		copyFileContentsToStdOut(script.getFile());
 	}
 

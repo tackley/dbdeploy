@@ -25,20 +25,26 @@ public class Controller {
 		this.changeScriptExecuter = changeScriptExecuter;
 	}
 
-	public void applyScriptsToGetChangesUpToLatestVersion(File directory) throws DbDeployException, IOException {
+	public void applyScriptsToGetChangesUpToVersion(Integer lastChangeToApply, File directory) throws DbDeployException, IOException {
 		
 		List<ChangeScript> changeScripts = changeScriptRepository.getOrderedListOfChangeScripts();
 
 		List<Integer> appliedChanges = schemaVersion.getAppliedChangeNumbers();
 
+		if (lastChangeToApply != Integer.MAX_VALUE) {
+			info("Only applying changes up and including change script #" + lastChangeToApply);
+		}
+		
 		info("Changes currently applied to database:\n  " + prettyPrinter.format(appliedChanges));
 		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(changeScripts));
 		
 		List<Integer> changesToApply = new ArrayList<Integer>();
 		
 		for (ChangeScript changeScript : changeScripts) {
-			if (!appliedChanges.contains(changeScript.getId())) {
-				changesToApply.add(changeScript.getId());
+			final int changeScriptId = changeScript.getId();
+			
+			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
+				changesToApply.add(changeScriptId);
 				changeScriptExecuter.applyChangeScript(changeScript);
 
 				String sql = schemaVersion.generateSqlToUpdateSchemaVersion(changeScript);
