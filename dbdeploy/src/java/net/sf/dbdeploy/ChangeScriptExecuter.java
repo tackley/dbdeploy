@@ -9,46 +9,67 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import net.sf.dbdeploy.database.DbmsSyntax;
 import net.sf.dbdeploy.scripts.ChangeScript;
 
 public class ChangeScriptExecuter {
 
 	private PrintStream output;
 	
-	public ChangeScriptExecuter(PrintStream printStream) {
+	public ChangeScriptExecuter(PrintStream printStream, DbmsSyntax dbmsSyntax) {
 		output = printStream;
 		/* Header data: information and control settings for the entire script. */
 		Date now = Calendar.getInstance().getTime();
 		output.println("-- Script generated at " + DateFormat.getDateTimeInstance().format(now));
 		output.println();
-		/* Halt the script on error. */
-		output.println("WHENEVER SQLERROR EXIT sql.sqlcode ROLLBACK");
-		/* Disable '&' variable substitution. */
-		output.println("SET DEFINE OFF");
+		output.println(dbmsSyntax.generateScriptHeader());
 	}
 
-	public void applyChangeScript(ChangeScript script) throws IOException {
+	public void applyChangeDoScript(ChangeScript script) throws IOException {
+		/* Using double hyphen as comment since ant SQL task doesn't like c-style comments */
 		output.println();
-		output.println("PROMPT " + script);
-		copyFileContentsToStdOut(script.getFile());
+		output.println("-- Change script: " + script);
+		copyFileDoContentsToStdOut(script.getFile());
 	}
 
-	private void copyFileContentsToStdOut(File file) throws IOException {
+	public void applyChangeUndoScript(ChangeScript script) throws IOException {
+		/* Using double hyphen as comment since ant SQL task doesn't like c-style comments */
+		output.println();
+		output.println("-- Change script: " + script);
+		copyFileUndoContentsToStdOut(script.getFile());
+	}
+
+	private void copyFileDoContentsToStdOut(File file) throws IOException {
        BufferedReader in = new BufferedReader(new FileReader(file));
         String str;
-        while ((str = in.readLine()) != null) {
+        str = in.readLine();
+        while ((str != null) && (!str.equals("--//@UNDO"))) {
         	output.println(str);
+        	str = in.readLine();
+        }
+        in.close();
+	}
+
+	private void copyFileUndoContentsToStdOut(File file) throws IOException {
+       BufferedReader in = new BufferedReader(new FileReader(file));
+        String str;
+        str = in.readLine();
+        while ((str != null) && (!str.equals("--//@UNDO"))) {
+        	// Just keep looping until we find the magic "--//@UNDO"
+        	str = in.readLine();
+        }
+        str = in.readLine();
+        while ((str != null) && (!str.equals("--//@UNDO"))) {
+        	output.println(str);
+        	str = in.readLine();
         }
         in.close();
 	}
 
 	/* Should be called *after* insert of script contents. */
-	public void applySqlToSetSchemaVersion(String sql) {
+	public void applyDeltaFragmentHeaderOrFooterSql(String sql) {
 		output.println();
-		output.println(sql + ";");
-		/* Ensure the schema version update (and any other DML in the current script)
-		 * is stored, in case next script fails. */
-		output.println("COMMIT;");
+		output.println(sql);
 	}
 
 }

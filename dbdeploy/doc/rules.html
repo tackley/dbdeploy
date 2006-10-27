@@ -1,0 +1,75 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+ <title>dbdeploy - rules</title>
+</head>
+<body>
+
+<h1>Rules for using dbdeploy</h1>
+
+<p>
+When creating a delta file you will need to follow these conventions:
+</p>
+<ol><li>Make sure that <strong>EVERY</strong> database modification is written as a delta script to be picked up by dbdeploy.
+</li><li>Follow the naming convention for delta scripts. Script names must begin with a number that indicates the order in which it should be run (<tt>1.sql</tt> gets run first, then <tt>2.sql</tt> and so on). You can optionally add a comment to the file name to describe what the script does (eg <tt>1 Created the CustomerAddress table.sql</tt>) the comment will get written to the schema version table as the script is applied.
+</li><li>You can optionally add an undo section to your script. Write the script so it performs the do action first (eg create the CustomerAddress table) once all do actions have been scripted include the token <tt>--//@UNDO</tt> on a new line. Include the undo steps after this token.
+
+</li><li>If you realise that you've made a mistake in a delta script that's been checked in then consider carefully how to fix it. <strong>See the note of caution below</strong>.
+</li></ol><h2 id="Example">Example</h2>
+<p>
+A developer needs to modify the database by adding a new table called foo. It is the third database modification to be written.
+</p>
+<p>
+Create a file called <tt>1 Create the new Foo table.sql</tt>
+</p>
+<p>
+The content of the file looks like this:
+</p>
+<pre class="wiki">
+CREATE TABLE FOO (
+FOO_ID INTEGER NOT NULL
+,FOO_VALUE VARCHAR(30)
+)
+;
+
+ALTER TABLE FOO ADD CONSTRAINT PK_FOO PRIMARY KEY (FOO_ID)
+;
+
+--//@UNDO
+
+DROP TABLE FOO
+;
+
+</pre>
+<h2 id="Anoteofcaution">A note of caution</h2>
+<p>
+dbdeploy works by checking to see if a particular delta script has been run against a particular database. To do this it uses the name of the delta script plus the name of the delta set (which will be &#34;All&#34; unless otherwise specified) and compares this against the content of the schema version table. <strong>If a delta script that has already been applied to a database is subsequently modified that subsequent modification will not be applied to the database.</strong>
+</p>
+<p>
+In most circumstances the answer to amending what's been done in a delta script is to just write another delta script. Using the example above, if next day business requirements change and it becomes necessary to add a <tt>FOO_DATE</tt> column to the <tt>FOO</tt> table then write a script called <tt>2 Add foo_date to the foo table.sql</tt>. The content should look something like this:
+
+</p>
+<pre class="wiki">--//Story400 - late-breaking requirement, need FOO_DATE column.
+
+ALTER TABLE FOO ADD (
+FOO_DATE DATE NULL)
+;
+
+--//@UNDO
+
+ALTER TABLE FOO DROP COLUMN FOO_DATE
+;
+
+</pre>
+<p>
+This all works fine so long as you don't need to fix a genuine bug in a script. There are a couple of ways to mitigate against this, none of them ground-breaking:
+</p>
+<ul><li>Always perform a local build before you check in, this way the problem is caught and can be fixed prior to it getting under version control.
+</li><li>Use continuous integration - if your CI build breaks then the source code repository doesn't get tagged until you've fixed the problem.
+</li></ul></div>
+   </div>
+
+ </body>
+</html>

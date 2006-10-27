@@ -6,34 +6,40 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 
 import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.DbmsSyntax;
 import net.sf.dbdeploy.exceptions.DbDeployException;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
 import net.sf.dbdeploy.scripts.DirectoryScanner;
 
 public class ToPrintSteamDeployer {
 	
-	private String url;
-	private String userid;
-	private String password;
 	private File dir;
-	private PrintStream outputPrintStream;
+	private PrintStream doOutputPrintStream;
+	private PrintStream undoOutputPrintStream;
+	private final DatabaseSchemaVersionManager schemaManager;
+	private final DbmsSyntax dbmsSyntax;
 
-	public ToPrintSteamDeployer(String url, String userid, String password, File dir, PrintStream outputPrintStream) {
-		this.url = url;
-		this.userid = userid;
-		this.password = password;
+	public ToPrintSteamDeployer(DatabaseSchemaVersionManager schemaManager, File dir, PrintStream outputPrintStream, DbmsSyntax dbmsSyntax, PrintStream undoOutputPrintStream) {
+		this.schemaManager = schemaManager;
 		this.dir = dir;
-		this.outputPrintStream = outputPrintStream;
+		this.doOutputPrintStream = outputPrintStream;
+		this.dbmsSyntax = dbmsSyntax;
+		this.undoOutputPrintStream = undoOutputPrintStream;
 	}
 
 	public void doDeploy(Integer lastChangeToApply) throws SQLException, DbDeployException, IOException {
-		System.err.println("dbdeploy v1.65");
+		System.out.println("dbdeploy v2.0");
 		
-		DatabaseSchemaVersionManager databaseSchemaVersion = new DatabaseSchemaVersionManager(url, userid, password);
 		ChangeScriptRepository repository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));
-		ChangeScriptExecuter changeScriptExecuter = new ChangeScriptExecuter(outputPrintStream);
-		Controller controller = new Controller(databaseSchemaVersion, repository, changeScriptExecuter);
-		controller.applyScriptsToGetChangesUpToVersion(lastChangeToApply, dir);
-		outputPrintStream.flush();
+		ChangeScriptExecuter doScriptExecuter = new ChangeScriptExecuter(doOutputPrintStream, dbmsSyntax);
+		Controller doController = new Controller(schemaManager, repository, doScriptExecuter);
+		doController.processDoChangeScripts(lastChangeToApply);
+		doOutputPrintStream.flush();
+		if (undoOutputPrintStream != null) {
+			ChangeScriptExecuter undoScriptExecuter = new ChangeScriptExecuter(undoOutputPrintStream, dbmsSyntax);
+			Controller undoController = new Controller(schemaManager, repository, undoScriptExecuter);
+			undoController.processUndoChangeScripts(lastChangeToApply);
+			undoOutputPrintStream.flush();
+		}
 	}
 }

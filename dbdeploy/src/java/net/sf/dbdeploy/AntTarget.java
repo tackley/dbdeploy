@@ -1,8 +1,12 @@
 package net.sf.dbdeploy;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.DbmsSyntax;
+import net.sf.dbdeploy.database.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.DbDeployException;
 
 import org.apache.tools.ant.BuildException;
@@ -16,7 +20,10 @@ public class AntTarget extends Task  {
 	private String password;
 	private File dir;
 	private File outputfile;
+	private String dbms;
 	private Integer lastChangeToApply = Integer.MAX_VALUE;
+	private String deltaSet = "Main";
+	private File undoOutputfile;
 
 	public void setDir(File dir) {
 		this.dir = dir;
@@ -24,16 +31,29 @@ public class AntTarget extends Task  {
 
 	@Override
 	public void execute() throws BuildException {
-
+		
 		try {
+			
+			Validator validator = new Validator();
+			validator.setUsage("ant");
+			validator.validate(userid, driver, url, dbms, dir.getAbsolutePath(), outputfile.getAbsolutePath());
 
 			PrintStream outputPrintStream = new PrintStream(outputfile);
+			PrintStream undoOutputPrintStream = createUndoOutputPrintStream(undoOutputfile);
 
-			Class.forName(driver);
+			Class.forName(driver); 
+			
+			DbmsSyntaxFactory factory = new DbmsSyntaxFactory(dbms);
+			DbmsSyntax dbmsSyntax = factory.createDbmsSyntax();
 
-			new ToPrintSteamDeployer(url, userid, password, dir, outputPrintStream).doDeploy(lastChangeToApply);
+			DatabaseSchemaVersionManager databaseSchemaVersion = 
+					new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet); 
+			
+			ToPrintSteamDeployer toPrintSteamDeployer = new ToPrintSteamDeployer(databaseSchemaVersion, dir, outputPrintStream, dbmsSyntax, undoOutputPrintStream);
+			toPrintSteamDeployer.doDeploy(lastChangeToApply);
 
 			outputPrintStream.close();
+			undoOutputPrintStream.close();
 
 		} catch (DbDeployException ex) {
 			System.err.println(ex.getMessage());
@@ -46,6 +66,16 @@ public class AntTarget extends Task  {
 		}
 
 	}
+	
+	private PrintStream createUndoOutputPrintStream(File undoOutputFile) throws FileNotFoundException {
+		if (undoOutputFile != null) {
+			return new PrintStream(undoOutputFile);
+		}
+		else {
+			return null;
+		}
+	}
+
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -67,8 +97,20 @@ public class AntTarget extends Task  {
 		this.outputfile = outputfile;
 	}
 
+	public void setDbms(String dbms) {
+		this.dbms = dbms;
+	}
+
 	public void setLastChangeToApply(Integer maxNumberToApply) {
 		this.lastChangeToApply = maxNumberToApply;
+	}
+
+	public void setDeltaSet(String deltaSet) {
+		this.deltaSet = deltaSet;
+	}
+
+	public void setUndoOutputfile(File undoOutputfile) {
+		this.undoOutputfile = undoOutputfile;
 	}
 	
 }

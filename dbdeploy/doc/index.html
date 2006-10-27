@@ -1,0 +1,52 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+ <title>dbdeploy</title>
+</head>
+<body>
+
+    <h1>Welcome to the dbdeploy project</h1>
+
+<p>
+The intention of dbdeploy is to simplify iterative development of databases.
+</p>
+<h2 id="Benefits">Benefits</h2>
+<ul><li>Consistent implementation across build tools (ant, nant, MSBuild) [CURRENTLY ONLY ANT IS SUPPORTED]
+</li><li>Consistent implementation across database management systems
+</li><li>It's easy - it just concatinates SQL scripts
+</li><li>Guaranteed read-only - dbdeploy will only perform read operations on your database
+</li><li>Sysadmin / DBA-friendly - the output is simply a SQL script
+</li><li>Generates an audit of modifications applied
+</li><li>Continuous validation of your next production upgrade - when used with a CI tool such as CruiseControl
+</li><li>Generates a corresponding undo script to roll back your changes
+</li></ul><h2 id="Overview">Overview</h2>
+<p>
+The recurring problem with database development is that at some point you'll need to upgrade an existing database and preserve its content. In development environments it's often possible (even desirable) to blow away the database and rebuild from scratch as often as the code is rebuilt but this approach cannot be taken forward into more controlled environments such as QA, UAT and Production.
+</p>
+
+<p>
+For this reason it's necessary to maintain database modifications as a sequence of deltas.
+</p>
+<p>
+Maintaining and making use of these deltas can quickly become a significant overhead. Issues can include:
+</p>
+<ul><li>Ensuring deltas get run in the correct order
+</li><li>Which database has had which delta applied?
+</li><li>How to match a tagged version of code with a specific database version?
+</li><li>How to verify that the delta scripts actually work?
+</li><li>How to verify that the undo scripts actually work?
+</li></ul><p>
+Using dbdeploy in conjunction with SCM and CI it's possible to manage these issues painlessly.
+</p>
+<p>
+dbdeploy plugs into your build tool (ant is currently supported, nant and MSBuild versions are coming soon) and compares a given database against a given set of delta scripts. It figures out which of the delta scripts have not yet been applied to the database and outputs a single script to migrate the database to the desired version. The script can then be run by the build tool itself, archived for later use or both.
+</p>
+<h2 id="Thedetail">The detail</h2>
+
+<p>
+<a href="gettingstarted.html">Getting Started</a>
+</p>
+ </body>
+</html>

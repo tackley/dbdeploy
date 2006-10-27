@@ -1,0 +1,85 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+ <title>dbdeploy - getting started</title>
+</head>
+<body>
+
+
+<h1 id="GettingStartedWithdbdeploy">Getting Started With dbdeploy</h1>
+
+<p>
+This page describes how to get up and running
+</p>
+<h2 id="Overview">Overview</h2>
+<p>
+Need to accomplish the following steps:
+</p>
+<ol><li>Compare your project against our recommended foundations
+</li><li>Download dbdeploy
+</li><li>Prepare the ground
+</li><li>Configure your build process
+</li><li>Using dbdeploy
+</li></ol><h2 id="Foundationsforasuccessfulproject">Foundations for a successful project</h2>
+<p>
+We recommend that you run your project in the following way:
+
+</p>
+<ul><li>Treat all database code like any other source code - store it under version control
+</li><li>Once a delta script has been checked it be very very wary of modifying it (reasons will become clear later)
+</li><li>Continuous integration is key - get <a class="ext-link" href="http://cruisecontrol.sourceforge.net/"><span class="icon"></span>CruiseControl</a>
+</li></ul><h2 id="Downloaddbdeploy">Download dbdeploy</h2>
+<p>
+The latest release of dbdeploy can be downloaded here. (TODO!!!)
+</p>
+<p>
+Simply save the jar file on your computer - we'd suggest including it in a lib directory alongside your source code.
+</p>
+<h2 id="Preparetheground">Prepare the ground</h2>
+<p>
+
+Complete the following preparations to ready your project to use dbdeploy.
+</p>
+<h3 id="Directorystructure">Directory structure</h3>
+<p>
+We usually use a directory structure similar to the following:
+</p>
+<pre class="wiki">basedir
+   |
+   | - db
+       |
+       | - deltas
+</pre>
+<p>
+The <tt>db</tt> directory is located underneath the base directory of the project. In <tt>db</tt> are all files relevant to the project's database component. Underneath <tt>db</tt> is the <tt>deltas</tt> directory, this is the location of all delta files relevant to the project.
+
+</p>
+<h3 id="CreatetheSchemaVersiontable">Create the schema version table</h3>
+<p>
+The schema version table needs to exist in each database that dbdeploy will generate migration scripts for. You can create the table by running the createSchemaVersionTable.xxx.sql script downloaded as part of the dbdeploy package. The xxx in the filename signifies the script that will work with your DBMS; ora = Oracle, syb-ase = Sybase ASE etc etc.
+</p>
+<h2 id="Configureyourbuildprocess">Configure your build process</h2>
+<p>
+You are now ready to use dbdeploy in your build process. The exact means of doing this will depend on your build tool, choose the link appropriate to you:
+</p>
+<p>
+<a class="wiki" href="ConfigureAnt.html">Configuring dbdeploy for ant</a>
+</p>
+<p>
+Configuring dbdeploy for nant - TODO
+
+</p>
+<p>
+Configuring dbdeploy for msbuild - TODO
+</p>
+<h2 id="Usingdbdeploy">Using dbdeploy</h2>
+<p>
+Now you're all configured it's time to try and use dbdeploy. You'll need to follow these <a href="rules.html">rules</a>.
+</p>
+</div>
+   </div>
+
+ </body>
+</html>

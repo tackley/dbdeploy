@@ -17,7 +17,7 @@ public class ChangeScriptRepositoryTest extends MockObjectTestCase {
 		
 		ChangeScriptRepository repository = new ChangeScriptRepository(Arrays.asList( three, two, four, one ));
 		
-		List<ChangeScript> list = repository.getOrderedListOfChangeScripts();
+		List<ChangeScript> list = repository.getOrderedListOfDoChangeScripts();
 		assertThat(4, eq(list.size()));
 		assertSame(one, list.get(0));
 		assertSame(two, list.get(1));

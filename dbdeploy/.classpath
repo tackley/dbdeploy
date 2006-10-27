@@ -6,7 +6,9 @@
 	<classpathentry kind="lib" path="lib/jmock-1.1.0RC1.jar"/>
 	<classpathentry kind="lib" path="lib/jmock-cglib-1.1.0RC1.jar"/>
 	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
-	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/ant.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/jtds-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

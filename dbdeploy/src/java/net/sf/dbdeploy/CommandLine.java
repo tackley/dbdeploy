@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.DbmsSyntax;
+import net.sf.dbdeploy.database.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.DbDeployException;
 
 public class CommandLine {
@@ -25,10 +28,19 @@ public class CommandLine {
 			String userid = properties.getProperty("db.user");
 			String password = properties.getProperty("db.password");
 			String driver = properties.getProperty("db.driver");
+			String dbms = properties.getProperty("db.dbms");
+			String deltaSet = properties.getProperty("db.deltaSet");
 
-			Class.forName(driver);
+			Class.forName(driver); 
 			
-			new ToPrintSteamDeployer(url, userid, password, new File("."), System.out).doDeploy(Integer.MAX_VALUE);
+			DbmsSyntaxFactory factory = new DbmsSyntaxFactory(dbms);
+			DbmsSyntax dbmsSyntax = factory.createDbmsSyntax();
+			
+			DatabaseSchemaVersionManager databaseSchemaVersion = 
+				new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet);
+			
+			new ToPrintSteamDeployer(databaseSchemaVersion, new File("."), System.out, null, null).doDeploy(Integer.MAX_VALUE);
+
 
 		} catch (DbDeployException ex) {
 			System.err.println(ex.getMessage());

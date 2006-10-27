@@ -32,7 +32,12 @@ public class ChangeScriptRepository {
 		
 	}
 
-	public List<ChangeScript> getOrderedListOfChangeScripts() {
+	public List<ChangeScript> getOrderedListOfDoChangeScripts() {
+		return Collections.unmodifiableList(scripts);
+	}
+
+	public List<ChangeScript> getOrderedListOfUndoChangeScripts() {
+		Collections.reverse(this.scripts);
 		return Collections.unmodifiableList(scripts);
 	}
 

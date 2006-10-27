@@ -1,2 +1,7 @@
 CREATE TABLE Test (id NUMBER)
 /
+
+--//@UNDO
+
+DROP TABLE Test
+/
