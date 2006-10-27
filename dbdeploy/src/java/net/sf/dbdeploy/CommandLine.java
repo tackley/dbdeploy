@@ -39,7 +39,7 @@ public class CommandLine {
 			DatabaseSchemaVersionManager databaseSchemaVersion = 
 				new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet);
 			
-			new ToPrintSteamDeployer(databaseSchemaVersion, new File("."), System.out, null, null).doDeploy(Integer.MAX_VALUE);
+			new ToPrintSteamDeployer(databaseSchemaVersion, new File("."), System.out, dbmsSyntax, null).doDeploy(Integer.MAX_VALUE);
 
 
 		} catch (DbDeployException ex) {

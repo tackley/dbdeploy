@@ -17,8 +17,10 @@ public class DbmsSyntaxFactory {
 			return new HsqlDbmsSyntax();
 		} else if (dbms.equals("syb-ase")) {
 			return new SybAseDbmsSyntax();
+		} else if (dbms.equals("mssql")) {
+			return new MsSqlDbmsSyntax();
 		} else {
-			throw new IllegalArgumentException("Supported dbms: ora, hsql, syb-ase");
+			throw new IllegalArgumentException("Supported dbms: ora, hsql, syb-ase, mssql");
 		}
 	}
 }

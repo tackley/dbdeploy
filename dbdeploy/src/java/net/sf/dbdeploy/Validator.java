@@ -41,8 +41,8 @@ public class Validator {
 			throw new BuildException(constructErrorMessage("Url expected"));
 		}
 		
-		if ( !dbms.equals("ora") && !dbms.equals("ora-sqlplus") && !dbms.equals("hsql") && !dbms.equals("syb-ase") ) {
-			throw new BuildException(constructErrorMessage("Unknown DBMS: " + dbms + "\n\nAllowed values:\nora - Oracle\nhsql - Hypersonic SQL\nsyb-ase - Sybase ASE"));
+		if ( !dbms.equals("ora") && !dbms.equals("ora-sqlplus") && !dbms.equals("hsql") && !dbms.equals("syb-ase") && !dbms.equals("mssql") ) {
+			throw new BuildException(constructErrorMessage("Unknown DBMS: " + dbms + "\n\nAllowed values:\nora - Oracle\nhsql - Hypersonic SQL\nsyb-ase - Sybase ASE\nmssql - Microsoft SQL Server"));
 		}
 		
 		if (dir == null || dir == "") {
