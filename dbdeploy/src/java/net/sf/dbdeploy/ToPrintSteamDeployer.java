@@ -28,7 +28,7 @@ public class ToPrintSteamDeployer {
 	}
 
 	public void doDeploy(Integer lastChangeToApply) throws SQLException, DbDeployException, IOException {
-		System.out.println("dbdeploy v2.01");
+		System.out.println("dbdeploy v2.1");
 		
 		ChangeScriptRepository repository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));
 		ChangeScriptExecuter doScriptExecuter = new ChangeScriptExecuter(doOutputPrintStream, dbmsSyntax);
