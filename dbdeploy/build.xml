@@ -75,6 +75,7 @@
 			<zipfileset dir="${lib.dir}" includes="ojdbc14.jar" prefix="lib/"/>
 			<zipfileset dir="${lib.dir}" includes="hsqldb.jar" prefix="lib/"/>
 			<zipfileset dir="${lib.dir}" includes="jtds-1.2.jar" prefix="lib/"/>
+			<zipfileset dir="${lib.dir}" includes="mysql-connector-java-3.1.13-bin.jar" prefix="lib/"/>
 			<zipfileset dir="doc" includes="*.txt" prefix="doc/"/>
 			<zipfileset dir="scripts" includes="*.sql" prefix="scripts/"/>
 		</zip>
