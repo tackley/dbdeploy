@@ -53,7 +53,10 @@ public class AntTarget extends Task  {
 			toPrintSteamDeployer.doDeploy(lastChangeToApply);
 
 			outputPrintStream.close();
-			undoOutputPrintStream.close();
+			if (undoOutputPrintStream != null) {
+				undoOutputPrintStream.close();
+			}
+			
 
 		} catch (DbDeployException ex) {
 			System.err.println(ex.getMessage());
@@ -61,7 +64,9 @@ public class AntTarget extends Task  {
 		}
 		catch (Exception ex) {
 			System.err.println("Failed to apply changes: " + ex);
-			ex.printStackTrace();
+			//ex.printStackTrace();
+			System.err.println("Stack Trace:");
+			ex.printStackTrace(System.err);
 			throw new BuildException(ex);
 		}
 

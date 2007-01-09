@@ -34,6 +34,32 @@ public abstract class AbstractDbmsSyntax extends TestCase {
 		
 		assertNotNull(antTarget);
 	}
+	
+	public void testRunTheDamnThingWithoutAnUndoFileSpecified() {
+		String driver = getDriver();
+		String url = getDbUrl();
+		String username = getUsername();
+		String password = getPassword();
+		File dir = getDir();
+		String deltaSet = getDeltaSet();
+		String dbms = getDbms();
+		File outputfile = getOutputFile();
+		
+		AntTarget antTarget = new AntTarget();
+		
+		antTarget.setDriver(driver);
+		antTarget.setUrl(url);
+		antTarget.setUserid(username);
+		antTarget.setPassword(password);
+		antTarget.setDir(dir);
+		antTarget.setDeltaSet(deltaSet);
+		antTarget.setDbms(dbms);
+		antTarget.setOutputfile(outputfile);
+		
+		antTarget.execute();
+		
+		assertNotNull(antTarget);
+	}
 
 	protected abstract String getDriver();
 	protected abstract String getDbUrl();
