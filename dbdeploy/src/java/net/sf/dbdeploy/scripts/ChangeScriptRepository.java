@@ -20,7 +20,7 @@ public class ChangeScriptRepository {
 	}
 	
 	private void checkForDuplicateIds(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
-		int lastId = 0;
+		int lastId = -1;
 		
 		for (ChangeScript script : scripts) {
 			if (script.getId() == lastId) {

@@ -36,5 +36,16 @@ public class ChangeScriptRepositoryTest extends MockObjectTestCase {
 		} catch (DuplicateChangeScriptException ex) {
 			assertEquals("There is more than one change script with number 2", ex.getMessage());
 		}
-	}
+	}    
+    public void testChangeScriptsMayBeNumberedFromZero() throws Exception {
+        ChangeScript zero = new ChangeScript(0);
+        ChangeScript four = new ChangeScript(4);
+
+        ChangeScriptRepository repository = new ChangeScriptRepository(Arrays.asList( zero, four ));
+
+        List<ChangeScript> list = repository.getOrderedListOfDoChangeScripts();
+        assertThat(2, eq(list.size()));
+        assertSame(zero, list.get(0));
+        assertSame(four, list.get(1));
+    }
 }
