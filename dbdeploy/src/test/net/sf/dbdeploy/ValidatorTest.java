@@ -1,21 +1,25 @@
 package net.sf.dbdeploy;
 
 import org.apache.tools.ant.BuildException;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-
-public class ValidatorTest extends TestCase {
+public class ValidatorTest {
 	private static final String USER_ID = "userId";
 	private static final String DRIVER = "driver";
 	private static final String URL = "url";
 	private static final String DBMS = "ora";
 	private static final String DIR = "dir";
 	private static final String OUTPUT_FILE = "output file";
+	private final Validator validator;
 
-	public void testShouldFailWhenPassedNullUserid() {
-		Validator validator = new Validator();
+	public ValidatorTest() {
+		validator = new Validator();
 		validator.setUsage("ant");
+	}
+
+	@Test
+	public void shouldFailWhenPassedNullUserid() {
 		try {
 			validator.validate(null, DRIVER, URL, DBMS, DIR, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -24,10 +28,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedEmptyUserid() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedEmptyUserid() {
 		try {
 			validator.validate("", DRIVER, URL, DBMS, DIR, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -36,10 +39,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedNullDriver() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedNullDriver() {
 		try {
 			validator.validate(USER_ID, null, URL, DBMS, DIR, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -48,10 +50,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedEmptyDriver() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedEmptyDriver() {
 		try {
 			validator.validate(USER_ID, "", URL, DBMS, DIR, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -60,10 +61,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedNullUrl() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedNullUrl() {
 		try {
 			validator.validate(USER_ID, DRIVER, null, DBMS, DIR, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -72,8 +72,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedEmptyUrl() {
+
+	@Test
+	public void shouldFailWhenPassedEmptyUrl() {
 		Validator validator = new Validator();
 		validator.setUsage("ant");
 		try {
@@ -84,8 +85,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedNonOraDbms() {
+
+	@Test
+	public void shouldFailWhenPassedNonOraDbms() {
 		Validator validator = new Validator();
 		validator.setUsage("ant");
 		try {
@@ -96,10 +98,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedNullDir() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedNullDir() {
 		try {
 			validator.validate(USER_ID, DRIVER, URL, DBMS, null, OUTPUT_FILE);
 			fail("BuildException expected");
@@ -108,10 +109,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedEmptyDir() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedEmptyDir() {
 		try {
 			validator.validate(USER_ID, DRIVER, URL, DBMS, "", OUTPUT_FILE);
 			fail("BuildException expected");
@@ -120,10 +120,9 @@ public class ValidatorTest extends TestCase {
 		}
 		
 	}
-	
-	public void testShouldFailWhenPassedNullOutputFile() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+
+	@Test
+	public void shouldFailWhenPassedNullOutputFile() {
 		try {
 			validator.validate(USER_ID, DRIVER, URL, DBMS, DIR, null);
 			fail("BuildException expected");
@@ -133,9 +132,8 @@ public class ValidatorTest extends TestCase {
 		
 	}
 	
-	public void testShouldFailWhenPassedEmptyOutputFile() {
-		Validator validator = new Validator();
-		validator.setUsage("ant");
+	@Test
+	public void shouldFailWhenPassedEmptyOutputFile() {
 		try {
 			validator.validate(USER_ID, DRIVER, URL, DBMS, DIR, "");
 			fail("BuildException expected");

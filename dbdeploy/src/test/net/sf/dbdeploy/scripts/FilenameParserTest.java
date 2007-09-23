@@ -1,12 +1,13 @@
 package net.sf.dbdeploy.scripts;
 
 import net.sf.dbdeploy.exceptions.UnrecognisedFilenameException;
-import net.sf.dbdeploy.scripts.FilenameParser;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class FilenameParserTest extends TestCase {
+public class FilenameParserTest {
 
-	public void testCanParseAnyFilenameThatStartsWithANumber() throws Exception {
+	@Test
+	public void canParseAnyFilenameThatStartsWithANumber() throws Exception {
 		FilenameParser parser = new FilenameParser();
 		assertEquals(1, parser.extractIdFromFilename("0001_a_filename.txt"));
 		assertEquals(1, parser.extractIdFromFilename("1_a_filename.txt"));
@@ -14,8 +15,9 @@ public class FilenameParserTest extends TestCase {
 		assertEquals(1, parser.extractIdFromFilename("1.txt"));
 		assertEquals(123, parser.extractIdFromFilename("00123_something.txt"));
 	}
-	
-	public void testThrowsWhenFilenameDoesNotStartWithANumber() throws Exception {
+
+	@Test
+	public void throwsWhenFilenameDoesNotStartWithANumber() throws Exception {
 		FilenameParser parser = new FilenameParser();
 		try {
 		parser.extractIdFromFilename("blah blah blah");

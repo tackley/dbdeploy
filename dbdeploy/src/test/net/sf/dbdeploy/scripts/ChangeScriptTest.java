@@ -1,33 +1,34 @@
 package net.sf.dbdeploy.scripts;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import org.junit.*;
+
 import java.io.File;
 
-import net.sf.dbdeploy.scripts.ChangeScript;
+public class ChangeScriptTest  {
 
-
-import junit.framework.TestCase;
-
-public class ChangeScriptTest extends TestCase {
-
-	public void testChangeScriptsHaveAnIdAndAFile() throws Exception {
+	@Test
+	public void changeScriptsHaveAnIdAndAFile() throws Exception {
 		File file = new File("abc.txt");
 		ChangeScript changeScript = new ChangeScript(5, file);
-		assertEquals(5, changeScript.getId());
-		assertEquals(file, changeScript.getFile());
+        assertThat(changeScript.getId(), equalTo(5));
+        assertThat(changeScript.getFile(), sameInstance(file));
 	}
-	
-	public void testChangeScriptsNaturallyOrderById() throws Exception {
+
+	@Test
+	public void changeScriptsNaturallyOrderById() throws Exception {
 		ChangeScript one = new ChangeScript(1);
 		ChangeScript two = new ChangeScript(2);
-		
-		assertTrue(one.compareTo(two) < 1);
-		assertTrue(two.compareTo(one) >= 1);
+
+        assertThat(one.compareTo(two), lessThan(1));
+        assertThat(two.compareTo(one), greaterThanOrEqualTo(1));
 	}
-	
-	public void testToStringReturnsASensibleValue() throws Exception {
+
+	@Test
+	public void toStringReturnsASensibleValue() throws Exception {
 		File file = new File("abc.txt");
 		ChangeScript changeScript = new ChangeScript(5, file);
-		assertEquals("#5: abc.txt", changeScript.toString());
-		
+		assertThat(changeScript.toString(), equalTo("#5: abc.txt"));
 	}
 }

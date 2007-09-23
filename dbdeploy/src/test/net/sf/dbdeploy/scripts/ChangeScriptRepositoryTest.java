@@ -1,15 +1,17 @@
 package net.sf.dbdeploy.scripts;
 
+import net.sf.dbdeploy.exceptions.DuplicateChangeScriptException;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.List;
 
-import net.sf.dbdeploy.exceptions.DuplicateChangeScriptException;
+public class ChangeScriptRepositoryTest {
 
-import org.jmock.cglib.MockObjectTestCase;
-
-public class ChangeScriptRepositoryTest extends MockObjectTestCase {
-	
-	public void testGivenASetOfChangeScriptsReturnsThemCorrectly() throws Exception {
+	@Test
+	public void shouldReturnAnOrderedListOfChangeScripts() throws Exception {
 		ChangeScript one = new ChangeScript(1);
 		ChangeScript two = new ChangeScript(2);
 		ChangeScript three = new ChangeScript(3);
@@ -18,14 +20,15 @@ public class ChangeScriptRepositoryTest extends MockObjectTestCase {
 		ChangeScriptRepository repository = new ChangeScriptRepository(Arrays.asList( three, two, four, one ));
 		
 		List<ChangeScript> list = repository.getOrderedListOfDoChangeScripts();
-		assertThat(4, eq(list.size()));
+		assertThat(4, equalTo(list.size()));
 		assertSame(one, list.get(0));
 		assertSame(two, list.get(1));
 		assertSame(three, list.get(2));
 		assertSame(four, list.get(3));
 	}
 	
-	public void testThrowsWhenConstructedWithAChangeScriptListThatHasDuplicates() throws Exception {
+	@Test
+	public void shouldThrowWhenChangeScriptListContainsDuplicates() throws Exception {
 		ChangeScript two = new ChangeScript(2);
 		ChangeScript three = new ChangeScript(3);
 		ChangeScript anotherTwo = new ChangeScript(2);
@@ -36,15 +39,17 @@ public class ChangeScriptRepositoryTest extends MockObjectTestCase {
 		} catch (DuplicateChangeScriptException ex) {
 			assertEquals("There is more than one change script with number 2", ex.getMessage());
 		}
-	}    
-    public void testChangeScriptsMayBeNumberedFromZero() throws Exception {
+	}
+
+	@Test
+    public void shouldAllowChangeScriptsThatStartFromZero() throws Exception {
         ChangeScript zero = new ChangeScript(0);
         ChangeScript four = new ChangeScript(4);
 
         ChangeScriptRepository repository = new ChangeScriptRepository(Arrays.asList( zero, four ));
 
         List<ChangeScript> list = repository.getOrderedListOfDoChangeScripts();
-        assertThat(2, eq(list.size()));
+        assertThat(2, equalTo(list.size()));
         assertSame(zero, list.get(0));
         assertSame(four, list.get(1));
     }

@@ -1,18 +1,19 @@
 package net.sf.dbdeploy.database;
 
+import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
+import net.sf.dbdeploy.scripts.ChangeScript;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
-import net.sf.dbdeploy.scripts.ChangeScript;
-
-import org.jmock.cglib.MockObjectTestCase;
-
-
-public abstract class AbstractDatabaseSchemaVersionManager extends MockObjectTestCase {
+public abstract class AbstractDatabaseSchemaVersionManager {
 	
 	private DatabaseSchemaVersionManager databaseSchemaVersion;
 	private String connectionString = getConnectionString();
@@ -21,26 +22,27 @@ public abstract class AbstractDatabaseSchemaVersionManager extends MockObjectTes
 	private String deltaSet = getDeltaSet();
 	private String changelogTableDoesNotExistMessage = getChangelogTableDoesNotExistMessage();
 	
-	@Override
+	@Before
 	protected void setUp() throws Exception {
-		//DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
 		registerDbDriver();
 
 		databaseSchemaVersion = new DatabaseSchemaVersionManager(connectionString, username, password, new OracleDbmsSyntax(), deltaSet);
 	}
-	
-	public void testCanRetrieveSchemaVersionFromDatabase() throws Exception {
+
+	@Test
+	public void canRetrieveSchemaVersionFromDatabase() throws Exception {
 		ensureTableDoesNotExist();
 		createTable();
 		insertRowIntoTable(5);
 
 		List<Integer> appliedChangeNumbers = databaseSchemaVersion.getAppliedChangeNumbers();
 		assertEquals(1, appliedChangeNumbers.size());
-		assertThat(new Integer(5), isIn(appliedChangeNumbers));
+		assertThat(5, isIn(appliedChangeNumbers));
 	}
 	
 
-	public void testThrowsWhenDatabaseTableDoesNotExist() throws Exception {
+	@Test
+	public void throwsWhenDatabaseTableDoesNotExist() throws Exception {
 		ensureTableDoesNotExist();
 		
 		try {
@@ -50,21 +52,24 @@ public abstract class AbstractDatabaseSchemaVersionManager extends MockObjectTes
 			assertEquals(changelogTableDoesNotExistMessage , ex.getMessage());
 		}
 	}
-	
-	public void testShouldReturnEmptySetWhenTableHasNoRows() throws Exception {
+
+	@Test
+	public void shouldReturnEmptySetWhenTableHasNoRows() throws Exception {
 		ensureTableDoesNotExist();
 		createTable();
 
 		assertEquals(0, databaseSchemaVersion.getAppliedChangeNumbers().size());
 	}
-	
-	public void testCanRetrieveDeltaFragmentHeaderSql() throws Exception {
+
+	@Test
+	public void canRetrieveDeltaFragmentHeaderSql() throws Exception {
 		ChangeScript script = new ChangeScript(3, "description"); 
 		assertEquals("--------------- Fragment begins: #3 ---------------\nINSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description) VALUES (3, 'All', CURRENT_TIMESTAMP, USER, 'description');\nCOMMIT;\n", 
 				databaseSchemaVersion.generateDoDeltaFragmentHeader(script));
 	}
-	
-	public void testCanRetrieveDeltaFragmentFooterSql() throws Exception {
+
+	@Test
+	public void canRetrieveDeltaFragmentFooterSql() throws Exception {
 		ChangeScript script = new ChangeScript(3, "description"); 
 		assertEquals("UPDATE changelog SET complete_dt = CURRENT_TIMESTAMP WHERE change_number = 3 AND delta_set = 'All';\nCOMMIT;\n--------------- Fragment ends: #3 ---------------\n", 
 				databaseSchemaVersion.generateDoDeltaFragmentFooter(script));
@@ -80,7 +85,6 @@ public abstract class AbstractDatabaseSchemaVersionManager extends MockObjectTes
 	
 	protected void executeSql(String sql) throws SQLException {
 		registerDbDriver();
-		//DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
 		Connection connection = DriverManager.getConnection(connectionString, username, password);
 		Statement statement = connection.createStatement();
 		statement.executeUpdate(sql);
