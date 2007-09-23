@@ -1,4 +1,4 @@
-package net.sf.dbdeploy.database;
+package net.sf.dbdeploy.database.syntax;
 
 public class OracleSqlPlusDbmsSyntax implements DbmsSyntax {
 

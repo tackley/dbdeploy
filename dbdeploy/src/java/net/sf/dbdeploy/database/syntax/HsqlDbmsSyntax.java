@@ -1,21 +1,21 @@
-package net.sf.dbdeploy.database;
+package net.sf.dbdeploy.database.syntax;
 
-public class MsSqlDbmsSyntax implements DbmsSyntax {
+public class HsqlDbmsSyntax implements DbmsSyntax {
 
 	public String generateScriptHeader() {
 		return "";
 	}
 
 	public String generateTimestamp() {
-		return "getdate()";
+		return "CURRENT_TIMESTAMP";
 	}
 
 	public String generateUser() {
-		return "user_name()";
+		return "USER()";
 	}
 
 	public String generateStatementDelimiter() {
-		return "\nGO";
+		return ";";
 	}
 
 	public String generateCommit() {

@@ -28,6 +28,15 @@
 	<target name="compile" depends="init">
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath">
 		</javac>
+
+	 <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}/test">
+        <patternset>
+	         <include name="**/?*.sql"/>
+	    </patternset>
+        <type type="file"/>
+      </fileset>
+    </copy>
 	</target>
 
 
@@ -40,12 +49,13 @@
 
 
 	<target name="test">
-		<junit printsummary="true" showoutput="true" haltonfailure="false">
+		<junit printsummary="true" showoutput="true" haltonfailure="false" fork="true">
 			<classpath>
 				<path location="${classes.dir}" />
 				<path refid="classpath" />
 			</classpath>
 			<formatter type="xml"/>
+			<formatter type="brief" usefile="false" />
 			<batchtest todir="${testoutput.dir}">
 				<fileset dir="${src.dir}/test">
 					<include name="**/*Test.java" />

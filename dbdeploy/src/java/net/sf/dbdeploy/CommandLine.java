@@ -1,13 +1,15 @@
 package net.sf.dbdeploy;
 
+import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.syntax.DbmsSyntax;
+import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
+import net.sf.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+import net.sf.dbdeploy.scripts.DirectoryScanner;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
-import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
-import net.sf.dbdeploy.database.DbmsSyntax;
-import net.sf.dbdeploy.database.DbmsSyntaxFactory;
-import net.sf.dbdeploy.exceptions.DbDeployException;
 
 public class CommandLine {
 
@@ -38,8 +40,10 @@ public class CommandLine {
 			
 			DatabaseSchemaVersionManager databaseSchemaVersion = 
 				new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet);
+
+			ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(new File(".")));
 			
-			new ToPrintSteamDeployer(databaseSchemaVersion, new File("."), System.out, dbmsSyntax, null).doDeploy(Integer.MAX_VALUE);
+			new ToPrintSteamDeployer(databaseSchemaVersion, changeScriptRepository, System.out, dbmsSyntax, null).doDeploy(Integer.MAX_VALUE);
 
 
 		} catch (DbDeployException ex) {

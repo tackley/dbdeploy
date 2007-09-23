@@ -1,19 +1,18 @@
 package net.sf.dbdeploy;
 
+import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.scripts.ChangeScript;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
-import net.sf.dbdeploy.exceptions.DbDeployException;
-import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
-import net.sf.dbdeploy.scripts.ChangeScript;
-import net.sf.dbdeploy.scripts.ChangeScriptRepository;
-
 public class Controller {
 
-	private final DatabaseSchemaVersionManager schemaVersion;
-	private final ChangeScriptExecuter changeScriptExecuter;
+	private final DatabaseSchemaVersionManager schemaVersionManager;
+	private final ConsolidatedChangeScriptWriter changeScriptWriter;
 	private final ChangeScriptRepository changeScriptRepository;
 	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
 	private List<ChangeScript> doChangeScripts;
@@ -21,17 +20,14 @@ public class Controller {
 	private List<Integer> appliedChanges;
 	private List<Integer> changesToApply;
 
-	public Controller(DatabaseSchemaVersionManager schemaVersion, 
+	public Controller(DatabaseSchemaVersionManager schemaVersionManager,
 			ChangeScriptRepository changeScriptRepository,
-			ChangeScriptExecuter changeScriptExecuter) throws DbDeployException {
-		this.schemaVersion = schemaVersion;
+			ConsolidatedChangeScriptWriter changeScriptWriter) throws DbDeployException {
+		this.schemaVersionManager = schemaVersionManager;
 		this.changeScriptRepository = changeScriptRepository;
-		this.changeScriptExecuter = changeScriptExecuter;
-		
-		doChangeScripts = changeScriptRepository.getOrderedListOfDoChangeScripts();
-
-		appliedChanges = schemaVersion.getAppliedChangeNumbers();
-
+		this.changeScriptWriter = changeScriptWriter;
+		this.doChangeScripts = changeScriptRepository.getOrderedListOfDoChangeScripts();
+		this.appliedChanges = schemaVersionManager.getAppliedChangeNumbers();
 	}
 
 	public void processDoChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
@@ -66,13 +62,13 @@ public class Controller {
 			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
 				changesToApply.add(changeScriptId);
 
-				String sql = schemaVersion.generateDoDeltaFragmentHeader(changeScript);
-				changeScriptExecuter.applyDeltaFragmentHeaderOrFooterSql(sql);
+				String sql = schemaVersionManager.generateDoDeltaFragmentHeader(changeScript);
+				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
 				
-				changeScriptExecuter.applyChangeDoScript(changeScript);
+				changeScriptWriter.applyChangeDoScript(changeScript);
 
-				sql = schemaVersion.generateDoDeltaFragmentFooter(changeScript);
-				changeScriptExecuter.applyDeltaFragmentHeaderOrFooterSql(sql);
+				sql = schemaVersionManager.generateDoDeltaFragmentFooter(changeScript);
+				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
 			}
 		}		
 	}
@@ -83,10 +79,10 @@ public class Controller {
 			final int changeScriptId = changeScript.getId();
 			
 			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {				
-				changeScriptExecuter.applyChangeUndoScript(changeScript);
+				changeScriptWriter.applyChangeUndoScript(changeScript);
 
-				String sql = schemaVersion.generateUndoDeltaFragmentFooter(changeScript);
-				changeScriptExecuter.applyDeltaFragmentHeaderOrFooterSql(sql);
+				String sql = schemaVersionManager.generateUndoDeltaFragmentFooter(changeScript);
+				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
 			}
 		}		
 	}

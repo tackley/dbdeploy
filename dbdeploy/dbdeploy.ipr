@@ -69,6 +69,7 @@
       <entry name="?*.html" />
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
+      <entry name="?*.sql" />
     </wildcardResourcePatterns>
   </component>
   <component name="DependenciesAnalyzeManager">

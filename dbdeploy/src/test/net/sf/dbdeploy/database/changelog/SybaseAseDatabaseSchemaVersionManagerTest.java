@@ -1,15 +1,16 @@
-package net.sf.dbdeploy.database;
+package net.sf.dbdeploy.database.changelog;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class HsqlDatabaseSchemaVersionManagerTest extends AbstractDatabaseSchemaVersionManager {
+public class SybaseAseDatabaseSchemaVersionManagerTest extends AbstractDatabaseSchemaVersionManagerTestBase {
 
-	static final String CONNECTION_STRING = "jdbc:hsqldb:hsql://localhost/xdb";
+
+	static final String CONNECTION_STRING = "jdbc:jtds:sybase://localhost:1276/dbdeploy";
 	static final String USERNAME = "sa";
 	static final String PASSWORD = "";
 	static final String DELTA_SET = "All";
-	static final String CHANGELOG_TABLE_DOES_NOT_EXIST_MESSAGE = "Could not retrieve change log from database because: Table not found in statement [SELECT change_number FROM changelog WHERE delta_set = ? ORDER BY change_number]";
+	static final String CHANGELOG_TABLE_DOES_NOT_EXIST_MESSAGE = "Could not retrieve change log from database because: changelog not found. Specify owner.objectname or use sp_help to check whether the object exists (sp_help may produce lots of output).\n";
 	
 	protected String getConnectionString() {
 		return CONNECTION_STRING;
@@ -36,8 +37,8 @@ public class HsqlDatabaseSchemaVersionManagerTest extends AbstractDatabaseSchema
 		"CREATE TABLE " + DatabaseSchemaVersionManager.TABLE_NAME + "( " +
 				"change_number INTEGER, " +
 				"delta_set VARCHAR(10) NOT NULL, " +
-				"start_dt TIMESTAMP NOT NULL, " +
-				"complete_dt TIMESTAMP NOT NULL, " +
+				"start_dt DATETIME NOT NULL, " +
+				"complete_dt DATETIME NOT NULL, " +
 				"applied_by VARCHAR(100) NOT NULL, "+
 			    "description VARCHAR(500) NOT NULL )");
 		executeSql(
@@ -47,13 +48,14 @@ public class HsqlDatabaseSchemaVersionManagerTest extends AbstractDatabaseSchema
 	}
 
 	protected void insertRowIntoTable(int i) throws SQLException {
-		executeSql("INSERT INTO " + DatabaseSchemaVersionManager.TABLE_NAME 
+		executeSql("INSERT INTO " + DatabaseSchemaVersionManager.TABLE_NAME
 				+ " (change_number, delta_set, start_dt, complete_dt, applied_by, description) VALUES ( " 
 				+ i + ", '" + DELTA_SET 
-				+ "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, USER(), 'Unit test')");
+				+ "', getdate(), getdate(), user_name(), 'Unit test')");
 	}
 
 	protected void registerDbDriver() throws SQLException {
-		DriverManager.registerDriver (new org.hsqldb.jdbcDriver());
+		DriverManager.registerDriver (new net.sourceforge.jtds.jdbc.Driver());
 	}
+
 }

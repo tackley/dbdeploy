@@ -1,6 +1,6 @@
-package net.sf.dbdeploy.database;
+package net.sf.dbdeploy.database.syntax;
 
-public class OracleDbmsSyntax implements DbmsSyntax {
+public class MySQLDbmsSyntax implements DbmsSyntax {
 
 	public String generateScriptHeader() {
 		return "";
@@ -11,7 +11,7 @@ public class OracleDbmsSyntax implements DbmsSyntax {
 	}
 
 	public String generateUser() {
-		return "USER";
+		return "USER()";
 	}
 
 	public String generateStatementDelimiter() {

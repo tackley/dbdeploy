@@ -1,16 +1,17 @@
 package net.sf.dbdeploy;
 
+import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.syntax.DbmsSyntax;
+import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
+import net.sf.dbdeploy.exceptions.DbDeployException;
+import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+import net.sf.dbdeploy.scripts.DirectoryScanner;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-
-import net.sf.dbdeploy.database.DatabaseSchemaVersionManager;
-import net.sf.dbdeploy.database.DbmsSyntax;
-import net.sf.dbdeploy.database.DbmsSyntaxFactory;
-import net.sf.dbdeploy.exceptions.DbDeployException;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 public class AntTarget extends Task  {
 	
@@ -46,10 +47,12 @@ public class AntTarget extends Task  {
 			DbmsSyntaxFactory factory = new DbmsSyntaxFactory(dbms);
 			DbmsSyntax dbmsSyntax = factory.createDbmsSyntax();
 
-			DatabaseSchemaVersionManager databaseSchemaVersion = 
-					new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet); 
+			DatabaseSchemaVersionManager databaseSchemaVersion =
+					new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet);
+
+			ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(dir));
 			
-			ToPrintSteamDeployer toPrintSteamDeployer = new ToPrintSteamDeployer(databaseSchemaVersion, dir, outputPrintStream, dbmsSyntax, undoOutputPrintStream);
+			ToPrintSteamDeployer toPrintSteamDeployer = new ToPrintSteamDeployer(databaseSchemaVersion, changeScriptRepository, outputPrintStream, dbmsSyntax, undoOutputPrintStream);
 			toPrintSteamDeployer.doDeploy(lastChangeToApply);
 
 			outputPrintStream.close();
