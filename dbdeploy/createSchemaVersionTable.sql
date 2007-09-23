@@ -1,7 +1,0 @@
-CREATE TABLE changelog (
-	change_number INTEGER PRIMARY KEY,
-	applied_date TIMESTAMP DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
-	applied_by VARCHAR2(100) DEFAULT (USER) NOT NULL,
-    description VARCHAR2(500) NOT NULL
-);
-
