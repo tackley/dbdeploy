@@ -71,13 +71,13 @@ public abstract class AbstractDatabaseSchemaVersionManagerTestBase extends TestC
 
 	private void ensureTableDoesNotExist() {
 		try {
-			executeSql("DROP TABLE " + DatabaseSchemaVersionManager.TABLE_NAME);
+			executeSql("DROP TABLE changelog");
 		} catch (Exception e) {
 			// ignore
 		}
 	}
 	
-	protected void executeSql(String sql) throws SQLException {
+	void executeSql(String sql) throws SQLException {
 		registerDbDriver();
 		Connection connection = DriverManager.getConnection(connectionString, username, password);
 		Statement statement = connection.createStatement();

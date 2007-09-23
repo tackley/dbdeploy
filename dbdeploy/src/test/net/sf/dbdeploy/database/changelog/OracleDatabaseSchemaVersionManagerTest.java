@@ -33,7 +33,7 @@ public class OracleDatabaseSchemaVersionManagerTest extends AbstractDatabaseSche
 	
 	protected void createTable() throws SQLException {
 		executeSql(
-		"CREATE TABLE " + DatabaseSchemaVersionManager.TABLE_NAME + "( " +
+		"CREATE TABLE changelog ( " +
 				"change_number INTEGER, " +
 				"delta_set VARCHAR2(10) NOT NULL, " +
 				"start_dt TIMESTAMP NOT NULL, " +
@@ -41,13 +41,13 @@ public class OracleDatabaseSchemaVersionManagerTest extends AbstractDatabaseSche
 				"applied_by VARCHAR2(100) NOT NULL, "+
 			    "description VARCHAR2(500) NOT NULL )");
 		executeSql(
-		"ALTER TABLE " + DatabaseSchemaVersionManager.TABLE_NAME + 
+		"ALTER TABLE changelog " +
 			" ADD CONSTRAINT PK_VERSION_MGR PRIMARY KEY (change_number, delta_set)");
 
 	}
 
 	protected void insertRowIntoTable(int i) throws SQLException {
-		executeSql("INSERT INTO " + DatabaseSchemaVersionManager.TABLE_NAME 
+		executeSql("INSERT INTO changelog "
 				+ " (change_number, delta_set, start_dt, complete_dt, applied_by, description) VALUES ( " 
 				+ i + ", '" + DELTA_SET 
 				+ "', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, USER, 'Unit test')");

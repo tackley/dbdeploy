@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class DatabaseSchemaVersionManager {
 
-	public static final String TABLE_NAME = "changelog";
-
 	private Connection connection;
 	private final String connectionString;
 	private final String username;
@@ -34,7 +32,7 @@ public class DatabaseSchemaVersionManager {
 		List<Integer> changeNumbers = new ArrayList<Integer>();
 		PreparedStatement statement;
 		try {
-			statement = getConnection().prepareStatement("SELECT change_number FROM " + TABLE_NAME + " WHERE delta_set = ? ORDER BY change_number");
+			statement = getConnection().prepareStatement("SELECT change_number FROM changelog WHERE delta_set = ? ORDER BY change_number");
 			statement.setString(1, deltaSet);
 			ResultSet rs = statement.executeQuery();
 
@@ -59,36 +57,56 @@ public class DatabaseSchemaVersionManager {
 	public String generateDoDeltaFragmentHeader(ChangeScript changeScript) {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("--------------- Fragment begins: " + changeScript + " ---------------\n");
-		builder.append("INSERT INTO " + TABLE_NAME + " (change_number, delta_set, start_dt, applied_by, description)" +
-			" VALUES (" + changeScript.getId() + ", '" + deltaSet + "', " + dbmsSyntax.generateTimestamp() + 
-			", " + dbmsSyntax.generateUser() + ", '" + changeScript.getDescription() + "')" + dbmsSyntax.generateStatementDelimiter() + "\n");
-		builder.append(dbmsSyntax.generateCommit() + "\n");
+		builder.append(String.format("--------------- Fragment begins: %s ---------------\n", changeScript));
+		builder.append(String.format(
+			"INSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description)" +
+			" VALUES (%d, '%s', %s, %s, '%s')",
+				changeScript.getId(),
+				deltaSet,
+				dbmsSyntax.generateTimestamp(),
+				dbmsSyntax.generateUser(),
+				changeScript.getDescription()));
+		builder.append(dbmsSyntax.generateStatementDelimiter());
+		builder.append('\n');
+		builder.append(dbmsSyntax.generateCommit());
+		builder.append('\n');
+		
 		return builder.toString();
 	}
 
 	public String generateDoDeltaFragmentFooter(ChangeScript changeScript) {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("UPDATE " + TABLE_NAME + " SET complete_dt = " 
-				+ dbmsSyntax.generateTimestamp()
-				+ " WHERE change_number = " + changeScript.getId()
-				+ " AND delta_set = '" + deltaSet + "'"
-				+ dbmsSyntax.generateStatementDelimiter() + "\n");
-		builder.append(dbmsSyntax.generateCommit() + "\n");
-		builder.append("--------------- Fragment ends: " + changeScript + " ---------------\n");
+		builder.append(String.format(
+				"UPDATE changelog SET complete_dt = %s"
+				+ " WHERE change_number = %d"
+				+ " AND delta_set = '%s'",
+				 dbmsSyntax.generateTimestamp(),
+				changeScript.getId(),
+				deltaSet
+				));
+		builder.append(dbmsSyntax.generateStatementDelimiter());
+		builder.append('\n');
+		builder.append(dbmsSyntax.generateCommit());
+		builder.append('\n');
+		builder.append(String.format("--------------- Fragment ends: %s ---------------\n", changeScript));
+
 		return builder.toString();
 	}
 
 	public String generateUndoDeltaFragmentFooter(ChangeScript changeScript) {
 		StringBuilder builder = new StringBuilder();
 		
-		builder.append("DELETE FROM " + TABLE_NAME
-				+ " WHERE change_number = " + changeScript.getId()
-				+ " AND delta_set = '" + deltaSet + "'"
-				+ dbmsSyntax.generateStatementDelimiter() + "\n");
-		builder.append(dbmsSyntax.generateCommit() + "\n");
-		builder.append("--------------- Fragment ends: " + changeScript + " ---------------\n");
+		builder.append(String.format("DELETE FROM changelog "
+				+ " WHERE change_number = %d"
+				+ " AND delta_set = '%s'",
+				changeScript.getId(), deltaSet));
+		builder.append(dbmsSyntax.generateStatementDelimiter());
+		builder.append('\n');
+		builder.append(dbmsSyntax.generateCommit());
+		builder.append('\n');
+
+		builder.append(String.format("--------------- Fragment ends: %s ---------------\n", changeScript));
 		return builder.toString();
 	}
 }
