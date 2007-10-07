@@ -1,10 +1,6 @@
 package net.sf.dbdeploy.database.syntax;
 
-public class SybAseDbmsSyntax implements DbmsSyntax {
-
-	public String generateScriptHeader() {
-		return "";
-	}
+public class SybAseDbmsSyntax extends DbmsSyntax {
 
 	public String generateTimestamp() {
 		return "getdate()";
@@ -17,10 +13,5 @@ public class SybAseDbmsSyntax implements DbmsSyntax {
 	public String generateStatementDelimiter() {
 		return "\nGO";
 	}
-
-	public String generateCommit() {
-		return "COMMIT" + generateStatementDelimiter();
-	}
-
 
 }

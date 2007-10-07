@@ -1,4 +1,3 @@
-DROP TABLE changelog;
 
 CREATE TABLE changelog (
   change_number INTEGER NOT NULL,

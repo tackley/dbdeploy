@@ -7,11 +7,9 @@ import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,30 +19,27 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@RunWith(Theories.class)
 public class ScriptGenerationTest {
+	// TODO: the generated script should not contain a commit after the first insert into changelog
+	// Why? becuase if it doesn't commit then, on failure, the script can just be
+	//  reexecuted
 
-	@DataPoint
-	public static String ORACLE_SQLPLUS = "ora-sqlplus";
+	// TODO: need to test undo scripts as well as do scripts
 
-	@DataPoint
-	public static String ORACLE = "ora";
+	@Test
+	public void generateConsolidatedChangesScriptForAllDatabasesAndCompareAgainstTemplate() throws Exception {
+		for (String syntax : new DbmsSyntaxFactory().getSyntaxNames()) {
+			try {
+				System.out.printf("Testing syntax %s\n", syntax);
+				runIntegratedTestAndConfirmOutputResults(syntax);
+			} catch (Exception e) {
+				throw new RuntimeException("Failed while testing syntax " + syntax, e);
+			}
+		}
+	}
 
-	@DataPoint
-	public static String HSQL = "hsql";
-
-	@DataPoint
-	public static String SYB_ASE = "syb-ase";
-
-	@DataPoint
-	public static String MSSQL = "mssql";
-
-	@DataPoint
-	public static String MYSQL = "mysql";
-	
-	@Theory
-	public void runIntegratedTestAndConfirmOutputResults(String syntaxName) throws Exception {
-		DbmsSyntax syntax = getSyntax(syntaxName);
+	private void runIntegratedTestAndConfirmOutputResults(String syntaxName) throws Exception {
+		DbmsSyntax syntax = DbmsSyntax.createFor(syntaxName);
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintStream printStream = new PrintStream(outputStream);
@@ -64,27 +59,23 @@ public class ScriptGenerationTest {
 		org.junit.Assert.assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
 	}
 
-	private DbmsSyntax getSyntax(String dbSyntaxName) {
-		return new DbmsSyntaxFactory(dbSyntaxName).createDbmsSyntax();
-	}
-
 	private String getExpectedFilename(String dbSyntaxName) {
 		return dbSyntaxName + "_expected.sql";
 	}
 
 	private String readExpectedFileContents(String expectedFilename) throws IOException {
 		final InputStream stream = getClass().getResourceAsStream(expectedFilename);
-		assertThat("did not find resource file called " + expectedFilename, stream, org.hamcrest.Matchers.notNullValue());
+		assertThat("Did not find resource file called " + expectedFilename, stream, notNullValue());
 		int size = stream.available();
 		byte[] content = new byte[size];
-		org.junit.Assert.assertThat(stream.read(content), org.hamcrest.Matchers.is(size));
+		assertThat(stream.read(content), is(size));
 		return new String(content);
 	}
 
 
 	private class StubSchemaManager extends DatabaseSchemaVersionManager {
 		public StubSchemaManager(DbmsSyntax syntax) {
-			super(null, null, null, syntax, null);
+			super(null, syntax, null);
 		}
 
 		public List<Integer> getAppliedChangeNumbers() throws SchemaVersionTrackingException {

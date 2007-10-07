@@ -1,28 +1,46 @@
 package net.sf.dbdeploy.database.syntax;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class DbmsSyntaxFactory {
+	private Map<String, DbmsSyntax> available = new TreeMap<String, DbmsSyntax>();
 
-	private final String dbms;
-
-	public DbmsSyntaxFactory(String dbms) {
-		this.dbms = dbms;
+	public DbmsSyntaxFactory() {
+		available.put("ora", new OracleDbmsSyntax());
+		available.put("ora-sqlplus", new OracleSqlPlusDbmsSyntax());
+		available.put("hsql", new HsqlDbmsSyntax());
+		available.put("syb-ase", new SybAseDbmsSyntax());
+		available.put("mssql", new MsSqlDbmsSyntax());
+		available.put("mysql", new MySQLDbmsSyntax());
 	}
 
-	public DbmsSyntax createDbmsSyntax() {
-		if (dbms.equals("ora")) {
-			return new OracleDbmsSyntax();
-		} else if (dbms.equals("ora-sqlplus")) {
-			return new OracleSqlPlusDbmsSyntax();
-		} else if (dbms.equals("hsql")) {
-			return new HsqlDbmsSyntax();
-		} else if (dbms.equals("syb-ase")) {
-			return new SybAseDbmsSyntax();
-		} else if (dbms.equals("mssql")) {
-			return new MsSqlDbmsSyntax();
-		} else if (dbms.equals("mysql")) {
-			return new MySQLDbmsSyntax();	
-		} else {
-			throw new IllegalArgumentException("Supported dbms: ora, ora-sqlplus, hsql, syb-ase, mssql, mysql");
+	public DbmsSyntax createDbmsSyntax(String dbms) {
+		DbmsSyntax syntax = available.get(dbms);
+
+		if (syntax == null) {
+			throw new IllegalArgumentException("Supported dbms: " + buildListOfDbmsStrings());
 		}
+
+		return syntax;
+	}
+
+	private String buildListOfDbmsStrings() {
+		StringBuilder content = new StringBuilder();
+
+		for (String s : available.keySet()) {
+			content.append(s);
+			content.append(", ");
+		}
+
+		// remove the last comma
+		content.setLength(content.length() - 2);
+
+		return content.toString();
+	}
+
+	public Collection<String> getSyntaxNames() {
+		return available.keySet();
 	}
 }

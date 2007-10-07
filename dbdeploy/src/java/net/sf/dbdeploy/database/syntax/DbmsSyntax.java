@@ -1,14 +1,25 @@
 package net.sf.dbdeploy.database.syntax;
 
 
-public interface DbmsSyntax {
-	public String generateScriptHeader();
-	
-	public String generateTimestamp();
-	
-	public String generateUser();
-	
-	public String generateStatementDelimiter();
-	
-	public String generateCommit();
+public abstract class DbmsSyntax {
+
+	public static DbmsSyntax createFor(String syntaxName) {
+		return new DbmsSyntaxFactory().createDbmsSyntax(syntaxName);
+	}
+
+	public String generateScriptHeader() {
+		return "";
+	}
+
+	public abstract String generateTimestamp();
+
+	public abstract String generateUser();
+
+	public String generateStatementDelimiter() {
+		return ";";
+	}
+
+	public String generateCommit() {
+		return "COMMIT" + generateStatementDelimiter();
+	}
 }

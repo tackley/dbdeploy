@@ -1,8 +1,8 @@
 package net.sf.dbdeploy;
 
 import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import net.sf.dbdeploy.database.changelog.QueryExecuter;
 import net.sf.dbdeploy.database.syntax.DbmsSyntax;
-import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.DbDeployException;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
 import net.sf.dbdeploy.scripts.DirectoryScanner;
@@ -11,13 +11,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-public class CommandLine {
+public class OldCommandLine {
 
+	// TODO: using a properties file as a command line arg is bizzare.
+	//  Pass all the stuff needed as real command line args, and use
+	//  something like commons-cli to parse it
 	public static void main(String[] args) {
 
-		
+
 		try {
-			
+
 			if (args.length != 1) {
 				System.err.println("usage: dbdeploy propertyfilename");
 				System.exit(3);
@@ -33,16 +36,17 @@ public class CommandLine {
 			String dbms = properties.getProperty("db.dbms");
 			String deltaSet = properties.getProperty("db.deltaSet");
 
-			Class.forName(driver); 
-			
-			DbmsSyntaxFactory factory = new DbmsSyntaxFactory(dbms);
-			DbmsSyntax dbmsSyntax = factory.createDbmsSyntax();
-			
-			DatabaseSchemaVersionManager databaseSchemaVersion = 
-				new DatabaseSchemaVersionManager(url, userid, password, dbmsSyntax, deltaSet);
+			Class.forName(driver);
+
+			DbmsSyntax dbmsSyntax = DbmsSyntax.createFor(dbms);
+
+			QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
+
+			DatabaseSchemaVersionManager databaseSchemaVersion =
+					new DatabaseSchemaVersionManager(deltaSet, dbmsSyntax, queryExecuter);
 
 			ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(new File(".")));
-			
+
 			new ToPrintSteamDeployer(databaseSchemaVersion, changeScriptRepository, System.out, dbmsSyntax, null).doDeploy(Integer.MAX_VALUE);
 
 

@@ -1,10 +1,6 @@
 package net.sf.dbdeploy.database.syntax;
 
-public class MsSqlDbmsSyntax implements DbmsSyntax {
-
-	public String generateScriptHeader() {
-		return "";
-	}
+public class MsSqlDbmsSyntax extends DbmsSyntax {
 
 	public String generateTimestamp() {
 		return "getdate()";
@@ -17,9 +13,4 @@ public class MsSqlDbmsSyntax implements DbmsSyntax {
 	public String generateStatementDelimiter() {
 		return "\nGO";
 	}
-
-	public String generateCommit() {
-		return "COMMIT" + generateStatementDelimiter();
-	}
-
 }

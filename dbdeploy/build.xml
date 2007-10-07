@@ -2,66 +2,66 @@
 
 <project name="dbdeploy" default="all" basedir=".">
 
-	<property name="src.dir" location="src" />
-	<property name="lib.dir" location="lib" />
-	<property name="build.dir" location="build" />
-	<property name="dist.dir" location="dist" />
-	<property name="classes.dir" location="${build.dir}/classes" />
-	<property name="testoutput.dir" location="${build.dir}/testoutput" />
-	<property name="testreport.dir" location="${build.dir}/testreport" />
+	<property name="src.dir" location="src"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="build.dir" location="build"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="classes.dir" location="${build.dir}/classes"/>
+	<property name="testoutput.dir" location="${build.dir}/testoutput"/>
+	<property name="testreport.dir" location="${build.dir}/testreport"/>
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}"/>
 	</path>
 
-	<target name="all" depends="clean, compile, test, dist" />
+	<target name="all" depends="clean, compile, test, dist"/>
 
 
 	<target name="init">
-		<mkdir dir="${classes.dir}" />
-		<mkdir dir="${dist.dir}" />
-		<mkdir dir="${testreport.dir}" />
-		<mkdir dir="${testoutput.dir}" />
+		<mkdir dir="${classes.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${testreport.dir}"/>
+		<mkdir dir="${testoutput.dir}"/>
 	</target>
 
 
 	<target name="compile" depends="init">
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" debug="true">
 		</javac>
 
-	 <copy todir="${classes.dir}">
-      <fileset dir="${src.dir}/test">
-        <patternset>
-	         <include name="**/?*.sql"/>
-	    </patternset>
-        <type type="file"/>
-      </fileset>
-    </copy>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}/test">
+				<patternset>
+					<include name="**/?*.sql"/>
+				</patternset>
+				<type type="file"/>
+			</fileset>
+		</copy>
 	</target>
 
 
 	<target name="clean" description="Delete compiled classes etc">
-		<delete dir="${build.dir}" />
-		<delete dir="${dist.dir}" />
-		<delete dir="${testreport.dir}" />
-		<delete dir="${testoutput.dir}" />
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+		<delete dir="${testreport.dir}"/>
+		<delete dir="${testoutput.dir}"/>
 	</target>
 
 
 	<target name="test">
 		<junit printsummary="true" showoutput="true" haltonfailure="false" fork="true">
 			<classpath>
-				<path location="${classes.dir}" />
-				<path refid="classpath" />
+				<path location="${classes.dir}"/>
+				<path refid="classpath"/>
 			</classpath>
 			<formatter type="xml"/>
-			<formatter type="brief" usefile="false" />
+			<formatter type="brief" usefile="false"/>
 			<batchtest todir="${testoutput.dir}">
 				<fileset dir="${src.dir}/test">
-					<include name="**/*Test.java" />
+					<include name="**/*Test.java"/>
 				</fileset>
 			</batchtest>
-		</junit> 
+		</junit>
 		<junitreport>
 			<fileset dir="${testoutput.dir}">
 				<include name="TEST-*.xml"/>
@@ -69,18 +69,18 @@
 			<report format="frames" todir="${testreport.dir}"/>
 		</junitreport>
 	</target>
-	
+
 	<target name="dist" depends="init">
-		
+
 		<jar file="${build.dir}/dbdeploy.jar">
-	           <fileset dir="${classes.dir}" />
+			<fileset dir="${classes.dir}"/>
 			<manifest>
-				<attribute name="Main-Class" value="net.sf.dbdeploy.CommandLine"/>
-				<attribute name="Class-Path" value="ojdbc14.jar" />			
+				<attribute name="Main-Class" value="net.sf.dbdeploy.CommandLineTarget"/>
+				<attribute name="Class-Path" value="ojdbc14.jar"/>
 			</manifest>
-	 	</jar>
-		
-		<zip destfile="${dist.dir}/dbdeploy.zip" >
+		</jar>
+
+		<zip destfile="${dist.dir}/dbdeploy.zip">
 			<zipfileset dir="${build.dir}" includes="dbdeploy.jar" prefix="lib/"/>
 			<zipfileset dir="${lib.dir}" includes="ojdbc14.jar" prefix="lib/"/>
 			<zipfileset dir="${lib.dir}" includes="hsqldb.jar" prefix="lib/"/>

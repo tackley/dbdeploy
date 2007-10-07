@@ -11,7 +11,7 @@
     </buildFile>
   </component>
   <component name="BuildJarProjectSettings">
-    <option name="BUILD_JARS_ON_MAKE" value="false" />
+    <option name="BUILD_JARS_ON_MAKE" value="true" />
   </component>
   <component name="CodeStyleProjectProfileManger">
     <option name="PROJECT_PROFILE" />
@@ -39,6 +39,7 @@
             <package name="org.junit.Assert" withSubpackages="true" />
           </value>
         </option>
+        <option name="OPTIMIZE_IMPORTS_ON_THE_FLY" value="true" />
         <ADDITIONAL_INDENT_OPTIONS fileType="js">
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -337,6 +338,24 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES />
+    </library>
+    <library name="EasyMock">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/easymockclassextension-2.2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/easymock-2.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/cglib-nodep-2.1_3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Commons CLI">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../../tmp/cli/commons-cli-1.1-src/src/java" />
+      </SOURCES>
     </library>
   </component>
 </project>

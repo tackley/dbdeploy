@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="BuildJarSettings">
+    <containerInfo>
+      <containerElement type="module" name="dbdeploy">
+        <attribute name="method" value="1" />
+        <attribute name="URI" value="/" />
+      </containerElement>
+    </containerInfo>
+    <setting name="jarUrl" value="file://$MODULE_DIR$/dbdeploy.jar" />
+    <setting name="buildJar" value="true" />
+    <setting name="mainClass" value="net.sf.dbdeploy.CommandLineTarget" />
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -16,6 +27,8 @@
     <orderEntry type="library" name="MySql Database" level="project" />
     <orderEntry type="library" name="Oracle Database" level="project" />
     <orderEntry type="library" name="Hamcrest" level="project" />
+    <orderEntry type="library" name="EasyMock" level="project" />
+    <orderEntry type="library" name="Commons CLI" level="project" />
     <orderEntryProperties />
   </component>
 </module>
