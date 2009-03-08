@@ -1,0 +1,93 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sf.dbdeploy</groupId>
+    <artifactId>dbdeploy-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>3.0-SNAPSHOT</version>
+    <name>dbdeploy</name>
+    <url>http://www.dbdeploy.com</url>
+
+    <modules>
+        <module>dbdeploy-core</module>
+        <module>dbdeploy-ant</module>
+        <module>dbdeploy-ant-integration-test</module>
+        <module>dbdeploy-cli</module>
+        <module>dbdeploy-dist</module>
+    </modules>
+
+    <scm>
+        <connection>scm:svn:http://dbdeploy.googlecode.com/svn/branches/maven</connection>
+        <developerConnection>scm:svn:https://dbdeploy.googlecode.com/svn/branches/maven</developerConnection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>LGPL</name>
+        </license>
+    </licenses>
+
+    <mailingLists>
+        <mailingList>
+            <name>users</name>
+            <post>db-deploy-users@googlegroups.com</post>
+            <archive>http://groups.google.com/group/db-deploy-users</archive>
+        </mailingList>
+    </mailingLists>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.5</source>
+                        <target>1.5</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+            <version>2.3</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

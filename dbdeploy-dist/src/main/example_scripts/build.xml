@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dbdeploy_example" default="update-database" basedir=".">
+
+	<property name="db.name" value="db/testdb"/>
+
+	<taskdef name="dbdeploy" classname="net.sf.dbdeploy.AntTarget" classpath="../build/dbdeploy.jar"/>
+
+	<target name="clean" depends="drop-and-create-database, create-changelog-table"/>
+
+	<target name="update-database" description="generate a sql upgrade script">
+
+		<dbdeploy driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:${db.name}"
+		          userid="sa"
+		          password=""
+		          dir="."
+		          outputfile="output.sql"
+		          dbms="hsql"
+				/>
+
+		<sql driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:${db.name}"
+		     userid="sa" password="">
+			<fileset file="output.sql"/>
+		</sql>
+
+	</target>
+
+	<target name="dump-tables">
+		<sql driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:${db.name}"
+		     userid="sa" password="" print="true">
+			select * from changelog;
+			select * from test;
+		</sql>
+	</target>
+
+	<target name="shutdown">
+		<sql driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:${db.name}"
+		     userid="sa" password="" print="true">
+			shutdown;
+		</sql>
+	</target>
+
+	<target name="drop-and-create-database">
+		<delete dir="db"/>
+		<mkdir dir="db"/>
+	</target>
+
+	<target name="create-changelog-table">
+		<sql driver="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:file:${db.name}"
+		     userid="sa" password="">
+			<fileset file="../dbdeploy-dist/src/main/scripts/createSchemaVersionTable.hsql.sql"/>
+		</sql>
+	</target>
+
+</project>
