@@ -12,11 +12,11 @@
             <useTransitiveDependencies>false</useTransitiveDependencies>
         </dependencySet>
     </dependencySets>
-
+   
     <fileSets>
         <fileSet>
             <directory>src/main/doc</directory>
-            <outputDirectory>doc</outputDirectory>
+            <outputDirectory>/</outputDirectory>
         </fileSet>
 
         <fileSet>
