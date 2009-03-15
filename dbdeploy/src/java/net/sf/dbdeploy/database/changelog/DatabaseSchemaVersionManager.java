@@ -4,6 +4,8 @@ import net.sf.dbdeploy.database.syntax.DbmsSyntax;
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,58 +45,93 @@ public class DatabaseSchemaVersionManager {
 
 
 	public String generateDoDeltaFragmentHeader(ChangeScript changeScript) {
-		StringBuilder builder = new StringBuilder();
-
-		builder.append(String.format("--------------- Fragment begins: %s ---------------\n", changeScript));
-		builder.append(String.format(
-				"INSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description)" +
-						" VALUES (%d, '%s', %s, %s, '%s')",
-				changeScript.getId(),
-				deltaSet,
-				dbmsSyntax.generateTimestamp(),
-				dbmsSyntax.generateUser(),
-				changeScript.getDescription()));
-		builder.append(dbmsSyntax.generateStatementDelimiter());
-		builder.append('\n');
-		builder.append(dbmsSyntax.generateCommit());
-		builder.append('\n');
-
-		return builder.toString();
+		return collectIntoAStringWithSystemDependentLineTerminationCharacters(doDeltaFragmentHeaderContent(changeScript));
 	}
 
-	public String generateDoDeltaFragmentFooter(ChangeScript changeScript) {
-		StringBuilder builder = new StringBuilder();
+	private ContentWriter doDeltaFragmentHeaderContent(final ChangeScript changeScript) {
+		return new ContentWriter() {
+			public void writeContentTo(PrintWriter contentWriter) {
+				contentWriter.printf("--------------- Fragment begins: %s ---------------", changeScript);
+				contentWriter.println();
+				contentWriter.printf(
+						"INSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description)" +
+								" VALUES (%d, '%s', %s, %s, '%s')",
+						changeScript.getId(),
+						deltaSet,
+						dbmsSyntax.generateTimestamp(),
+						dbmsSyntax.generateUser(),
+						changeScript.getDescription());
+				contentWriter.append(dbmsSyntax.generateStatementDelimiter());
+				contentWriter.println();
+				contentWriter.append(dbmsSyntax.generateCommit());
+				contentWriter.println();
+			}
+		};
+	}
 
-		builder.append(String.format(
-				"UPDATE changelog SET complete_dt = %s"
-						+ " WHERE change_number = %d"
-						+ " AND delta_set = '%s'",
-				dbmsSyntax.generateTimestamp(),
-				changeScript.getId(),
-				deltaSet
-		));
-		builder.append(dbmsSyntax.generateStatementDelimiter());
-		builder.append('\n');
-		builder.append(dbmsSyntax.generateCommit());
-		builder.append('\n');
-		builder.append(String.format("--------------- Fragment ends: %s ---------------\n", changeScript));
+	public String generateDoDeltaFragmentFooter(final ChangeScript changeScript) {
+		return collectIntoAStringWithSystemDependentLineTerminationCharacters(doDeltaFragementFooterContent(changeScript));
+	}
 
-		return builder.toString();
+	private ContentWriter doDeltaFragementFooterContent(final ChangeScript changeScript) {
+		return new ContentWriter() {
+
+			public void writeContentTo(PrintWriter contentWriter) {
+				contentWriter.printf(
+						"UPDATE changelog SET complete_dt = %s"
+								+ " WHERE change_number = %d"
+								+ " AND delta_set = '%s'",
+						dbmsSyntax.generateTimestamp(),
+						changeScript.getId(),
+						deltaSet);
+				contentWriter.append(dbmsSyntax.generateStatementDelimiter());
+				contentWriter.println();
+
+				contentWriter.append(dbmsSyntax.generateCommit());
+				contentWriter.println();
+
+				contentWriter.printf("--------------- Fragment ends: %s ---------------", changeScript);
+				contentWriter.println();
+			}
+		};
 	}
 
 	public String generateUndoDeltaFragmentFooter(ChangeScript changeScript) {
-		StringBuilder builder = new StringBuilder();
+		return collectIntoAStringWithSystemDependentLineTerminationCharacters(undoDeltaFragmentFooterContent(changeScript));
+	}
 
-		builder.append(String.format("DELETE FROM changelog "
-				+ " WHERE change_number = %d"
-				+ " AND delta_set = '%s'",
-				changeScript.getId(), deltaSet));
-		builder.append(dbmsSyntax.generateStatementDelimiter());
-		builder.append('\n');
-		builder.append(dbmsSyntax.generateCommit());
-		builder.append('\n');
+	private ContentWriter undoDeltaFragmentFooterContent(final ChangeScript changeScript) {
+		return new ContentWriter() {
+			public void writeContentTo(PrintWriter contentWriter) {
+				contentWriter.printf("DELETE FROM changelog "
+						+ " WHERE change_number = %d"
+						+ " AND delta_set = '%s'",
+						changeScript.getId(), deltaSet);
+				contentWriter.append(dbmsSyntax.generateStatementDelimiter());
+				contentWriter.println();
 
-		builder.append(String.format("--------------- Fragment ends: %s ---------------\n", changeScript));
-		return builder.toString();
+				contentWriter.append(dbmsSyntax.generateCommit());
+				contentWriter.println();
+
+				contentWriter.printf("--------------- Fragment ends: %s ---------------", changeScript);
+				contentWriter.println();
+			}
+		};
+	}
+
+	private String collectIntoAStringWithSystemDependentLineTerminationCharacters(ContentWriter collector) {
+		StringWriter content = new StringWriter();
+		PrintWriter contentWriter = new PrintWriter(content);
+		try {
+			collector.writeContentTo(contentWriter);
+			contentWriter.flush();
+			return content.toString();
+		} finally {
+			contentWriter.close();
+		}
+	}
+
+	private interface ContentWriter {
+		void writeContentTo(PrintWriter contentWriter);
 	}
 }

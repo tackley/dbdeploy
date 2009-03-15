@@ -7,14 +7,10 @@ import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +52,7 @@ public class ScriptGenerationTest {
 
 		deployer.doDeploy(Integer.MAX_VALUE);
 
-		org.junit.Assert.assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
+		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
 	}
 
 	private String getExpectedFilename(String dbSyntaxName) {
@@ -65,11 +61,27 @@ public class ScriptGenerationTest {
 
 	private String readExpectedFileContents(String expectedFilename) throws IOException {
 		final InputStream stream = getClass().getResourceAsStream(expectedFilename);
-		assertThat("Did not find resource file called " + expectedFilename, stream, notNullValue());
-		int size = stream.available();
-		byte[] content = new byte[size];
-		assertThat(stream.read(content), is(size));
-		return new String(content);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		try {
+			return readEntireStreamIntoAStringWithConversionToSystemDependantLineTerminators(reader);
+		} finally {
+			reader.close();
+		}
+	}
+
+	private String readEntireStreamIntoAStringWithConversionToSystemDependantLineTerminators(BufferedReader reader) throws IOException {
+		StringWriter contentWithSystemDependentLineTerminators = new StringWriter();
+		PrintWriter newLineConvertingContentWriter = new PrintWriter(contentWithSystemDependentLineTerminators);
+		try {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				newLineConvertingContentWriter.println(line);
+			}
+			newLineConvertingContentWriter.flush();
+			return contentWithSystemDependentLineTerminators.toString();
+		} finally {
+			newLineConvertingContentWriter.close();
+		}
 	}
 
 

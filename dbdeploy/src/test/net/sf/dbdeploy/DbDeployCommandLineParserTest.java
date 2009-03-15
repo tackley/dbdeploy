@@ -10,7 +10,7 @@ public class DbDeployCommandLineParserTest {
 
 	@Test
 	public void canParseUserIdFromCommandLine() throws Exception {
-		parser.parse("-u myuserid".split(" "), dbDeploy);
+		parser.parse("-U myuserid".split(" "), dbDeploy);
 		assertEquals("myuserid", dbDeploy.getUserid());
 	}
 

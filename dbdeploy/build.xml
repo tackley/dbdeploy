@@ -74,6 +74,7 @@
 
 		<jar file="${build.dir}/dbdeploy.jar">
 			<fileset dir="${classes.dir}"/>
+			<fileset dir="${src.dir}"/>
 			<manifest>
 				<attribute name="Main-Class" value="net.sf.dbdeploy.CommandLineTarget"/>
 				<attribute name="Class-Path" value="ojdbc14.jar"/>
