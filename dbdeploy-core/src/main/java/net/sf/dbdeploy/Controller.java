@@ -21,8 +21,8 @@ public class Controller {
 	private List<Integer> changesToApply;
 
 	public Controller(DatabaseSchemaVersionManager schemaVersionManager,
-			ChangeScriptRepository changeScriptRepository,
-			ConsolidatedChangeScriptWriter changeScriptWriter) throws DbDeployException {
+	                  ChangeScriptRepository changeScriptRepository,
+	                  ConsolidatedChangeScriptWriter changeScriptWriter) throws DbDeployException {
 		this.schemaVersionManager = schemaVersionManager;
 		this.changeScriptRepository = changeScriptRepository;
 		this.changeScriptWriter = changeScriptWriter;
@@ -34,12 +34,12 @@ public class Controller {
 		if (lastChangeToApply != Integer.MAX_VALUE) {
 			info("Only applying changes up and including change script #" + lastChangeToApply);
 		}
-		
+
 		info("Changes currently applied to database:\n  " + prettyPrinter.format(appliedChanges));
 		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(doChangeScripts));
-		
+
 		changesToApply = new ArrayList<Integer>();
-		
+
 		loopThruDoScripts(lastChangeToApply);
 
 		info("To be applied:\n  " + prettyPrinter.format(changesToApply));
@@ -53,37 +53,37 @@ public class Controller {
 	private void info(String string) {
 		System.err.println(string);
 	}
-	
+
 	private void loopThruDoScripts(Integer lastChangeToApply) throws IOException {
-		
+
 		for (ChangeScript changeScript : doChangeScripts) {
 			final int changeScriptId = changeScript.getId();
-			
+
 			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
 				changesToApply.add(changeScriptId);
 
 				String sql = schemaVersionManager.generateDoDeltaFragmentHeader(changeScript);
 				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
-				
+
 				changeScriptWriter.applyChangeDoScript(changeScript);
 
 				sql = schemaVersionManager.generateDoDeltaFragmentFooter(changeScript);
 				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
 			}
-		}		
+		}
 	}
-	
+
 	private void loopThruUndoScripts(Integer lastChangeToApply) throws IOException {
-		
+
 		for (ChangeScript changeScript : undoChangeScripts) {
 			final int changeScriptId = changeScript.getId();
-			
-			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {				
+
+			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
 				changeScriptWriter.applyChangeUndoScript(changeScript);
 
 				String sql = schemaVersionManager.generateUndoDeltaFragmentFooter(changeScript);
 				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
 			}
-		}		
+		}
 	}
 }
