@@ -11,7 +11,7 @@
 
     <artifactId>dbdeploy-ant-integration-test</artifactId>
     <name>dbdeploy-ant-integration-test</name>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <build>
 
@@ -26,6 +26,7 @@
                         <id>integration-test</id>
                         <phase>integration-test</phase>
                         <configuration>
+                            <!-- this is just a sanity check to ensure that the ant task works ok -->
                             <tasks>
                                 <property name="test_classpath" refid="maven.test.classpath"/>
                                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
@@ -50,7 +51,6 @@
                         <groupId>${project.groupId}</groupId>
                         <version>${project.version}</version>
                     </dependency>
-
                     <dependency>
                         <groupId>hsqldb</groupId>
                         <artifactId>hsqldb</artifactId>
@@ -60,5 +60,29 @@
             </plugin>
 
         </plugins>
+        
     </build>
+
+    <dependencies>
+        <dependency>
+            <artifactId>dbdeploy-core</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 </project>
