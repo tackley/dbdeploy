@@ -11,7 +11,7 @@ public class SybAseDbmsSyntax extends DbmsSyntax {
 	}
 
 	public String generateStatementDelimiter() {
-		return "\nGO";
+		return String.format("%nGO");
 	}
 
 }
