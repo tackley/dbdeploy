@@ -40,10 +40,7 @@ public class DatabaseSchemaVersionManagerTest {
 	public void doFragmentHeaderShouldBeFormattedCorrectlyBasedOnSyntax() {
 		String result = schemaVersionManager.generateDoDeltaFragmentHeader(new ChangeScript(99, "Some Description"));
 
-		String expected = format("--------------- Fragment begins: #99 ---------------%n" +
-				"INSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description) " +
-				"VALUES (99, 'deltaSetName', (timestamp), (user), 'Some Description');%n" +
-				"COMMIT;%n");
+		String expected = format("--------------- Fragment begins: #99 ---------------");
 
 		assertEquals(expected, result);
 	}
@@ -53,8 +50,7 @@ public class DatabaseSchemaVersionManagerTest {
 		String result = schemaVersionManager.generateDoDeltaFragmentFooter(new ChangeScript(99, "Some Description"));
 
 		String expected = format(
-				"UPDATE changelog SET complete_dt = (timestamp) " +
-						"WHERE change_number = 99 AND delta_set = 'deltaSetName';%n" +
+				"INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description) VALUES (99, 'deltaSetName', (timestamp), (user), 'Some Description');%n" +
 						"COMMIT;%n" +
 						"--------------- Fragment ends: #99 ---------------%n");
 

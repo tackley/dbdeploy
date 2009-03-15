@@ -52,19 +52,6 @@ public class DatabaseSchemaVersionManager {
 		return new ContentWriter() {
 			public void writeContentTo(PrintWriter printWriter) {
 				printWriter.printf("--------------- Fragment begins: %s ---------------", changeScript);
-				printWriter.println();
-				printWriter.printf(
-						"INSERT INTO changelog (change_number, delta_set, start_dt, applied_by, description)" +
-								" VALUES (%d, '%s', %s, %s, '%s')",
-						changeScript.getId(),
-						deltaSet,
-						dbmsSyntax.generateTimestamp(),
-						dbmsSyntax.generateUser(),
-						changeScript.getDescription());
-				printWriter.append(dbmsSyntax.generateStatementDelimiter());
-				printWriter.println();
-				printWriter.append(dbmsSyntax.generateCommit());
-				printWriter.println();
 			}
 		};
 	}
@@ -78,12 +65,13 @@ public class DatabaseSchemaVersionManager {
 
 			public void writeContentTo(PrintWriter printWriter) {
 				printWriter.printf(
-						"UPDATE changelog SET complete_dt = %s"
-								+ " WHERE change_number = %d"
-								+ " AND delta_set = '%s'",
-						dbmsSyntax.generateTimestamp(),
+						"INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)" +
+								" VALUES (%d, '%s', %s, %s, '%s')",
 						changeScript.getId(),
-						deltaSet);
+						deltaSet,
+						dbmsSyntax.generateTimestamp(),
+						dbmsSyntax.generateUser(),
+						changeScript.getDescription());
 				printWriter.append(dbmsSyntax.generateStatementDelimiter());
 				printWriter.println();
 

@@ -16,10 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScriptGenerationTest {
-	// TODO: the generated script should not contain a commit after the first insert into changelog
-	// Why? becuase if it doesn't commit then, on failure, the script can just be
-	//  reexecuted
-
 	// TODO: need to test undo scripts as well as do scripts
 
 	@Test

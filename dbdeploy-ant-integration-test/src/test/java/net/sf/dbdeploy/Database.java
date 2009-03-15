@@ -33,13 +33,12 @@ public class Database {
 	}
 
 	public void createSchemaVersionTable() throws SQLException {
-		execute("CREATE TABLE changelog (\n" +
-				"  change_number INTEGER NOT NULL,\n" +
-				"  delta_set VARCHAR(10) NOT NULL,\n" +
-				"  start_dt TIMESTAMP NOT NULL,\n" +
-				"  complete_dt TIMESTAMP NULL,\n" +
-				"  applied_by VARCHAR(100) NOT NULL,\n" +
-				"  description VARCHAR(500) NOT NULL\n" +
+		execute("CREATE TABLE changelog ( " +
+				"  change_number INTEGER NOT NULL, " +
+				"  delta_set VARCHAR(10) NOT NULL, " +
+				"  complete_dt TIMESTAMP NOT NULL, " +
+				"  applied_by VARCHAR(100) NOT NULL, " +
+				"  description VARCHAR(500) NOT NULL " +
 				")");
 
 		execute("ALTER TABLE changelog ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number, delta_set)");
