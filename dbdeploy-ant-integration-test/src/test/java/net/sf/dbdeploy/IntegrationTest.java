@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 import java.sql.SQLException;
 
-public class IntegrationTests {
+public class IntegrationTest {
 	@Test
 	public void shouldSuccessfullyApplyAValidSetOfDeltas() throws Exception {
 		Database db = new Database("success_test");
@@ -58,13 +58,14 @@ public class IntegrationTests {
 		List<Object[]> results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(0));
 
-		assertThat(db.getChangelogEntries(), hasItems(1));
 		// now run dbdeploy again with valid scripts, should recover
 		dbDeploy.setScriptdirectory(new File("src/it/db/deltas"));
 		dbDeploy.setOutputfile(outputFile);
 		dbDeploy.go();
 
 		db.applyScript(outputFile);
+
+		assertThat(db.getChangelogEntries(), hasItems(1, 2));
 
 		results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(1));
