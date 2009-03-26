@@ -1,13 +1,16 @@
 package net.sf.dbdeploy.database;
 
-import net.sf.dbdeploy.ToPrintSteamDeployer;
+import net.sf.dbdeploy.ChangeScriptApplier;
+import net.sf.dbdeploy.Controller;
+import net.sf.dbdeploy.appliers.ApplyMode;
+import net.sf.dbdeploy.appliers.PrintStreamApplier;
 import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.database.syntax.DbmsSyntax;
 import net.sf.dbdeploy.database.syntax.DbmsSyntaxFactory;
 import net.sf.dbdeploy.exceptions.SchemaVersionTrackingException;
 import net.sf.dbdeploy.scripts.ChangeScript;
 import net.sf.dbdeploy.scripts.ChangeScriptRepository;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import java.io.*;
@@ -36,17 +39,18 @@ public class ScriptGenerationTest {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintStream printStream = new PrintStream(outputStream);
 
-		ChangeScript changeOne = new StubChangeScript(1, "1: change1.sql", "-- contents of change script 1");
-		ChangeScript changeTwo = new StubChangeScript(2, "2: change2.sql", "-- contents of change script 2");
+		ChangeScript changeOne = new StubChangeScript(1, "001_change.sql", "-- contents of change script 1");
+		ChangeScript changeTwo = new StubChangeScript(2, "002_change.sql", "-- contents of change script 2");
 
 		List<ChangeScript> changeScripts = Arrays.asList(changeOne, changeTwo);
 		ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(changeScripts);
 
-		ToPrintSteamDeployer deployer = new ToPrintSteamDeployer(
-				new StubSchemaManager(syntax), changeScriptRepository, printStream,
-				syntax, null);
+		final StubSchemaManager schemaManager = new StubSchemaManager(syntax);
+		ChangeScriptApplier applier = new PrintStreamApplier(ApplyMode.DO, printStream, syntax, schemaManager);
+		Controller controller = new Controller(changeScriptRepository, schemaManager,
+				applier, null);
 
-		deployer.doDeploy(Integer.MAX_VALUE);
+		controller.processChangeScripts(Integer.MAX_VALUE);
 
 		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
 	}
@@ -86,7 +90,8 @@ public class ScriptGenerationTest {
 			super(null, syntax, null);
 		}
 
-		public List<Integer> getAppliedChangeNumbers() throws SchemaVersionTrackingException {
+		@Override
+		public List<Integer> getAppliedChanges() throws SchemaVersionTrackingException {
 			return Collections.emptyList();
 		}
 	}
@@ -99,7 +104,8 @@ public class ScriptGenerationTest {
 			this.changeContents = changeContents;
 		}
 
-		public String getContent() throws IOException {
+		@Override
+		public String getContent() {
 			return changeContents;
 		}
 	}

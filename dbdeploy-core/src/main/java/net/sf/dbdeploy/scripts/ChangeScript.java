@@ -1,5 +1,7 @@
 package net.sf.dbdeploy.scripts;
 
+import net.sf.dbdeploy.exceptions.DbDeployException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -47,46 +49,47 @@ public class ChangeScript implements Comparable {
 
 	@Override
 	public String toString() {
-		if (file != null)
-			return "#" + id + ": " + file.getName();
-
-		return "#" + id;
+		return "#" + id + ": " + description;
 	}
 
-	public String getContent() throws IOException {
+	public String getContent() {
 		return getFileContents(false);
 	}
 
-	public String getUndoContent() throws IOException {
+	public String getUndoContent() {
 		return getFileContents(true);
 	}
 
-	private String getFileContents(boolean onlyAfterUndoMarker) throws IOException {
-		StringBuilder content = new StringBuilder();
-		boolean foundUndoMarker = false;
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-
+	private String getFileContents(boolean onlyAfterUndoMarker) {
 		try {
-			for (;;) {
-				String str = reader.readLine();
+			StringBuilder content = new StringBuilder();
+			boolean foundUndoMarker = false;
+			BufferedReader reader = new BufferedReader(new FileReader(file));
 
-				if (str == null)
-					break;
+			try {
+				for (;;) {
+					String str = reader.readLine();
 
-				if (str.trim().equals(UNDO_MARKER)) {
-					foundUndoMarker = true;
-					continue;
+					if (str == null)
+						break;
+
+					if (str.trim().equals(UNDO_MARKER)) {
+						foundUndoMarker = true;
+						continue;
+					}
+
+					if (foundUndoMarker == onlyAfterUndoMarker) {
+						content.append(str);
+						content.append('\n');
+					}
 				}
-
-				if (foundUndoMarker == onlyAfterUndoMarker) {
-					content.append(str);
-					content.append('\n');
-				}
+			} finally {
+				reader.close();
 			}
-		} finally {
-			reader.close();
-		}
 
-		return content.toString();
+			return content.toString();
+		} catch (IOException e) {
+			throw new DbDeployException("Failed to read change script file", e);
+		}
 	}
 }

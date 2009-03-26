@@ -1,89 +1,83 @@
 package net.sf.dbdeploy;
 
-import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.exceptions.DbDeployException;
 import net.sf.dbdeploy.scripts.ChangeScript;
-import net.sf.dbdeploy.scripts.ChangeScriptRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Controller {
 
-	private final DatabaseSchemaVersionManager schemaVersionManager;
-	private final ConsolidatedChangeScriptWriter changeScriptWriter;
-	private final ChangeScriptRepository changeScriptRepository;
-	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
-	private List<ChangeScript> doChangeScripts;
-	private List<ChangeScript> undoChangeScripts;
-	private List<Integer> appliedChanges;
-	private List<Integer> changesToApply;
+	private final AvailableChangeScriptsProvider availableChangeScriptsProvider;
+	private final AppliedChangesProvider appliedChangesProvider;
+	private final ChangeScriptApplier changeScriptApplier;
+	private final ChangeScriptApplier undoScriptApplier;
 
-	public Controller(DatabaseSchemaVersionManager schemaVersionManager,
-	                  ChangeScriptRepository changeScriptRepository,
-	                  ConsolidatedChangeScriptWriter changeScriptWriter) throws DbDeployException {
-		this.schemaVersionManager = schemaVersionManager;
-		this.changeScriptRepository = changeScriptRepository;
-		this.changeScriptWriter = changeScriptWriter;
-		this.doChangeScripts = changeScriptRepository.getOrderedListOfDoChangeScripts();
-		this.appliedChanges = schemaVersionManager.getAppliedChangeNumbers();
+	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
+
+	public Controller(AvailableChangeScriptsProvider availableChangeScriptsProvider,
+					  AppliedChangesProvider appliedChangesProvider,
+					  ChangeScriptApplier changeScriptApplier, ChangeScriptApplier undoScriptApplier) {
+		this.availableChangeScriptsProvider = availableChangeScriptsProvider;
+		this.appliedChangesProvider = appliedChangesProvider;
+		this.changeScriptApplier = changeScriptApplier;
+		this.undoScriptApplier = undoScriptApplier;
 	}
 
-	public void processDoChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
+	public void processChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
 		if (lastChangeToApply != Integer.MAX_VALUE) {
 			info("Only applying changes up and including change script #" + lastChangeToApply);
 		}
 
-		info("Changes currently applied to database:\n  " + prettyPrinter.format(appliedChanges));
-		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(doChangeScripts));
+		List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
+		List<Integer> applied = appliedChangesProvider.getAppliedChanges();
+		List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
 
-		changesToApply = new ArrayList<Integer>();
+		logStatus(scripts, applied, toApply);
 
-		loopThruDoScripts(lastChangeToApply);
+		applyScripts(toApply, changeScriptApplier);
 
-		info("To be applied:\n  " + prettyPrinter.format(changesToApply));
+		if (undoScriptApplier != null) {
+			info("Generating undo scripts...");
+			Collections.reverse(toApply);
+			applyScripts(toApply, undoScriptApplier);
+		}
 	}
 
-	public void processUndoChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
-		undoChangeScripts = changeScriptRepository.getOrderedListOfUndoChangeScripts();
-		loopThruUndoScripts(lastChangeToApply);
+	private void applyScripts(List<ChangeScript> toApply, ChangeScriptApplier applier) {
+		applier.begin();
+
+		for (ChangeScript changeScript : toApply) {
+			applier.apply(changeScript);
+		}
+
+		applier.end();
+	}
+
+	private void logStatus(List<ChangeScript> scripts, List<Integer> applied, List<ChangeScript> toApply) {
+		info("Changes currently applied to database:\n  " + prettyPrinter.format(applied));
+		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(scripts));
+		info("To be applied:\n  " + prettyPrinter.formatChangeScriptList(toApply));
+	}
+
+	private List<ChangeScript> identifyChangesToApply(Integer lastChangeToApply, List<ChangeScript> scripts, List<Integer> applied) {
+		List<ChangeScript> result = new ArrayList<ChangeScript>();
+
+		for (ChangeScript script : scripts) {
+			if (script.getId() > lastChangeToApply)
+				break;
+
+			if (!applied.contains(script.getId())) {
+				result.add(script);
+			}
+		}
+
+		return result;
 	}
 
 	private void info(String string) {
 		System.err.println(string);
-	}
-
-	private void loopThruDoScripts(Integer lastChangeToApply) throws IOException {
-
-		for (ChangeScript changeScript : doChangeScripts) {
-			final int changeScriptId = changeScript.getId();
-
-			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
-				changesToApply.add(changeScriptId);
-
-				String sql = schemaVersionManager.generateDoDeltaFragmentHeader(changeScript);
-				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
-
-				changeScriptWriter.applyChangeDoScript(changeScript);
-
-				sql = schemaVersionManager.generateDoDeltaFragmentFooter(changeScript);
-				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
-			}
-		}
-	}
-
-	private void loopThruUndoScripts(Integer lastChangeToApply) throws IOException {
-
-		for (ChangeScript changeScript : undoChangeScripts) {
-			final int changeScriptId = changeScript.getId();
-
-			if (changeScriptId <= lastChangeToApply && !appliedChanges.contains(changeScriptId)) {
-				changeScriptWriter.applyChangeUndoScript(changeScript);
-
-				String sql = schemaVersionManager.generateUndoDeltaFragmentFooter(changeScript);
-				changeScriptWriter.applyDeltaFragmentHeaderOrFooterSql(sql);
-			}
-		}
 	}
 }

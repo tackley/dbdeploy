@@ -1,12 +1,13 @@
 package net.sf.dbdeploy.scripts;
 
 import net.sf.dbdeploy.exceptions.DuplicateChangeScriptException;
+import net.sf.dbdeploy.AvailableChangeScriptsProvider;
 
 import java.util.Collections;
 import java.util.List;
 
 
-public class ChangeScriptRepository {
+public class ChangeScriptRepository implements AvailableChangeScriptsProvider {
 
 	private final List<ChangeScript> scripts;
 
@@ -41,4 +42,8 @@ public class ChangeScriptRepository {
 		return Collections.unmodifiableList(scripts);
 	}
 
+	@Override
+	public List<ChangeScript> getAvailableChangeScripts() {
+		return getOrderedListOfDoChangeScripts();
+	}
 }

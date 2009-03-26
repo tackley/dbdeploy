@@ -1,5 +1,7 @@
 package net.sf.dbdeploy;
 
+import net.sf.dbdeploy.appliers.ApplyMode;
+import net.sf.dbdeploy.appliers.PrintStreamApplier;
 import net.sf.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import net.sf.dbdeploy.database.changelog.QueryExecuter;
 import net.sf.dbdeploy.database.syntax.DbmsSyntax;
@@ -68,9 +70,6 @@ public class DbDeploy {
 
 		Class.forName(driver);
 
-		PrintStream outputPrintStream = new PrintStream(outputfile);
-		PrintStream undoOutputPrintStream = createUndoOutputPrintStream(undoOutputfile);
-
 		DbmsSyntax dbmsSyntax = DbmsSyntax.createFor(dbms);
 
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
@@ -78,18 +77,25 @@ public class DbDeploy {
 		DatabaseSchemaVersionManager databaseSchemaVersion =
 				new DatabaseSchemaVersionManager(deltaset, dbmsSyntax, queryExecuter);
 
-		ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
+		ChangeScriptRepository changeScriptRepository =
+				new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
 
-		ToPrintSteamDeployer toPrintSteamDeployer = new ToPrintSteamDeployer(databaseSchemaVersion, changeScriptRepository, outputPrintStream, dbmsSyntax, undoOutputPrintStream);
-		toPrintSteamDeployer.doDeploy(lastChangeToApply);
+		ChangeScriptApplier doScriptApplier =
+				new PrintStreamApplier(ApplyMode.DO, new PrintStream(outputfile), dbmsSyntax, databaseSchemaVersion);
 
-		outputPrintStream.close();
-		if (undoOutputPrintStream != null) {
-			undoOutputPrintStream.close();
+		ChangeScriptApplier undoScriptApplier = null;
+
+		if (undoOutputfile != null) {
+			undoScriptApplier =
+					new PrintStreamApplier(ApplyMode.UNDO, new PrintStream(undoOutputfile), dbmsSyntax, databaseSchemaVersion);
+
 		}
 
-		queryExecuter.close();
+		Controller controller = new Controller(changeScriptRepository, databaseSchemaVersion, doScriptApplier, undoScriptApplier);
 
+		controller.processChangeScripts(lastChangeToApply);
+
+		queryExecuter.close();
 	}
 
 	private void validate() throws UsageException {

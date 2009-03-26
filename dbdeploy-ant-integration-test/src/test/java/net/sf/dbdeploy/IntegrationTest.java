@@ -9,6 +9,14 @@ import java.util.List;
 import java.sql.SQLException;
 
 public class IntegrationTest {
+	//
+	// If you get errors running these tests in your IDE, you need to set
+	// the "current directory" to dbdeploy-ant-integration-test
+	// which is what mvn does when running the tests
+	//
+	// This is a bit rubbish, I agree.
+	//
+
 	@Test
 	public void shouldSuccessfullyApplyAValidSetOfDeltas() throws Exception {
 		Database db = new Database("success_test");

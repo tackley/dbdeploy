@@ -7,3 +7,8 @@
 --
 INSERT INTO Test VALUES (6);
 INSERT INTO Test VALUES (7);
+
+--//@UNDO
+
+DELETE FROM Test WHERE id IN (6,7);
+

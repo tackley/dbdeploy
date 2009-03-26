@@ -22,4 +22,8 @@ public abstract class DbmsSyntax {
 	public String generateCommit() {
 		return "COMMIT" + generateStatementDelimiter();
 	}
+
+	public String generateBeginTransaction() {
+		return "BEGIN TRANSACTION" + generateStatementDelimiter();
+	}
 }

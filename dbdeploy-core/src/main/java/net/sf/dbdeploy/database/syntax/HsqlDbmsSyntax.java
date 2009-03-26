@@ -9,4 +9,11 @@ public class HsqlDbmsSyntax extends DbmsSyntax {
 	public String generateUser() {
 		return "USER()";
 	}
+
+	@Override
+	public String generateBeginTransaction() {
+		// HSQL doesn't support explicit transactions
+		// See http://hsqldb.sourceforge.net/doc/guide/ch09.html
+		return "";
+	}
 }

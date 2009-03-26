@@ -9,4 +9,9 @@ public class MySQLDbmsSyntax extends DbmsSyntax {
 	public String generateUser() {
 		return "USER()";
 	}
+
+	@Override
+	public String generateBeginTransaction() {
+		return "START TRANSACTION" + generateStatementDelimiter();
+	}
 }

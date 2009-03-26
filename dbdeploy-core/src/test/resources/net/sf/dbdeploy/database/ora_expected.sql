@@ -1,21 +1,29 @@
 
 
---------------- Fragment begins: #1 ---------------
+----- START CHANGE SCRIPT #1: 001_change.sql -----
 
--- Change script: #1
+BEGIN TRANSACTION;
+
 -- contents of change script 1
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description) VALUES (1, 'null', CURRENT_TIMESTAMP, USER, '1: change1.sql');
+INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
+ VALUES (1, 'null', CURRENT_TIMESTAMP, USER, '001_change.sql');
+
 COMMIT;
---------------- Fragment ends: #1 ---------------
+
+----- END CHANGE SCRIPT #1: 001_change.sql -----
 
 
---------------- Fragment begins: #2 ---------------
+----- START CHANGE SCRIPT #2: 002_change.sql -----
 
--- Change script: #2
+BEGIN TRANSACTION;
+
 -- contents of change script 2
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description) VALUES (2, 'null', CURRENT_TIMESTAMP, USER, '2: change2.sql');
+INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
+ VALUES (2, 'null', CURRENT_TIMESTAMP, USER, '002_change.sql');
+
 COMMIT;
---------------- Fragment ends: #2 ---------------
+
+----- END CHANGE SCRIPT #2: 002_change.sql -----
 

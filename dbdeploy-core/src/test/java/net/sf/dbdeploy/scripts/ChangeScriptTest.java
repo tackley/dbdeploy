@@ -87,5 +87,9 @@ public class ChangeScriptTest {
 		File file = new File("abc.txt");
 		ChangeScript changeScript = new ChangeScript(5, file);
 		assertThat(changeScript.toString(), equalTo("#5: abc.txt"));
+		
+		changeScript = new ChangeScript(5, "abc.txt");
+		assertThat(changeScript.toString(), equalTo("#5: abc.txt"));
+
 	}
 }

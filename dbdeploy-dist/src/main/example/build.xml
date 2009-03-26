@@ -43,6 +43,7 @@
                   password=""
                   dir="."
                   outputfile="output.sql"
+                  undoOutputfile="undo.sql"
                   dbms="hsql"
                 />
 

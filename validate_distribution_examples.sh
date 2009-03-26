@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mvn --projects dbdeploy-dist install
+mvn install
 
 TMPDIR=$(mktemp --directory)
 

@@ -1,6 +1,6 @@
 package net.sf.dbdeploy.exceptions;
 
-public class DbDeployException extends Exception {
+public class DbDeployException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

@@ -96,6 +96,6 @@ public class Database {
 		final QueryExecuter queryExecuter = new QueryExecuter(connectionString, DATABASE_USERNAME, DATABASE_PASSWORD);
 
 		DatabaseSchemaVersionManager schemaVersionManager = new DatabaseSchemaVersionManager("Main", syntax, queryExecuter);
-		return schemaVersionManager.getAppliedChangeNumbers();
+		return schemaVersionManager.getAppliedChanges();
 	}
 }
