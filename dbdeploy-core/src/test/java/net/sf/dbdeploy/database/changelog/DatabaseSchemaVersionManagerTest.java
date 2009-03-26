@@ -2,10 +2,14 @@ package net.sf.dbdeploy.database.changelog;
 
 import net.sf.dbdeploy.database.syntax.DbmsSyntax;
 import net.sf.dbdeploy.scripts.ChangeScript;
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 
 import static java.lang.String.format;
 import java.sql.ResultSet;
@@ -15,19 +19,20 @@ import java.util.List;
 public class DatabaseSchemaVersionManagerTest {
 	private final DatabaseSchemaVersionManager schemaVersionManager
 			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), new StubQueryExecuter());
-	private ResultSet expectedResultSet = createMock(ResultSet.class);
+
+	@Mock
+	private ResultSet expectedResultSet;
+
+	@Before
+	public void setUp() {
+		MockitoAnnotations.initMocks(this);
+	}
 
 	@Test
 	public void shouldUseQueryExecuterToReadInformationFromTheChangelogTable() throws Exception {
-		expect(expectedResultSet.next()).andReturn(true);
-		expect(expectedResultSet.getInt(1)).andReturn(5);
-		expect(expectedResultSet.next()).andReturn(true);
-		expect(expectedResultSet.getInt(1)).andReturn(9);
-		expect(expectedResultSet.next()).andReturn(true);
-		expect(expectedResultSet.getInt(1)).andReturn(12);
-		expect(expectedResultSet.next()).andReturn(false);
+		when(expectedResultSet.next()).thenReturn(true, true, true, false);
+		when(expectedResultSet.getInt(1)).thenReturn(5, 9, 12);
 
-		replay(expectedResultSet);
 		final List<Integer> numbers = schemaVersionManager.getAppliedChangeNumbers();
 		assertThat(numbers, hasItems(5, 9, 12));
 	}

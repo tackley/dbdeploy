@@ -17,8 +17,8 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:http://dbdeploy.googlecode.com/svn/branches/maven</connection>
-        <developerConnection>scm:svn:https://dbdeploy.googlecode.com/svn/branches/maven</developerConnection>
+        <connection>scm:svn:http://dbdeploy.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://dbdeploy.googlecode.com/svn/trunk</developerConnection>
     </scm>
 
     <licenses>
@@ -76,19 +76,12 @@
         </dependency>
 
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <version>2.3</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.7</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-            <version>2.3</version>
-            <scope>test</scope>
-        </dependency>
-
+        
     </dependencies>
 
 </project>
