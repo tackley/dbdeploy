@@ -36,6 +36,8 @@ public class DatabaseSchemaVersionManager {
 				changeNumbers.add(rs.getInt(1));
 			}
 
+			rs.close();
+
 			return changeNumbers;
 		} catch (SQLException e) {
 			throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "

@@ -92,7 +92,7 @@ public class Database {
 		return results;
 	}
 
-	public List<Integer> getChangelogEntries() throws SchemaVersionTrackingException {
+	public List<Integer> getChangelogEntries() throws SchemaVersionTrackingException, SQLException {
 		final QueryExecuter queryExecuter = new QueryExecuter(connectionString, DATABASE_USERNAME, DATABASE_PASSWORD);
 
 		DatabaseSchemaVersionManager schemaVersionManager = new DatabaseSchemaVersionManager("Main", syntax, queryExecuter);

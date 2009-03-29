@@ -3,14 +3,10 @@ package net.sf.dbdeploy.database.changelog;
 import java.sql.*;
 
 public class QueryExecuter {
-	private final String connectionString;
-	private final String username;
-	private final String password;
+	private final Connection connection;
 
-	public QueryExecuter(String connectionString, String username, String password) {
-		this.connectionString = connectionString;
-		this.username = username;
-		this.password = password;
+	public QueryExecuter(String connectionString, String username, String password) throws SQLException {
+		connection = DriverManager.getConnection(connectionString, username, password);
 	}
 
 	public ResultSet execute(String sql, String parameter) throws SQLException {
@@ -20,6 +16,10 @@ public class QueryExecuter {
 	}
 
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(connectionString, username, password);
+		return connection;
+	}
+
+	public void close() throws SQLException {
+		connection.close();
 	}
 }

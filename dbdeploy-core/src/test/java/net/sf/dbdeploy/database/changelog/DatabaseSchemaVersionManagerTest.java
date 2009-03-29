@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Matchers.anyString;
 
 import static java.lang.String.format;
 import java.sql.ResultSet;
@@ -17,15 +18,20 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DatabaseSchemaVersionManagerTest {
-	private final DatabaseSchemaVersionManager schemaVersionManager
-			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), new StubQueryExecuter());
+	private DatabaseSchemaVersionManager schemaVersionManager;
 
-	@Mock
-	private ResultSet expectedResultSet;
+	@Mock private ResultSet expectedResultSet;
+	@Mock private QueryExecuter queryExecuter;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws SQLException {
 		MockitoAnnotations.initMocks(this);
+
+		when(queryExecuter.execute(anyString(), anyString())).thenReturn(expectedResultSet);
+
+		schemaVersionManager
+			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter);
+
 	}
 
 	@Test
@@ -85,15 +91,5 @@ public class DatabaseSchemaVersionManagerTest {
 		}
 	}
 
-	private class StubQueryExecuter extends QueryExecuter {
-
-		public StubQueryExecuter() {
-			super(null, null, null);
-		}
-
-		public ResultSet execute(String sql, String parameter) throws SQLException {
-			return expectedResultSet;
-		}
-	}
 }
 

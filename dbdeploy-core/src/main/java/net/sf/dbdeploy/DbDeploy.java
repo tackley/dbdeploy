@@ -88,6 +88,8 @@ public class DbDeploy {
 			undoOutputPrintStream.close();
 		}
 
+		queryExecuter.close();
+
 	}
 
 	private void validate() throws UsageException {
