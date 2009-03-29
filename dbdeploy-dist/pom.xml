@@ -38,11 +38,13 @@
     </build>
 
     <dependencies>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dbdeploy-ant</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dbdeploy-cli</artifactId>
@@ -55,12 +57,14 @@
             <version>${project.version}</version>
             <classifier>sources</classifier>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dbdeploy-cli</artifactId>
             <version>${project.version}</version>
             <classifier>sources</classifier>
         </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dbdeploy-core</artifactId>
@@ -68,6 +72,11 @@
             <classifier>sources</classifier>
         </dependency>
 
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+        </dependency>
 
     </dependencies>
 

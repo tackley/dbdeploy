@@ -31,20 +31,22 @@
                                 <property name="test_classpath" refid="maven.test.classpath"/>
                                 <property name="runtime_classpath" refid="maven.runtime.classpath"/>
 
-                                <property name="build.dir" location="${project.build.directory}" />
-                                <property name="delta.dir" location="src/it/db/deltas" />
-                                   
+                                <property name="build.dir" location="${project.build.directory}"/>
+                                <property name="delta.dir" location="src/it/db/deltas"/>
+
                                 <ant dir="src/it/ant"/>
                             </tasks>
                         </configuration>
-                        <goals><goal>run</goal></goals>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
-                      <groupId>org.apache.ant</groupId>
-                      <artifactId>ant-nodeps</artifactId>
-                      <version>1.7.0</version>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-nodeps</artifactId>
+                        <version>1.7.0</version>
                     </dependency>
                     <dependency>
                         <artifactId>dbdeploy-ant</artifactId>
@@ -54,13 +56,13 @@
                     <dependency>
                         <groupId>hsqldb</groupId>
                         <artifactId>hsqldb</artifactId>
-                        <version>1.8.0.7</version>
+                        <version>${hsqldb.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
 
         </plugins>
-        
+
     </build>
 
     <dependencies>
@@ -74,7 +76,7 @@
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.7</version>
+            <version>${hsqldb.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

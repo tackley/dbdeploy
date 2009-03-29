@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dbdeploy_example" default="default">
+
+    <property name="db.driver" value="org.hsqldb.jdbcDriver" />
+    <property name="db.url" value="jdbc:hsqldb:file:db/testdb;shutdown=true" />
+
+    <path id="hsql.classpath">
+        <fileset dir=".">
+            <include name="hsqldb*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="dbdeploy.classpath">
+        <!-- include the dbdeploy-ant jar -->
+        <fileset dir="..">
+            <include name="dbdeploy-ant-*.jar"/>
+        </fileset>
+
+        <!-- the dbdeploy task also needs the database driver jar on the classpath -->
+        <path refid="hsql.classpath" />
+
+    </path>
+
+    <taskdef name="dbdeploy" classname="net.sf.dbdeploy.AntTarget" classpathref="dbdeploy.classpath"/>
+
+    <target name="default" depends="clean, update-database"/>
+
+    <target name="clean" depends="drop-and-create-database, create-changelog-table"/>
+
+    <target name="create-changelog-table">
+        <sql driver="${db.driver}" url="${db.url}"
+             userid="sa" password="" classpathref="hsql.classpath" >
+            <fileset file="../scripts/createSchemaVersionTable.hsql.sql"/>
+        </sql>
+    </target>
+
+    <target name="update-database" description="generate a sql upgrade script">
+
+        <!-- use dbdeploy to generate the change script -->
+        <dbdeploy driver="${db.driver}" url="${db.url}"
+                  userid="sa"
+                  password=""
+                  dir="."
+                  outputfile="output.sql"
+                  dbms="hsql"
+                />
+
+        <!-- now apply the changescript to the database -->
+        <sql driver="${db.driver}" url="${db.url}"
+             userid="sa" password="" classpathref="hsql.classpath">
+            <fileset file="output.sql"/>
+        </sql>
+
+    </target>
+
+    <target name="dump-tables">
+        <sql driver="${db.driver}" url="${db.url}"
+             userid="sa" password="" print="true" classpathref="hsql.classpath">
+            select * from changelog;
+            select * from test;
+        </sql>
+    </target>
+
+    <target name="drop-and-create-database">
+        <delete dir="db"/>
+        <mkdir dir="db"/>
+    </target>
+
+</project>

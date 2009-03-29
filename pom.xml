@@ -35,6 +35,10 @@
         </mailingList>
     </mailingLists>
 
+    <properties>
+        <hsqldb.version>1.8.0.7</hsqldb.version>
+    </properties>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -53,6 +57,12 @@
                     <configuration>
                         <encoding>UTF-8</encoding>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.2</version>
                 </plugin>
 
             </plugins>

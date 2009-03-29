@@ -1,5 +1,0 @@
-CREATE TABLE Test (id INTEGER);
-
---//@UNDO
-
-DROP TABLE Test;

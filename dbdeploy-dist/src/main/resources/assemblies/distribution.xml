@@ -10,6 +10,19 @@
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>${project.groupId}:*</include>
+            </includes>
+        </dependencySet>
+
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <outputDirectory>example</outputDirectory>
+            <excludes>
+                <exclude>${project.groupId}:*</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
    
@@ -20,8 +33,8 @@
         </fileSet>
 
         <fileSet>
-            <directory>src/main/example_scripts</directory>
-            <outputDirectory>example_scripts</outputDirectory>
+            <directory>src/main/example</directory>
+            <outputDirectory>example</outputDirectory>
         </fileSet>
 
         <fileSet>
