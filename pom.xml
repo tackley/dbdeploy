@@ -17,8 +17,15 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:http://dbdeploy.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://dbdeploy.googlecode.com/svn/trunk</developerConnection>
+        <!--
+            This github account is used as a staging area for dbdeploy commits.
+            Currently all checkins are mirred to the google code svn repository
+            at http://dbdeploy.googlecode.com/svn/trunk/
+
+            This may change in due course - git makes collaberation so much easier...
+        -->
+        <connection>scm:git:git://github.com/tackley/dbdeploy.git</connection>
+        <developerConnection>scm:git:git@github.com:tackley/dbdeploy.git</developerConnection>
     </scm>
 
     <licenses>
