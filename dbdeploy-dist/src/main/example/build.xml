@@ -22,7 +22,7 @@
 
     </path>
 
-    <taskdef name="dbdeploy" classname="net.sf.dbdeploy.AntTarget" classpathref="dbdeploy.classpath"/>
+    <taskdef name="dbdeploy" classname="com.dbdeploy.AntTarget" classpathref="dbdeploy.classpath"/>
 
     <target name="default" depends="clean, update-database"/>
 
