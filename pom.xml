@@ -3,7 +3,7 @@
     <groupId>com.dbdeploy</groupId>
     <artifactId>dbdeploy-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.0M1</version>
+    <version>3.0-SNAPSHOT</version>
     <name>dbdeploy</name>
     <url>http://www.dbdeploy.com</url>
 
