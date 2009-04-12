@@ -24,7 +24,6 @@
             This may change in due course - git makes collaberation so much easier...
         -->
         <connection>scm:git:git://github.com/tackley/dbdeploy.git</connection>
-        <developerConnection>scm:git:git@github.com:tackley/dbdeploy.git</developerConnection>
     </scm>
 
     <distributionManagement>
