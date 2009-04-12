@@ -25,7 +25,23 @@
         -->
         <connection>scm:git:git://github.com/tackley/dbdeploy.git</connection>
         <developerConnection>scm:git:git@github.com:tackley/dbdeploy.git</developerConnection>
-    </scm> 
+    </scm>
+
+    <distributionManagement>
+        <downloadUrl>http://dbdeploy.googlecode.com/svn/m2-repo</downloadUrl>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>dbdeploy</id>
+            <name>Dbdeploy Repository</name>
+            <url>file:///var/maven-repo/repository</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>dbdeploySnapshots</id>
+            <name>Dbdeploy Snapshot Repository</name>
+            <url>file:///var/maven-repo/snapshot-repository</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <licenses>
         <license>
@@ -75,7 +91,7 @@
         </pluginManagement>
 
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -97,7 +113,7 @@
             <version>1.7</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
 </project>
