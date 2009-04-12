@@ -1,5 +1,6 @@
-package com.dbdeploy;
+package com.dbdeploy.integration;
 
+import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.database.syntax.DbmsSyntax;
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.dbdeploy.DbDeploy;
 
 public class Database {
 	String connectionString;

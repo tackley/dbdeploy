@@ -1,14 +1,13 @@
-package com.dbdeploy;
+package com.dbdeploy.integration;
 
+import com.dbdeploy.DbDeploy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.List;
 import java.sql.SQLException;
-
-import com.dbdeploy.DbDeploy;
+import java.util.List;
 
 public class IntegrationTest {
 	//
