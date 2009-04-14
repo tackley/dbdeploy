@@ -80,7 +80,7 @@ public class PrintStreamApplierTest {
 
 	@Test
 	public void shouldUseDatabaseSchemaVersionManagerToGenerateChangelogUpdateScript() {
-		when(schemaVersionManager.getChangelogUpdateSql(script)).thenReturn("(sql to update changelog)");
+		when(schemaVersionManager.getChangelogInsertSql(script)).thenReturn("(sql to update changelog)");
 
 		applier.insertToSchemaVersionTable(script);
 

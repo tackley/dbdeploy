@@ -2,17 +2,17 @@ package com.dbdeploy.database.changelog;
 
 import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.scripts.ChangeScript;
+import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;
-import org.hamcrest.Matchers;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.startsWith;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.startsWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.ResultSet;
@@ -49,7 +49,7 @@ public class DatabaseSchemaVersionManagerTest {
 	@Test
 	public void shouldGenerateSqlStringToUpdateChangelogTableAfterScriptApplication() throws Exception {
 		final ChangeScript script = new ChangeScript(99, "Some Description");
-		String sql = schemaVersionManager.getChangelogUpdateSql(script);
+		String sql = schemaVersionManager.getChangelogInsertSql(script);
 		String expected =
 				"INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description) " +
 						"VALUES (99, 'deltaSetName', (timestamp), (user), 'Some Description')";
@@ -72,7 +72,7 @@ public class DatabaseSchemaVersionManagerTest {
                         "user_specified_changelog");
 
         final ChangeScript script = new ChangeScript(99, "Some Description");
-        String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogUpdateSql(script);
+        String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogInsertSql(script);
 
         assertThat(updateSql, Matchers.startsWith("INSERT INTO user_specified_changelog "));
     }

@@ -1,9 +1,9 @@
 package com.dbdeploy.database.changelog;
 
 import com.dbdeploy.AppliedChangesProvider;
-import com.dbdeploy.scripts.ChangeScript;
-import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import com.dbdeploy.database.syntax.DbmsSyntax;
+import com.dbdeploy.exceptions.SchemaVersionTrackingException;
+import com.dbdeploy.scripts.ChangeScript;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +27,6 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
         this.changeLogTableName = changeLogTableName;
     }
 
-	@Override
 	public List<Integer> getAppliedChanges() {
 		try {
 			ResultSet rs = queryExecuter.execute("SELECT change_number FROM " + changeLogTableName
@@ -48,7 +47,7 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 		}
 	}
 
-	public String getChangelogUpdateSql(ChangeScript script) {
+	public String getChangelogInsertSql(ChangeScript script) {
 		return String.format(
 			"INSERT INTO " + changeLogTableName + " (change_number, delta_set, complete_dt, applied_by, description)%n" +
 					" VALUES (%d, '%s', %s, %s, '%s')",

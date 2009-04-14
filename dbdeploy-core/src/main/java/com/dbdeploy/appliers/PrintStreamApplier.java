@@ -22,7 +22,6 @@ public class PrintStreamApplier extends AbstractChangeScriptApplier  {
 		this.schemaVersionManager = schemaVersionManager;
 	}
 
-	@Override
 	public void begin() {
 		output.println(dbmsSyntax.generateScriptHeader());
 	}
@@ -48,7 +47,7 @@ public class PrintStreamApplier extends AbstractChangeScriptApplier  {
 
 	@Override
 	protected void insertToSchemaVersionTable(ChangeScript changeScript) {
-		output.println(schemaVersionManager.getChangelogUpdateSql(changeScript)
+		output.println(schemaVersionManager.getChangelogInsertSql(changeScript)
 				+ dbmsSyntax.generateStatementDelimiter());
 		output.println();
 	}
@@ -72,7 +71,6 @@ public class PrintStreamApplier extends AbstractChangeScriptApplier  {
 		output.println();
 	}
 
-	@Override
 	public void end() {
 		output.close();
 	}

@@ -10,16 +10,29 @@ public class QueryExecuter {
 	}
 
 	public ResultSet execute(String sql, String parameter) throws SQLException {
-		PreparedStatement statement = getConnection().prepareStatement(sql);
+		PreparedStatement statement = connection.prepareStatement(sql);
 		statement.setString(1, parameter);
 		return statement.executeQuery();
 	}
 
-	private Connection getConnection() throws SQLException {
-		return connection;
+	public void execute(String sql) throws SQLException {
+		Statement statement = connection.createStatement();
+		try {
+			statement.execute(sql);
+		} finally {
+			statement.close();
+		}
 	}
 
 	public void close() throws SQLException {
 		connection.close();
+	}
+
+	public void setAutoCommit(boolean autoCommitMode) throws SQLException {
+		connection.setAutoCommit(autoCommitMode);
+	}
+
+	public void commit() throws SQLException {
+		connection.commit();
 	}
 }

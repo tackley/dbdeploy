@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
+import com.dbdeploy.database.DelimiterType;
 
 public class DbDeployCommandLineParserTest {
 	private final DbDeploy dbDeploy = new DbDeploy();
@@ -24,8 +25,9 @@ public class DbDeployCommandLineParserTest {
 	public void checkAllOfTheOtherFieldsParseOkHere() throws Exception {
 		parser.parse(("-U userid -Ppassword --driver a.b.c --url b:c:d " +
 				"--scriptdirectory . -o output.sql " +
-                "--changeLogTableName my-change-log " +
-				"--dbms ora --deltaset Schema").split(" "), dbDeploy);
+				"--changeLogTableName my-change-log " +
+				"--dbms ora --deltaset Schema " +
+				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
 
 		assertThat(dbDeploy.getUserid(), is("userid"));
 		assertThat(dbDeploy.getPassword(), is("password"));
@@ -36,6 +38,8 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getDbms(), is("ora"));
 		assertThat(dbDeploy.getDeltaset(), is("Schema"));
 		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
+		assertThat(dbDeploy.getDelimiter(), is("\\"));
+		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.dbdeploy;
 
 import com.dbdeploy.exceptions.UsageException;
+import com.dbdeploy.database.DelimiterType;
 import org.apache.commons.cli.*;
 
 import java.beans.BeanInfo;
@@ -26,18 +27,20 @@ public class DbDeployCommandLineParser {
 
 			for (PropertyDescriptor p : info.getPropertyDescriptors()) {
 				final String propertyName = p.getDisplayName();
-//				System.out.println("Property: " + propertyName);
 				if (commandLine.hasOption(propertyName)) {
-//					System.out.println(" ^ assigning!");
 					Object value = commandLine.getOptionValue(propertyName);
 					if (p.getPropertyType().isAssignableFrom(File.class)) {
 						value = new File((String) value);
 					}
 
-//					System.out.println(" ^^ value is " + value + " (" + value.getClass() + ")");
 					p.getWriteMethod().invoke(dbDeploy, value);
 				}
 			}
+
+			if (commandLine.hasOption("delimitertype")) {
+				dbDeploy.setDelimiterType(DelimiterType.valueOf(commandLine.getOptionValue("delimitertype")));
+			}
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -110,6 +113,18 @@ public class DbDeployCommandLineParser {
 				.withDescription("name of schema version table to use")
 				.withLongOpt("changeLogTableName")
 				.create("t"));
+
+		options.addOption(OptionBuilder
+				.hasArg()
+				.withDescription("delimiter to separate sql statements")
+				.withLongOpt("delimiter")
+				.create());
+
+		options.addOption(OptionBuilder
+				.hasArg()
+				.withDescription("delimiter type to separate sql statements (row or normal)")
+				.withLongOpt("delimitertype")
+				.create());
 
 		return options;
 	}

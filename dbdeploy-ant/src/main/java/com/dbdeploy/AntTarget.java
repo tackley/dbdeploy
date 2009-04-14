@@ -1,5 +1,6 @@
 package com.dbdeploy;
 
+import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.exceptions.UsageException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -18,11 +19,13 @@ public class AntTarget extends Task {
 			+ "\n\t\turl=\"[DATABASE URL]\" *"
 			+ "\n\t\tdbms=\"[YOUR DBMS]\" *"
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
-			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\" *"
+			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\tmaxNumberToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
 			+ "\n\t\tdeltaSet=\"[NAME OF DELTA SET TO BE APPLIED]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
+			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
+			+ "\n\t\tdelimitertype=\"[STATEMENT DELIMITER TYPE - row or normal, default normal]\""
 			+ "\n\t/>"
 			+ "\n\n* - Indicates mandatory parameter";
 
@@ -82,5 +85,12 @@ public class AntTarget extends Task {
 		dbDeploy.setChangeLogTableName(changeLogTableName);
 	}
 
+    public void setDelimiter(String delimiter) {
+        dbDeploy.setDelimiter(delimiter);
+    }
+
+    public void setDelimitertype(DelimiterType delimiterType) {
+        dbDeploy.setDelimiterType(delimiterType);
+    }
 }
 

@@ -1,14 +1,12 @@
 package com.dbdeploy;
 
 import com.dbdeploy.exceptions.UsageException;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.hamcrest.Matchers.startsWith;
 
 import java.io.File;
-
-import com.dbdeploy.DbDeploy;
 
 public class DbDeployTest {
 	private final DbDeploy dbDeploy = new DbDeploy();
@@ -56,13 +54,6 @@ public class DbDeployTest {
 		dbDeploy.go();
 	}
 
-	@Test(expected = UsageException.class)
-	public void shouldThrowIfOutputFileNotSpecified() throws Exception {
-		dbDeploy.setOutputfile(null);
-		dbDeploy.go();
-	}
-
-
 	@Test
 	public void shouldThrowIfScriptDirectoryIsNotAValidDirectory() throws Exception {
 		dbDeploy.setScriptdirectory(new File("fileThatDoesntExist.txt"));
@@ -77,6 +68,5 @@ public class DbDeployTest {
     @Test
     public void shouldReportVersionNumberWithoutCrashing() {
         assertThat(dbDeploy.getWelcomeString(), startsWith("dbdeploy"));
-        System.out.println(dbDeploy.getWelcomeString());
     }
 }
