@@ -4,20 +4,13 @@ import com.dbdeploy.DbDeploy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
 public class IntegrationTest {
-	//
-	// If you get errors running these tests in your IDE, you need to set
-	// the "current directory" to dbdeploy-core
-	// which is what mvn does when running the tests
-	//
-	// This is a bit rubbish, I agree.
-	//
-
 	@Test
 	public void shouldSuccessfullyApplyAValidSetOfDeltas() throws Exception {
 		Database db = new Database("success_test");
@@ -27,7 +20,7 @@ public class IntegrationTest {
 
 		DbDeploy dbDeploy = new DbDeploy();
 		db.applyDatabaseSettingsTo(dbDeploy);
-		dbDeploy.setScriptdirectory(new File("src/it/db/deltas"));
+		dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/deltas"));
 		dbDeploy.setOutputfile(outputFile);
 		dbDeploy.go();
 
@@ -49,7 +42,7 @@ public class IntegrationTest {
 
 		DbDeploy dbDeploy = new DbDeploy();
 		db.applyDatabaseSettingsTo(dbDeploy);
-		dbDeploy.setScriptdirectory(new File("src/it/db/invalid_deltas"));
+		dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/invalid_deltas"));
 		dbDeploy.setOutputfile(outputFile);
 		dbDeploy.go();
 
@@ -68,7 +61,7 @@ public class IntegrationTest {
 		assertThat(results.size(), is(0));
 
 		// now run dbdeploy again with valid scripts, should recover
-		dbDeploy.setScriptdirectory(new File("src/it/db/deltas"));
+		dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/deltas"));
 		dbDeploy.setOutputfile(outputFile);
 		dbDeploy.go();
 
@@ -80,7 +73,7 @@ public class IntegrationTest {
 		assertThat(results.size(), is(1));
 	}
 
-    @Test
+   @Test
     public void shouldUseSpecifiedChangeLogTable() throws Exception {
         Database db = new Database("user_defined_changelog_test", "user_defined_changelog_table");
         db.createSchemaVersionTable();
@@ -89,7 +82,7 @@ public class IntegrationTest {
 
         DbDeploy dbDeploy = new DbDeploy();
         db.applyDatabaseSettingsTo(dbDeploy);
-        dbDeploy.setScriptdirectory(new File("src/it/db/deltas"));
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/deltas"));
         dbDeploy.setOutputfile(outputFile);
         dbDeploy.setChangeLogTableName("user_defined_changelog_table");
         dbDeploy.go();
@@ -98,5 +91,21 @@ public class IntegrationTest {
 
         assertThat(db.getChangelogEntries(), hasItems(1, 2));
     }
+
+	private File findScriptDirectory(String directoryName) {
+		File directoryWhenRunningUnderMaven = new File(directoryName);
+		if (directoryWhenRunningUnderMaven.isDirectory()) {
+			return directoryWhenRunningUnderMaven;
+		}
+
+		File directoryWhenRunningUnderIde = new File("dbdeploy-core", directoryName);
+		if (directoryWhenRunningUnderIde.isDirectory()) {
+			return directoryWhenRunningUnderIde;
+		}
+
+		fail("Could not find script directory: " + directoryName);
+
+		return null;
+	}
 
 }
