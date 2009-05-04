@@ -30,7 +30,7 @@ public class PrintStreamApplier extends AbstractChangeScriptApplier  {
 	@Override
 	protected void preChangeScriptApply(ChangeScript changeScript) {
 		output.println();
-		output.println("----- START CHANGE SCRIPT " + changeScript + " -----");
+		output.println("-- START CHANGE SCRIPT " + changeScript);
 		output.println();
 	}
 
@@ -68,7 +68,7 @@ public class PrintStreamApplier extends AbstractChangeScriptApplier  {
 	@Override
 	protected void postChangeScriptApply(ChangeScript changeScript) {
 		output.println();
-		output.println("----- END CHANGE SCRIPT " + changeScript + " -----");
+		output.println("-- END CHANGE SCRIPT " + changeScript);
 		output.println();
 	}
 

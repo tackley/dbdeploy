@@ -42,7 +42,7 @@ public class PrintStreamApplierTest {
 	public void shouldDumpOutMeaningfulHeaderForScripts() throws Exception {
 		applier.preChangeScriptApply(script);
 
-		final String expected = "----- START CHANGE SCRIPT #2: 002_change_script_2.sql -----";
+		final String expected = "-- START CHANGE SCRIPT #2: 002_change_script_2.sql";
 
 		assertThat(getFileContents(), equalToIgnoringWhiteSpace(expected));
 	}
@@ -73,7 +73,7 @@ public class PrintStreamApplierTest {
 	public void shouldDumpOutMeaningfulTrailerForScripts() throws Exception {
 		applier.postChangeScriptApply(script);
 
-		final String expected = "----- END CHANGE SCRIPT #2: 002_change_script_2.sql -----";
+		final String expected = "-- END CHANGE SCRIPT #2: 002_change_script_2.sql";
 
 		assertThat(getFileContents(), equalToIgnoringWhiteSpace(expected));
 	}

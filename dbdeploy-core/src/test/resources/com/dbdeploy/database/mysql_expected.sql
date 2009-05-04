@@ -1,6 +1,6 @@
 
 
------ START CHANGE SCRIPT #1: 001_change.sql -----
+-- START CHANGE SCRIPT #1: 001_change.sql
 
 START TRANSACTION;
 
@@ -11,10 +11,10 @@ INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, descri
 
 COMMIT;
 
------ END CHANGE SCRIPT #1: 001_change.sql -----
+-- END CHANGE SCRIPT #1: 001_change.sql
 
 
------ START CHANGE SCRIPT #2: 002_change.sql -----
+-- START CHANGE SCRIPT #2: 002_change.sql
 
 START TRANSACTION;
 
@@ -25,5 +25,5 @@ INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, descri
 
 COMMIT;
 
------ END CHANGE SCRIPT #2: 002_change.sql -----
+-- END CHANGE SCRIPT #2: 002_change.sql
 

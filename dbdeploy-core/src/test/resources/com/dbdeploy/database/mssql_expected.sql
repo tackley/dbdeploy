@@ -1,6 +1,6 @@
 
 
------ START CHANGE SCRIPT #1: 001_change.sql -----
+-- START CHANGE SCRIPT #1: 001_change.sql
 
 BEGIN TRANSACTION
 GO
@@ -14,10 +14,10 @@ GO
 COMMIT
 GO
 
------ END CHANGE SCRIPT #1: 001_change.sql -----
+-- END CHANGE SCRIPT #1: 001_change.sql
 
 
------ START CHANGE SCRIPT #2: 002_change.sql -----
+-- START CHANGE SCRIPT #2: 002_change.sql
 
 BEGIN TRANSACTION
 GO
@@ -31,5 +31,5 @@ GO
 COMMIT
 GO
 
------ END CHANGE SCRIPT #2: 002_change.sql -----
+-- END CHANGE SCRIPT #2: 002_change.sql
 
