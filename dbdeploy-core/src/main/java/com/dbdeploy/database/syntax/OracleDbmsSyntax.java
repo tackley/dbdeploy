@@ -10,4 +10,8 @@ public class OracleDbmsSyntax extends DbmsSyntax {
 		return "USER";
 	}
 
+    @Override
+    public String generateBeginTransaction() {
+        return "";
+    }
 }

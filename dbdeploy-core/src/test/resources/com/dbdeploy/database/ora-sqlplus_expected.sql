@@ -3,7 +3,7 @@ SET DEFINE OFF
 
 -- START CHANGE SCRIPT #1: 001_change.sql
 
-BEGIN TRANSACTION;
+
 
 -- contents of change script 1
 
@@ -17,7 +17,7 @@ COMMIT;
 
 -- START CHANGE SCRIPT #2: 002_change.sql
 
-BEGIN TRANSACTION;
+
 
 -- contents of change script 2
 
