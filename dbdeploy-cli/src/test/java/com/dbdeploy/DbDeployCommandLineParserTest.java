@@ -1,10 +1,9 @@
 package com.dbdeploy;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import com.dbdeploy.DbDeploy;
-import com.dbdeploy.DbDeployCommandLineParser;
 
 public class DbDeployCommandLineParserTest {
 	private final DbDeploy dbDeploy = new DbDeploy();
@@ -25,6 +24,7 @@ public class DbDeployCommandLineParserTest {
 	public void checkAllOfTheOtherFieldsParseOkHere() throws Exception {
 		parser.parse(("-U userid -Ppassword --driver a.b.c --url b:c:d " +
 				"--scriptdirectory . -o output.sql " +
+                "--changeLogTableName my-change-log " +
 				"--dbms ora --deltaset Schema").split(" "), dbDeploy);
 
 		assertThat(dbDeploy.getUserid(), is("userid"));
@@ -35,6 +35,7 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getOutputfile().getName(), is("output.sql"));
 		assertThat(dbDeploy.getDbms(), is("ora"));
 		assertThat(dbDeploy.getDeltaset(), is("Schema"));
+		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
 	}
 
 }

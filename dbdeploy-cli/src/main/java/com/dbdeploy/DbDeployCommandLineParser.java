@@ -8,8 +8,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 
-import com.dbdeploy.DbDeploy;
-
 public class DbDeployCommandLineParser {
 	public void parse(String[] args, DbDeploy dbDeploy) throws UsageException {
 		try {
@@ -106,6 +104,12 @@ public class DbDeployCommandLineParser {
 				.withDescription("delta set name (default: Main)")
 				.withLongOpt("deltaset")
 				.create());
+
+		options.addOption(OptionBuilder
+				.hasArg()
+				.withDescription("name of schema version table to use")
+				.withLongOpt("changeLogTableName")
+				.create("t"));
 
 		return options;
 	}
