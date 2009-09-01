@@ -16,14 +16,21 @@ import java.util.List;
 public class Database {
 	String connectionString;
 	Connection connection;
+    private final String changeLogTableName;
+
 	private static final String DATABASE_SYNTAX = "hsql";
 	private static final String DATABASE_DRIVER = "org.hsqldb.jdbcDriver";
 	private static final String DATABASE_USERNAME = "sa";
 	private static final String DATABASE_PASSWORD = "";
 	private DbmsSyntax syntax;
 
-	public Database(String databaseName) throws ClassNotFoundException, SQLException {
-		connectionString = "jdbc:hsqldb:mem:" + databaseName;
+    public Database(String databaseName) throws ClassNotFoundException, SQLException {
+        this(databaseName, "changelog");
+    }
+
+    public Database(String databaseName, String changeLogTableName) throws ClassNotFoundException, SQLException {
+        this.changeLogTableName = changeLogTableName;
+        connectionString = "jdbc:hsqldb:mem:" + databaseName;
 		connection = openConnection();
 		syntax = DbmsSyntax.createFor(DATABASE_SYNTAX);
 	}
@@ -34,7 +41,8 @@ public class Database {
 	}
 
 	public void createSchemaVersionTable() throws SQLException {
-		execute("CREATE TABLE changelog ( " +
+		execute("CREATE TABLE " + changeLogTableName +
+                " ( " +
 				"  change_number INTEGER NOT NULL, " +
 				"  delta_set VARCHAR(10) NOT NULL, " +
 				"  complete_dt TIMESTAMP NOT NULL, " +
@@ -42,7 +50,8 @@ public class Database {
 				"  description VARCHAR(500) NOT NULL " +
 				")");
 
-		execute("ALTER TABLE changelog ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number, delta_set)");
+		execute("ALTER TABLE " + changeLogTableName +
+                " ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number, delta_set)");
 	}
 
 	private void execute(String sql) throws SQLException {
@@ -96,7 +105,8 @@ public class Database {
 	public List<Integer> getChangelogEntries() throws SchemaVersionTrackingException, SQLException {
 		final QueryExecuter queryExecuter = new QueryExecuter(connectionString, DATABASE_USERNAME, DATABASE_PASSWORD);
 
-		DatabaseSchemaVersionManager schemaVersionManager = new DatabaseSchemaVersionManager("Main", syntax, queryExecuter);
+		DatabaseSchemaVersionManager schemaVersionManager =
+                new DatabaseSchemaVersionManager("Main", syntax, queryExecuter, changeLogTableName);
 		return schemaVersionManager.getAppliedChanges();
 	}
 }

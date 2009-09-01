@@ -4,20 +4,20 @@ import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.scripts.ChangeScript;
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.hamcrest.Matchers.hasItems;
+import org.hamcrest.Matchers;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import static org.mockito.Matchers.startsWith;
+import static org.mockito.Matchers.anyString;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.Matchers.anyString;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
-import com.dbdeploy.database.changelog.QueryExecuter;
 
 public class DatabaseSchemaVersionManagerTest {
 	private DatabaseSchemaVersionManager schemaVersionManager;
@@ -32,7 +32,7 @@ public class DatabaseSchemaVersionManagerTest {
 		when(queryExecuter.execute(anyString(), anyString())).thenReturn(expectedResultSet);
 
 		schemaVersionManager
-			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter);
+			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter, "changelog");
 
 	}
 
@@ -64,7 +64,41 @@ public class DatabaseSchemaVersionManagerTest {
 				"DELETE FROM changelog WHERE change_number = 99 and delta_set = 'deltaSetName'";
 		assertThat(sql, equalToIgnoringWhiteSpace(expected));
 	}
+    
+    @Test
+    public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnUpdate() {
+        DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
+                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                        "user_specified_changelog");
 
+        final ChangeScript script = new ChangeScript(99, "Some Description");
+        String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogUpdateSql(script);
+
+        assertThat(updateSql, Matchers.startsWith("INSERT INTO user_specified_changelog "));
+    }
+
+    @Test
+    public void shouldGetAppliedChangesFromSpecifiedChangelogTableName() throws SQLException {
+        DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
+                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                        "user_specified_changelog");
+
+        schemaVersionManagerWithDifferentTableName.getAppliedChanges();
+
+        verify(queryExecuter).execute(startsWith("SELECT change_number FROM user_specified_changelog "), anyString());
+    }
+
+    @Test
+    public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnDelete() {
+        DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
+                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                        "user_specified_changelog");
+
+        final ChangeScript script = new ChangeScript(99, "Some Description");
+        String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogDeleteSql(script);
+
+        assertThat(updateSql, Matchers.startsWith("DELETE FROM user_specified_changelog "));
+    }
 
 	private class StubDbmsSyntax extends DbmsSyntax {
 		public String generateTimestamp() {

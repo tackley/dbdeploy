@@ -18,17 +18,20 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 	private final String deltaSet;
 	private final DbmsSyntax dbmsSyntax;
 	private final QueryExecuter queryExecuter;
+    private final String changeLogTableName;
 
-	public DatabaseSchemaVersionManager(String deltaSet, DbmsSyntax dbmsSyntax, QueryExecuter queryExecuter) {
+    public DatabaseSchemaVersionManager(String deltaSet, DbmsSyntax dbmsSyntax, QueryExecuter queryExecuter, String changeLogTableName) {
 		this.deltaSet = deltaSet;
 		this.dbmsSyntax = dbmsSyntax;
 		this.queryExecuter = queryExecuter;
-	}
+        this.changeLogTableName = changeLogTableName;
+    }
 
 	@Override
 	public List<Integer> getAppliedChanges() {
 		try {
-			ResultSet rs = queryExecuter.execute("SELECT change_number FROM changelog WHERE delta_set = ? ORDER BY change_number", deltaSet);
+			ResultSet rs = queryExecuter.execute("SELECT change_number FROM " + changeLogTableName
+                    + " WHERE delta_set = ? ORDER BY change_number", deltaSet);
 
 			List<Integer> changeNumbers = new ArrayList<Integer>();
 
@@ -47,7 +50,7 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
 	public String getChangelogUpdateSql(ChangeScript script) {
 		return String.format(
-			"INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)%n" +
+			"INSERT INTO " + changeLogTableName + " (change_number, delta_set, complete_dt, applied_by, description)%n" +
 					" VALUES (%d, '%s', %s, %s, '%s')",
 			script.getId(),
 			deltaSet,
@@ -58,7 +61,7 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
 	public String getChangelogDeleteSql(ChangeScript script) {
 		return String.format(
-			"DELETE FROM changelog WHERE change_number = %d AND delta_set = '%s'",
+			"DELETE FROM " + changeLogTableName + " WHERE change_number = %d AND delta_set = '%s'",
 				script.getId(), deltaSet);
 	}
 }

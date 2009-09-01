@@ -12,7 +12,7 @@ import java.util.List;
 public class IntegrationTest {
 	//
 	// If you get errors running these tests in your IDE, you need to set
-	// the "current directory" to dbdeploy-ant-integration-test
+	// the "current directory" to dbdeploy-core
 	// which is what mvn does when running the tests
 	//
 	// This is a bit rubbish, I agree.
@@ -79,5 +79,24 @@ public class IntegrationTest {
 		results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(1));
 	}
+
+    @Test
+    public void shouldUseSpecifiedChangeLogTable() throws Exception {
+        Database db = new Database("user_defined_changelog_test", "user_defined_changelog_table");
+        db.createSchemaVersionTable();
+
+        File outputFile = File.createTempFile("changelog_success", ".sql");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setScriptdirectory(new File("src/it/db/deltas"));
+        dbDeploy.setOutputfile(outputFile);
+        dbDeploy.setChangeLogTableName("user_defined_changelog_table");
+        dbDeploy.go();
+
+        db.applyScript(outputFile);
+
+        assertThat(db.getChangelogEntries(), hasItems(1, 2));
+    }
 
 }

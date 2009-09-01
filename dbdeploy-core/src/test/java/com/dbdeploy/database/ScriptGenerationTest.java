@@ -87,7 +87,7 @@ public class ScriptGenerationTest {
 
 	private class StubSchemaManager extends DatabaseSchemaVersionManager {
 		public StubSchemaManager(DbmsSyntax syntax) {
-			super(null, syntax, null);
+			super(null, syntax, null, "changelog");
 		}
 
 		@Override

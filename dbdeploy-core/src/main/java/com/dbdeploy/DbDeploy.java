@@ -22,6 +22,7 @@ public class DbDeploy {
 	private Integer lastChangeToApply = Integer.MAX_VALUE;
 	private String deltaset = "Main";
 	private String driver;
+    private String changeLogTableName = "changelog";
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -63,7 +64,11 @@ public class DbDeploy {
 		this.undoOutputfile = undoOutputfile;
 	}
 
-	public void go() throws Exception {
+    public void setChangeLogTableName(String changeLogTableName) {
+        this.changeLogTableName = changeLogTableName;
+    }
+
+    public void go() throws Exception {
         System.err.println(getWelcomeString());
 
 		validate();
@@ -75,7 +80,7 @@ public class DbDeploy {
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
 		DatabaseSchemaVersionManager databaseSchemaVersion =
-				new DatabaseSchemaVersionManager(deltaset, dbmsSyntax, queryExecuter);
+				new DatabaseSchemaVersionManager(deltaset, dbmsSyntax, queryExecuter, changeLogTableName);
 
 		ChangeScriptRepository changeScriptRepository =
 				new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
@@ -170,6 +175,10 @@ public class DbDeploy {
 	public String getDriver() {
 		return driver;
 	}
+
+    public String getChangeLogTableName() {
+        return changeLogTableName;
+    }
 
     public String getWelcomeString() {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("welcome.txt");
