@@ -6,8 +6,6 @@ import org.apache.tools.ant.Task;
 
 import java.io.File;
 
-import com.dbdeploy.DbDeploy;
-
 public class AntTarget extends Task {
 	private DbDeploy dbDeploy = new DbDeploy();
 
@@ -24,6 +22,7 @@ public class AntTarget extends Task {
 			+ "\n\t\tmaxNumberToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
 			+ "\n\t\tdeltaSet=\"[NAME OF DELTA SET TO BE APPLIED]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
+			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t/>"
 			+ "\n\n* - Indicates mandatory parameter";
 
@@ -77,6 +76,10 @@ public class AntTarget extends Task {
 
 	public void setUndoOutputfile(File undoOutputfile) {
 		dbDeploy.setUndoOutputfile(undoOutputfile);
+	}
+
+	public void setChangeLogTableName(String changeLogTableName) {
+		dbDeploy.setChangeLogTableName(changeLogTableName);
 	}
 
 }
