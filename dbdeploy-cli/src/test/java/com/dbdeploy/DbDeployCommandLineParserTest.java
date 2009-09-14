@@ -26,7 +26,7 @@ public class DbDeployCommandLineParserTest {
 		parser.parse(("-U userid -Ppassword --driver a.b.c --url b:c:d " +
 				"--scriptdirectory . -o output.sql " +
 				"--changeLogTableName my-change-log " +
-				"--dbms ora --deltaset Schema " +
+				"--dbms ora " +
 				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
 
 		assertThat(dbDeploy.getUserid(), is("userid"));
@@ -36,7 +36,6 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getScriptdirectory().getName(), is("."));
 		assertThat(dbDeploy.getOutputfile().getName(), is("output.sql"));
 		assertThat(dbDeploy.getDbms(), is("ora"));
-		assertThat(dbDeploy.getDeltaset(), is("Schema"));
 		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));

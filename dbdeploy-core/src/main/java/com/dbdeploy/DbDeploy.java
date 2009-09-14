@@ -23,7 +23,6 @@ public class DbDeploy {
 	private File undoOutputfile;
 	private String dbms;
 	private Integer lastChangeToApply = Integer.MAX_VALUE;
-	private String deltaset = "Main";
 	private String driver;
     private String changeLogTableName = "changelog";
     private String delimiter = ";";
@@ -61,10 +60,6 @@ public class DbDeploy {
 		this.lastChangeToApply = lastChangeToApply;
 	}
 
-	public void setDeltaset(String deltaset) {
-		this.deltaset = deltaset;
-	}
-
 	public void setUndoOutputfile(File undoOutputfile) {
 		this.undoOutputfile = undoOutputfile;
 	}
@@ -85,7 +80,7 @@ public class DbDeploy {
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
 		DatabaseSchemaVersionManager databaseSchemaVersionManager =
-				new DatabaseSchemaVersionManager(deltaset, dbmsSyntax, queryExecuter, changeLogTableName);
+				new DatabaseSchemaVersionManager(dbmsSyntax, queryExecuter, changeLogTableName);
 
 		ChangeScriptRepository changeScriptRepository =
 				new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
@@ -170,10 +165,6 @@ public class DbDeploy {
 
 	public Integer getLastChangeToApply() {
 		return lastChangeToApply;
-	}
-
-	public String getDeltaset() {
-		return deltaset;
 	}
 
 	public String getDriver() {

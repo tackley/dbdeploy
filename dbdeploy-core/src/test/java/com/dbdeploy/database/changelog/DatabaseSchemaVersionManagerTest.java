@@ -29,10 +29,10 @@ public class DatabaseSchemaVersionManagerTest {
 	public void setUp() throws SQLException {
 		MockitoAnnotations.initMocks(this);
 
-		when(queryExecuter.execute(anyString(), anyString())).thenReturn(expectedResultSet);
+		when(queryExecuter.executeQuery(anyString())).thenReturn(expectedResultSet);
 
 		schemaVersionManager
-			= new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter, "changelog");
+			= new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter, "changelog");
 
 	}
 
@@ -51,8 +51,8 @@ public class DatabaseSchemaVersionManagerTest {
 		final ChangeScript script = new ChangeScript(99, "Some Description");
 		String sql = schemaVersionManager.getChangelogInsertSql(script);
 		String expected =
-				"INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description) " +
-						"VALUES (99, 'deltaSetName', (timestamp), (user), 'Some Description')";
+				"INSERT INTO changelog (change_number, complete_dt, applied_by, description) " +
+						"VALUES (99, (timestamp), (user), 'Some Description')";
 		assertThat(sql, equalToIgnoringWhiteSpace(expected));
 	}
 
@@ -61,14 +61,14 @@ public class DatabaseSchemaVersionManagerTest {
 		final ChangeScript script = new ChangeScript(99, "Some Description");
 		String sql = schemaVersionManager.getChangelogDeleteSql(script);
 		String expected =
-				"DELETE FROM changelog WHERE change_number = 99 and delta_set = 'deltaSetName'";
+				"DELETE FROM changelog WHERE change_number = 99";
 		assertThat(sql, equalToIgnoringWhiteSpace(expected));
 	}
     
     @Test
     public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnUpdate() {
         DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
                         "user_specified_changelog");
 
         final ChangeScript script = new ChangeScript(99, "Some Description");
@@ -80,18 +80,18 @@ public class DatabaseSchemaVersionManagerTest {
     @Test
     public void shouldGetAppliedChangesFromSpecifiedChangelogTableName() throws SQLException {
         DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
                         "user_specified_changelog");
 
         schemaVersionManagerWithDifferentTableName.getAppliedChanges();
 
-        verify(queryExecuter).execute(startsWith("SELECT change_number FROM user_specified_changelog "), anyString());
+        verify(queryExecuter).executeQuery(startsWith("SELECT change_number FROM user_specified_changelog "));
     }
 
     @Test
     public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnDelete() {
         DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager("deltaSetName", new StubDbmsSyntax(), queryExecuter,
+                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
                         "user_specified_changelog");
 
         final ChangeScript script = new ChangeScript(99, "Some Description");

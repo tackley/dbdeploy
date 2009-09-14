@@ -15,13 +15,11 @@ import java.util.List;
  */
 public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
-	private final String deltaSet;
 	private final DbmsSyntax dbmsSyntax;
 	private final QueryExecuter queryExecuter;
     private final String changeLogTableName;
 
-    public DatabaseSchemaVersionManager(String deltaSet, DbmsSyntax dbmsSyntax, QueryExecuter queryExecuter, String changeLogTableName) {
-		this.deltaSet = deltaSet;
+    public DatabaseSchemaVersionManager(DbmsSyntax dbmsSyntax, QueryExecuter queryExecuter, String changeLogTableName) {
 		this.dbmsSyntax = dbmsSyntax;
 		this.queryExecuter = queryExecuter;
         this.changeLogTableName = changeLogTableName;
@@ -29,8 +27,8 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
 	public List<Integer> getAppliedChanges() {
 		try {
-			ResultSet rs = queryExecuter.execute("SELECT change_number FROM " + changeLogTableName
-                    + " WHERE delta_set = ? ORDER BY change_number", deltaSet);
+			ResultSet rs = queryExecuter.executeQuery(
+					"SELECT change_number FROM " + changeLogTableName + "  ORDER BY change_number");
 
 			List<Integer> changeNumbers = new ArrayList<Integer>();
 
@@ -49,10 +47,9 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
 	public String getChangelogInsertSql(ChangeScript script) {
 		return String.format(
-			"INSERT INTO " + changeLogTableName + " (change_number, delta_set, complete_dt, applied_by, description)%n" +
-					" VALUES (%d, '%s', %s, %s, '%s')",
+			"INSERT INTO " + changeLogTableName + " (change_number, complete_dt, applied_by, description)%n" +
+					" VALUES (%d, %s, %s, '%s')",
 			script.getId(),
-			deltaSet,
 			dbmsSyntax.generateTimestamp(),
 			dbmsSyntax.generateUser(),
 			script.getDescription());
@@ -60,7 +57,7 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
 	public String getChangelogDeleteSql(ChangeScript script) {
 		return String.format(
-			"DELETE FROM " + changeLogTableName + " WHERE change_number = %d AND delta_set = '%s'",
-				script.getId(), deltaSet);
+			"DELETE FROM " + changeLogTableName + " WHERE change_number = %d",
+				script.getId());
 	}
 }

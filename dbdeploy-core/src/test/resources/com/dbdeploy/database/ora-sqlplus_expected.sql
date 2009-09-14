@@ -7,8 +7,8 @@ SET DEFINE OFF
 
 -- contents of change script 1
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
- VALUES (1, 'null', CURRENT_TIMESTAMP, USER, '001_change.sql');
+INSERT INTO changelog (change_number, complete_dt, applied_by, description)
+ VALUES (1, CURRENT_TIMESTAMP, USER, '001_change.sql');
 
 COMMIT;
 
@@ -21,8 +21,8 @@ COMMIT;
 
 -- contents of change script 2
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
- VALUES (2, 'null', CURRENT_TIMESTAMP, USER, '002_change.sql');
+INSERT INTO changelog (change_number, complete_dt, applied_by, description)
+ VALUES (2, CURRENT_TIMESTAMP, USER, '002_change.sql');
 
 COMMIT;
 

@@ -9,10 +9,9 @@ public class QueryExecuter {
 		connection = DriverManager.getConnection(connectionString, username, password);
 	}
 
-	public ResultSet execute(String sql, String parameter) throws SQLException {
-		PreparedStatement statement = connection.prepareStatement(sql);
-		statement.setString(1, parameter);
-		return statement.executeQuery();
+	public ResultSet executeQuery(String sql) throws SQLException {
+		Statement statement = connection.createStatement();
+		return statement.executeQuery(sql);
 	}
 
 	public void execute(String sql) throws SQLException {

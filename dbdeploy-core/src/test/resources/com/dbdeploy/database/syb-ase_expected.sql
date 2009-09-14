@@ -6,8 +6,8 @@
 
 -- contents of change script 1
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
- VALUES (1, 'null', getdate(), user_name(), '001_change.sql')
+INSERT INTO changelog (change_number, complete_dt, applied_by, description)
+ VALUES (1, getdate(), user_name(), '001_change.sql')
 GO
 
 COMMIT
@@ -22,8 +22,8 @@ GO
 
 -- contents of change script 2
 
-INSERT INTO changelog (change_number, delta_set, complete_dt, applied_by, description)
- VALUES (2, 'null', getdate(), user_name(), '002_change.sql')
+INSERT INTO changelog (change_number, complete_dt, applied_by, description)
+ VALUES (2, getdate(), user_name(), '002_change.sql')
 GO
 
 COMMIT

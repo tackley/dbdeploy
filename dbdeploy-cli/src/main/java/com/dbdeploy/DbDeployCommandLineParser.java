@@ -104,13 +104,7 @@ public class DbDeployCommandLineParser {
 
 		options.addOption(OptionBuilder
 				.hasArg()
-				.withDescription("delta set name (default: Main)")
-				.withLongOpt("deltaset")
-				.create());
-
-		options.addOption(OptionBuilder
-				.hasArg()
-				.withDescription("name of schema version table to use")
+				.withDescription("name of change log table to use (default: changelog)")
 				.withLongOpt("changeLogTableName")
 				.create("t"));
 

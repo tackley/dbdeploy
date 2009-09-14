@@ -44,14 +44,13 @@ public class Database {
 		execute("CREATE TABLE " + changeLogTableName +
                 " ( " +
 				"  change_number INTEGER NOT NULL, " +
-				"  delta_set VARCHAR(10) NOT NULL, " +
 				"  complete_dt TIMESTAMP NOT NULL, " +
 				"  applied_by VARCHAR(100) NOT NULL, " +
 				"  description VARCHAR(500) NOT NULL " +
 				")");
 
 		execute("ALTER TABLE " + changeLogTableName +
-                " ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number, delta_set)");
+                " ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number)");
 	}
 
 	private void execute(String sql) throws SQLException {
@@ -106,7 +105,7 @@ public class Database {
 		final QueryExecuter queryExecuter = new QueryExecuter(connectionString, DATABASE_USERNAME, DATABASE_PASSWORD);
 
 		DatabaseSchemaVersionManager schemaVersionManager =
-                new DatabaseSchemaVersionManager("Main", syntax, queryExecuter, changeLogTableName);
+                new DatabaseSchemaVersionManager(syntax, queryExecuter, changeLogTableName);
 		return schemaVersionManager.getAppliedChanges();
 	}
 }

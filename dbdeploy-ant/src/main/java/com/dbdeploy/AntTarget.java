@@ -21,7 +21,6 @@ public class AntTarget extends Task {
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\tmaxNumberToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
-			+ "\n\t\tdeltaSet=\"[NAME OF DELTA SET TO BE APPLIED]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
@@ -71,10 +70,6 @@ public class AntTarget extends Task {
 
 	public void setLastChangeToApply(Integer maxNumberToApply) {
 		dbDeploy.setLastChangeToApply(maxNumberToApply);
-	}
-
-	public void setDeltaSet(String deltaSet) {
-		dbDeploy.setDeltaset(deltaSet);
 	}
 
 	public void setUndoOutputfile(File undoOutputfile) {
