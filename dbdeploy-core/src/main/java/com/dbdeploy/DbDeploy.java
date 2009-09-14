@@ -1,13 +1,12 @@
 package com.dbdeploy;
 
-import com.dbdeploy.appliers.ApplyMode;
 import com.dbdeploy.appliers.DirectToDbApplier;
-import com.dbdeploy.appliers.PrintStreamApplier;
+import com.dbdeploy.appliers.TemplateBasedApplier;
+import com.dbdeploy.appliers.UndoTemplateBasedApplier;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
-import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
 import com.dbdeploy.scripts.DirectoryScanner;
@@ -24,11 +23,12 @@ public class DbDeploy {
 	private String dbms;
 	private Integer lastChangeToApply = Integer.MAX_VALUE;
 	private String driver;
-    private String changeLogTableName = "changelog";
-    private String delimiter = ";";
-    private DelimiterType delimiterType = DelimiterType.normal;
+	private String changeLogTableName = "changelog";
+	private String delimiter = ";";
+	private DelimiterType delimiterType = DelimiterType.normal;
+	private File templatedir;
 
-    public void setDriver(String driver) {
+	public void setDriver(String driver) {
 		this.driver = driver;
 	}
 
@@ -64,23 +64,21 @@ public class DbDeploy {
 		this.undoOutputfile = undoOutputfile;
 	}
 
-    public void setChangeLogTableName(String changeLogTableName) {
-        this.changeLogTableName = changeLogTableName;
-    }
+	public void setChangeLogTableName(String changeLogTableName) {
+		this.changeLogTableName = changeLogTableName;
+	}
 
-    public void go() throws Exception {
-        System.err.println(getWelcomeString());
+	public void go() throws Exception {
+		System.err.println(getWelcomeString());
 
 		validate();
 
 		Class.forName(driver);
 
-		DbmsSyntax dbmsSyntax = DbmsSyntax.createFor(dbms);
-
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
 		DatabaseSchemaVersionManager databaseSchemaVersionManager =
-				new DatabaseSchemaVersionManager(dbmsSyntax, queryExecuter, changeLogTableName);
+				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 
 		ChangeScriptRepository changeScriptRepository =
 				new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
@@ -88,19 +86,22 @@ public class DbDeploy {
 		ChangeScriptApplier doScriptApplier;
 
 		if (outputfile != null) {
-			doScriptApplier = new PrintStreamApplier(ApplyMode.DO, new PrintStream(outputfile), dbmsSyntax, databaseSchemaVersionManager);
+			doScriptApplier = new TemplateBasedApplier(
+					new PrintStream(outputfile), dbms,
+					changeLogTableName, getTemplatedir());
 		} else {
-            QueryStatementSplitter splitter = new QueryStatementSplitter();
-            splitter.setDelimiter(getDelimiter());
-            splitter.setDelimiterType(getDelimiterType());
-            doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
+			QueryStatementSplitter splitter = new QueryStatementSplitter();
+			splitter.setDelimiter(getDelimiter());
+			splitter.setDelimiterType(getDelimiterType());
+			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;
 
 		if (undoOutputfile != null) {
 			undoScriptApplier =
-					new PrintStreamApplier(ApplyMode.UNDO, new PrintStream(undoOutputfile), dbmsSyntax, databaseSchemaVersionManager);
+					new UndoTemplateBasedApplier(
+							new PrintStream(undoOutputfile), dbms, changeLogTableName, getTemplatedir());
 
 		}
 
@@ -115,7 +116,6 @@ public class DbDeploy {
 		checkForRequiredParameter(userid, "userid");
 		checkForRequiredParameter(driver, "driver");
 		checkForRequiredParameter(url, "url");
-		checkForRequiredParameter(dbms, "dbms");
 		checkForRequiredParameter(scriptdirectory, "dir");
 
 		if (scriptdirectory == null || !scriptdirectory.isDirectory()) {
@@ -171,33 +171,41 @@ public class DbDeploy {
 		return driver;
 	}
 
-    public String getChangeLogTableName() {
-        return changeLogTableName;
-    }
+	public void setTemplatedir(File templatedir) {
+		this.templatedir = templatedir;
+	}
 
-    public String getDelimiter() {
-        return delimiter;
-    }
+	public File getTemplatedir() {
+		return templatedir;
+	}
 
-    public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
-    }
+	public String getChangeLogTableName() {
+		return changeLogTableName;
+	}
 
-    public DelimiterType getDelimiterType() {
-        return delimiterType;
-    }
+	public String getDelimiter() {
+		return delimiter;
+	}
 
-    public void setDelimiterType(DelimiterType delimiterType) {
-        this.delimiterType = delimiterType;
-    }
+	public void setDelimiter(String delimiter) {
+		this.delimiter = delimiter;
+	}
+
+	public DelimiterType getDelimiterType() {
+		return delimiterType;
+	}
 
 
-    public String getWelcomeString() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("welcome.txt");
-        try {
-            return new BufferedReader(new InputStreamReader(stream)).readLine();
-        } catch (IOException e) {
-            return null;
-        }
-    }
+	public void setDelimiterType(DelimiterType delimiterType) {
+		this.delimiterType = delimiterType;
+	}
+
+	public String getWelcomeString() {
+		InputStream stream = getClass().getClassLoader().getResourceAsStream("welcome.txt");
+		try {
+			return new BufferedReader(new InputStreamReader(stream)).readLine();
+		} catch (IOException e) {
+			return null;
+		}
+	}
 }

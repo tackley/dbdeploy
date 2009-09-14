@@ -2,10 +2,8 @@ package com.dbdeploy;
 
 import com.dbdeploy.scripts.ChangeScript;
 
+import java.util.List;
+
 public interface ChangeScriptApplier {
-	void begin();
-
-	void apply(ChangeScript changeScript);
-
-	void end();
+	void apply(List<ChangeScript> changeScript);
 }

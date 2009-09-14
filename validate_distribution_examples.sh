@@ -1,6 +1,11 @@
 #!/bin/sh
 
-mvn install
+mvn clean install
+
+if [ "$?" -ne "0" ]; then
+  echo "Hmm. Build failed."
+  exit 99
+fi
 
 TMPDIR=$(mktemp --directory)
 

@@ -47,11 +47,10 @@ public class DirectToDbApplierTest {
 	public void shouldInsertToSchemaVersionTable() throws Exception {
 		ChangeScript changeScript = new ChangeScript(1, "script.sql");
 
-		when(schemaVersionManager.getChangelogInsertSql(changeScript)).thenReturn("the insert script");
-
 		applier.insertToSchemaVersionTable(changeScript);
 
-		verify(queryExecuter).execute("the insert script");
+        verify(schemaVersionManager).recordScriptApplied(changeScript);
+
 	}
 
 	@Test

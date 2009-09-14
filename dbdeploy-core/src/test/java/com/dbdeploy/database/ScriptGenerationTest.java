@@ -2,13 +2,10 @@ package com.dbdeploy.database;
 
 import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.Controller;
-import com.dbdeploy.scripts.ChangeScript;
-import com.dbdeploy.exceptions.SchemaVersionTrackingException;
-import com.dbdeploy.appliers.ApplyMode;
-import com.dbdeploy.appliers.PrintStreamApplier;
+import com.dbdeploy.appliers.TemplateBasedApplier;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
-import com.dbdeploy.database.syntax.DbmsSyntax;
-import com.dbdeploy.database.syntax.DbmsSyntaxFactory;
+import com.dbdeploy.exceptions.SchemaVersionTrackingException;
+import com.dbdeploy.scripts.ChangeScript;
 import com.dbdeploy.scripts.ChangeScriptRepository;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -23,7 +20,7 @@ public class ScriptGenerationTest {
 
 	@Test
 	public void generateConsolidatedChangesScriptForAllDatabasesAndCompareAgainstTemplate() throws Exception {
-		for (String syntax : new DbmsSyntaxFactory().getSyntaxNames()) {
+		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase")) {
 			try {
 				System.out.printf("Testing syntax %s\n", syntax);
 				runIntegratedTestAndConfirmOutputResults(syntax);
@@ -34,9 +31,8 @@ public class ScriptGenerationTest {
 	}
 
 	private void runIntegratedTestAndConfirmOutputResults(String syntaxName) throws Exception {
-		DbmsSyntax syntax = DbmsSyntax.createFor(syntaxName);
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PrintStream printStream = new PrintStream(outputStream);
 
 		ChangeScript changeOne = new StubChangeScript(1, "001_change.sql", "-- contents of change script 1");
@@ -45,10 +41,11 @@ public class ScriptGenerationTest {
 		List<ChangeScript> changeScripts = Arrays.asList(changeOne, changeTwo);
 		ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(changeScripts);
 
-		final StubSchemaManager schemaManager = new StubSchemaManager(syntax);
-		ChangeScriptApplier applier = new PrintStreamApplier(ApplyMode.DO, printStream, syntax, schemaManager);
-		Controller controller = new Controller(changeScriptRepository, schemaManager,
-				applier, null);
+
+
+		final StubSchemaManager schemaManager = new StubSchemaManager();
+		ChangeScriptApplier applier = new TemplateBasedApplier(printStream, syntaxName, "changelog", null);
+		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
 
 		controller.processChangeScripts(Integer.MAX_VALUE);
 
@@ -86,8 +83,8 @@ public class ScriptGenerationTest {
 
 
 	private class StubSchemaManager extends DatabaseSchemaVersionManager {
-		public StubSchemaManager(DbmsSyntax syntax) {
-			super(syntax, null, "changelog");
+		public StubSchemaManager() {
+			super(null, "changelog");
 		}
 
 		@Override

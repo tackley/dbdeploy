@@ -1,5 +1,4 @@
 
-
 -- START CHANGE SCRIPT #1: 001_change.sql
 
 BEGIN TRANSACTION

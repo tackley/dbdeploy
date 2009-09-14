@@ -37,26 +37,16 @@ public class Controller {
 
 		logStatus(scripts, applied, toApply);
 
-		applyScripts(toApply, changeScriptApplier);
+        changeScriptApplier.apply(Collections.unmodifiableList(toApply));
 
-		if (undoScriptApplier != null) {
+        if (undoScriptApplier != null) {
 			info("Generating undo scripts...");
 			Collections.reverse(toApply);
-			applyScripts(toApply, undoScriptApplier);
-		}
+            undoScriptApplier.apply(Collections.unmodifiableList(toApply));
+        }
 	}
 
-	private void applyScripts(List<ChangeScript> toApply, ChangeScriptApplier applier) {
-		applier.begin();
-
-		for (ChangeScript changeScript : toApply) {
-			applier.apply(changeScript);
-		}
-
-		applier.end();
-	}
-
-	private void logStatus(List<ChangeScript> scripts, List<Integer> applied, List<ChangeScript> toApply) {
+    private void logStatus(List<ChangeScript> scripts, List<Integer> applied, List<ChangeScript> toApply) {
 		info("Changes currently applied to database:\n  " + prettyPrinter.format(applied));
 		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(scripts));
 		info("To be applied:\n  " + prettyPrinter.formatChangeScriptList(toApply));

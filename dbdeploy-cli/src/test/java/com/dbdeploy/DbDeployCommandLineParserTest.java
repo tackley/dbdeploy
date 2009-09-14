@@ -27,6 +27,7 @@ public class DbDeployCommandLineParserTest {
 				"--scriptdirectory . -o output.sql " +
 				"--changeLogTableName my-change-log " +
 				"--dbms ora " +
+				"--templatedir /tmp/mytemplates " +
 				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
 
 		assertThat(dbDeploy.getUserid(), is("userid"));
@@ -39,6 +40,7 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
+		assertThat(dbDeploy.getTemplatedir().getPath(), is("/tmp/mytemplates"));
 	}
 
 }

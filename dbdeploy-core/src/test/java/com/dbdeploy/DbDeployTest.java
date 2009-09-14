@@ -48,12 +48,6 @@ public class DbDeployTest {
 		dbDeploy.go();
 	}
 
-	@Test(expected = UsageException.class)
-	public void shouldThrowIfDbmsNotSpecified() throws Exception {
-		dbDeploy.setDbms(null);
-		dbDeploy.go();
-	}
-
 	@Test
 	public void shouldThrowIfScriptDirectoryIsNotAValidDirectory() throws Exception {
 		dbDeploy.setScriptdirectory(new File("fileThatDoesntExist.txt"));
@@ -65,8 +59,10 @@ public class DbDeployTest {
 		}
 	}
 
-    @Test
-    public void shouldReportVersionNumberWithoutCrashing() {
-        assertThat(dbDeploy.getWelcomeString(), startsWith("dbdeploy"));
-    }
+	@Test
+	public void shouldReportVersionNumberWithoutCrashing() {
+		assertThat(dbDeploy.getWelcomeString(), startsWith("dbdeploy"));
+	}
+
+
 }

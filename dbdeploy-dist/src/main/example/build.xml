@@ -46,7 +46,6 @@
                   userid="sa"
                   password=""
                   dir="."
-                  dbms="hsql"
                 />
 
     </target>

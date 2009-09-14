@@ -17,7 +17,8 @@ public class AntTarget extends Task {
 			+ "\n\t\tpassword=\"[DATABASE USER ID PASSWORD]\""
 			+ "\n\t\tdriver=\"[DATABASE DRIVER]\" *"
 			+ "\n\t\turl=\"[DATABASE URL]\" *"
-			+ "\n\t\tdbms=\"[YOUR DBMS]\" *"
+			+ "\n\t\tdbms=\"[YOUR DBMS]\""
+			+ "\n\t\ttemplatedir=\"[DIRECTORY FOR DBMS TEMPLATE SCRIPTS, IF NOT USING BUILT-IN]\""
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
@@ -80,12 +81,16 @@ public class AntTarget extends Task {
 		dbDeploy.setChangeLogTableName(changeLogTableName);
 	}
 
-    public void setDelimiter(String delimiter) {
-        dbDeploy.setDelimiter(delimiter);
-    }
+	public void setDelimiter(String delimiter) {
+		dbDeploy.setDelimiter(delimiter);
+	}
 
-    public void setDelimitertype(DelimiterType delimiterType) {
-        dbDeploy.setDelimiterType(delimiterType);
-    }
+	public void setDelimitertype(DelimiterType delimiterType) {
+		dbDeploy.setDelimiterType(delimiterType);
+	}
+
+	public void setTemplatedir(File templateDirectory) {
+		dbDeploy.setTemplatedir(templateDirectory);
+	}
 }
 

@@ -104,6 +104,12 @@ public class DbDeployCommandLineParser {
 
 		options.addOption(OptionBuilder
 				.hasArg()
+				.withDescription("template directory")
+				.withLongOpt("templatedir")
+				.create());
+
+		options.addOption(OptionBuilder
+				.hasArg()
 				.withDescription("name of change log table to use (default: changelog)")
 				.withLongOpt("changeLogTableName")
 				.create("t"));
@@ -119,6 +125,7 @@ public class DbDeployCommandLineParser {
 				.withDescription("delimiter type to separate sql statements (row or normal)")
 				.withLongOpt("delimitertype")
 				.create());
+
 
 		return options;
 	}

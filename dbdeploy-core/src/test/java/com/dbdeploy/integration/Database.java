@@ -3,7 +3,6 @@ package com.dbdeploy.integration;
 import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
-import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import org.apache.commons.io.FileUtils;
 
@@ -22,7 +21,6 @@ public class Database {
 	private static final String DATABASE_DRIVER = "org.hsqldb.jdbcDriver";
 	private static final String DATABASE_USERNAME = "sa";
 	private static final String DATABASE_PASSWORD = "";
-	private DbmsSyntax syntax;
 
     public Database(String databaseName) throws ClassNotFoundException, SQLException {
         this(databaseName, "changelog");
@@ -32,7 +30,6 @@ public class Database {
         this.changeLogTableName = changeLogTableName;
         connectionString = "jdbc:hsqldb:mem:" + databaseName;
 		connection = openConnection();
-		syntax = DbmsSyntax.createFor(DATABASE_SYNTAX);
 	}
 
 	private Connection openConnection() throws ClassNotFoundException, SQLException {
@@ -105,7 +102,7 @@ public class Database {
 		final QueryExecuter queryExecuter = new QueryExecuter(connectionString, DATABASE_USERNAME, DATABASE_PASSWORD);
 
 		DatabaseSchemaVersionManager schemaVersionManager =
-                new DatabaseSchemaVersionManager(syntax, queryExecuter, changeLogTableName);
+                new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 		return schemaVersionManager.getAppliedChanges();
 	}
 }

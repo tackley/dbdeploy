@@ -1,6 +1,5 @@
 package com.dbdeploy.database.changelog;
 
-import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.scripts.ChangeScript;
 import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
@@ -17,70 +16,67 @@ import org.mockito.MockitoAnnotations;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseSchemaVersionManagerTest {
-	private DatabaseSchemaVersionManager schemaVersionManager;
+    private final ChangeScript script = new ChangeScript(99, "Some Description");
 
-	@Mock private ResultSet expectedResultSet;
-	@Mock private QueryExecuter queryExecuter;
+    private DatabaseSchemaVersionManager schemaVersionManager;
 
-	@Before
-	public void setUp() throws SQLException {
-		MockitoAnnotations.initMocks(this);
+    @Mock private ResultSet expectedResultSet;
+    @Mock private QueryExecuter queryExecuter;
+    @Mock private DatabaseSchemaVersionManager.CurrentTimeProvider timeProvider;
 
-		when(queryExecuter.executeQuery(anyString())).thenReturn(expectedResultSet);
+    @Before
+    public void setUp() throws SQLException {
+        MockitoAnnotations.initMocks(this);
 
-		schemaVersionManager
-			= new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter, "changelog");
+        when(queryExecuter.executeQuery(anyString())).thenReturn(expectedResultSet);
 
-	}
+        schemaVersionManager = new DatabaseSchemaVersionManager(queryExecuter, "changelog");
+        schemaVersionManager.setTimeProvider(timeProvider);
+    }
 
-	@Test
-	public void shouldUseQueryExecuterToReadInformationFromTheChangelogTable() throws Exception {
-		when(expectedResultSet.next()).thenReturn(true, true, true, false);
-		when(expectedResultSet.getInt(1)).thenReturn(5, 9, 12);
-
-		final List<Integer> numbers = schemaVersionManager.getAppliedChanges();
-		assertThat(numbers, hasItems(5, 9, 12));
-	}
-
-
-	@Test
-	public void shouldGenerateSqlStringToUpdateChangelogTableAfterScriptApplication() throws Exception {
-		final ChangeScript script = new ChangeScript(99, "Some Description");
-		String sql = schemaVersionManager.getChangelogInsertSql(script);
-		String expected =
-				"INSERT INTO changelog (change_number, complete_dt, applied_by, description) " +
-						"VALUES (99, (timestamp), (user), 'Some Description')";
-		assertThat(sql, equalToIgnoringWhiteSpace(expected));
-	}
-
-	@Test
-	public void shouldGenerateSqlStringToDeleteChangelogTableAfterUndoScriptApplication() throws Exception {
-		final ChangeScript script = new ChangeScript(99, "Some Description");
-		String sql = schemaVersionManager.getChangelogDeleteSql(script);
-		String expected =
-				"DELETE FROM changelog WHERE change_number = 99";
-		assertThat(sql, equalToIgnoringWhiteSpace(expected));
-	}
-    
     @Test
-    public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnUpdate() {
-        DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
-                        "user_specified_changelog");
+    public void shouldUseQueryExecuterToReadInformationFromTheChangelogTable() throws Exception {
+        when(expectedResultSet.next()).thenReturn(true, true, true, false);
+        when(expectedResultSet.getInt(1)).thenReturn(5, 9, 12);
 
-        final ChangeScript script = new ChangeScript(99, "Some Description");
-        String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogInsertSql(script);
+        final List<Integer> numbers = schemaVersionManager.getAppliedChanges();
+        assertThat(numbers, hasItems(5, 9, 12));
+    }
 
-        assertThat(updateSql, Matchers.startsWith("INSERT INTO user_specified_changelog "));
+
+    @Test
+    public void shouldUpdateChangelogTable() throws Exception {
+        Date now = new Date();
+
+        when(queryExecuter.getDatabaseUsername()).thenReturn("DBUSER");
+        when(timeProvider.now()).thenReturn(now);
+
+        schemaVersionManager.recordScriptApplied(script);
+        String expected =
+                "INSERT INTO changelog (change_number, complete_dt, applied_by, description) " +
+                        "VALUES (?, ?, ?, ?)";
+
+        verify(queryExecuter).execute(expected, script.getId(),
+                new Timestamp(now.getTime()), "DBUSER", script.getDescription());
+    }
+
+    @Test
+    public void shouldGenerateSqlStringToDeleteChangelogTableAfterUndoScriptApplication() throws Exception {
+        String sql = schemaVersionManager.getChangelogDeleteSql(script);
+        String expected =
+                "DELETE FROM changelog WHERE change_number = 99";
+        assertThat(sql, equalToIgnoringWhiteSpace(expected));
     }
 
     @Test
     public void shouldGetAppliedChangesFromSpecifiedChangelogTableName() throws SQLException {
         DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
+                new DatabaseSchemaVersionManager(queryExecuter,
                         "user_specified_changelog");
 
         schemaVersionManagerWithDifferentTableName.getAppliedChanges();
@@ -91,24 +87,12 @@ public class DatabaseSchemaVersionManagerTest {
     @Test
     public void shouldGenerateSqlStringContainingSpecifiedChangelogTableNameOnDelete() {
         DatabaseSchemaVersionManager schemaVersionManagerWithDifferentTableName =
-                new DatabaseSchemaVersionManager(new StubDbmsSyntax(), queryExecuter,
+                new DatabaseSchemaVersionManager(queryExecuter,
                         "user_specified_changelog");
 
-        final ChangeScript script = new ChangeScript(99, "Some Description");
         String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogDeleteSql(script);
 
         assertThat(updateSql, Matchers.startsWith("DELETE FROM user_specified_changelog "));
     }
-
-	private class StubDbmsSyntax extends DbmsSyntax {
-		public String generateTimestamp() {
-			return "(timestamp)";
-		}
-
-		public String generateUser() {
-			return "(user)";
-		}
-	}
-
 }
 

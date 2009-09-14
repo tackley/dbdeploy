@@ -20,9 +20,9 @@
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <outputDirectory>example</outputDirectory>
-            <excludes>
-                <exclude>${project.groupId}:*</exclude>
-            </excludes>
+            <includes>
+                <include>hsqldb:*</include>
+            </includes>
         </dependencySet>
     </dependencySets>
    

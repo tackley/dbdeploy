@@ -1,13 +1,14 @@
 package com.dbdeploy.database.changelog;
 
 import com.dbdeploy.AppliedChangesProvider;
-import com.dbdeploy.database.syntax.DbmsSyntax;
 import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import com.dbdeploy.scripts.ChangeScript;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,13 +16,12 @@ import java.util.List;
  */
 public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
-	private final DbmsSyntax dbmsSyntax;
-	private final QueryExecuter queryExecuter;
+    private final QueryExecuter queryExecuter;
     private final String changeLogTableName;
+    private CurrentTimeProvider timeProvider = new CurrentTimeProvider();
 
-    public DatabaseSchemaVersionManager(DbmsSyntax dbmsSyntax, QueryExecuter queryExecuter, String changeLogTableName) {
-		this.dbmsSyntax = dbmsSyntax;
-		this.queryExecuter = queryExecuter;
+    public DatabaseSchemaVersionManager(QueryExecuter queryExecuter, String changeLogTableName) {
+        this.queryExecuter = queryExecuter;
         this.changeLogTableName = changeLogTableName;
     }
 
@@ -45,19 +45,36 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 		}
 	}
 
-	public String getChangelogInsertSql(ChangeScript script) {
-		return String.format(
-			"INSERT INTO " + changeLogTableName + " (change_number, complete_dt, applied_by, description)%n" +
-					" VALUES (%d, %s, %s, '%s')",
-			script.getId(),
-			dbmsSyntax.generateTimestamp(),
-			dbmsSyntax.generateUser(),
-			script.getDescription());
-	}
-
-	public String getChangelogDeleteSql(ChangeScript script) {
+    public String getChangelogDeleteSql(ChangeScript script) {
 		return String.format(
 			"DELETE FROM " + changeLogTableName + " WHERE change_number = %d",
 				script.getId());
 	}
+
+    public void recordScriptApplied(ChangeScript script) {
+        try {
+            queryExecuter.execute(
+                    "INSERT INTO " + changeLogTableName + " (change_number, complete_dt, applied_by, description)" +
+                            " VALUES (?, ?, ?, ?)",
+                    script.getId(),
+                    new Timestamp(timeProvider.now().getTime()),
+                    queryExecuter.getDatabaseUsername(),
+                    script.getDescription()
+                    );
+        } catch (SQLException e) {
+            throw new SchemaVersionTrackingException("Could not update change log because: "
+                    + e.getMessage(), e);
+        }
+    }
+
+    public void setTimeProvider(CurrentTimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
+    }
+
+    public static class CurrentTimeProvider {
+
+        public Date now() {
+            return new Date();
+        }
+    }
 }
