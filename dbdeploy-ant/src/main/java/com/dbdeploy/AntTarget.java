@@ -20,7 +20,7 @@ public class AntTarget extends Task {
 			+ "\n\t\tdbms=\"[YOUR DBMS]\" *"
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
-			+ "\n\t\tmaxNumberToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
+			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
@@ -68,8 +68,8 @@ public class AntTarget extends Task {
 		dbDeploy.setDbms(dbms);
 	}
 
-	public void setLastChangeToApply(Integer maxNumberToApply) {
-		dbDeploy.setLastChangeToApply(maxNumberToApply);
+	public void setLastChangeToApply(Integer lastChangeToApply) {
+		dbDeploy.setLastChangeToApply(lastChangeToApply);
 	}
 
 	public void setUndoOutputfile(File undoOutputfile) {
