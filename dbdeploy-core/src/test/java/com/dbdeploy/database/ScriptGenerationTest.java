@@ -19,7 +19,7 @@ public class ScriptGenerationTest {
 
 	@Test
 	public void generateConsolidatedChangesScriptForAllDatabasesAndCompareAgainstTemplate() throws Exception {
-		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase", "db2")) {
+		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase", "db2", "pgsql")) {
 			try {
 				System.out.printf("Testing syntax %s\n", syntax);
 				runIntegratedTestAndConfirmOutputResults(syntax);
