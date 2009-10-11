@@ -37,12 +37,6 @@ public class ChangeScriptRepository implements AvailableChangeScriptsProvider {
 		return Collections.unmodifiableList(scripts);
 	}
 
-	public List<ChangeScript> getOrderedListOfUndoChangeScripts() {
-		Collections.reverse(this.scripts);
-		return Collections.unmodifiableList(scripts);
-	}
-
-	@Override
 	public List<ChangeScript> getAvailableChangeScripts() {
 		return getOrderedListOfDoChangeScripts();
 	}
