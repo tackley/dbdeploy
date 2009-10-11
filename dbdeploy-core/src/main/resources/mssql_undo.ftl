@@ -5,9 +5,6 @@
 
 -- START UNDO OF CHANGE SCRIPT ${script}
 
-BEGIN TRANSACTION
-GO
-
 ${script.undoContent}
 
 DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id}

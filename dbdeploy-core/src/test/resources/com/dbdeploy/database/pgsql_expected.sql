@@ -1,8 +1,6 @@
 
 -- START CHANGE SCRIPT #1: 001_change.sql
 
-BEGIN TRANSACTION;
-
 -- contents of change script 1
 
 INSERT INTO changelog (change_number, complete_dt, applied_by, description)
@@ -14,8 +12,6 @@ COMMIT;
 
 
 -- START CHANGE SCRIPT #2: 002_change.sql
-
-BEGIN TRANSACTION;
 
 -- contents of change script 2
 

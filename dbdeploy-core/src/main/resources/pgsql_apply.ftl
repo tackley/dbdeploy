@@ -5,8 +5,6 @@
 
 -- START CHANGE SCRIPT ${script}
 
-BEGIN TRANSACTION;
-
 ${script.content}
 
 INSERT INTO ${changeLogTableName} (change_number, complete_dt, applied_by, description)
