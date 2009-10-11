@@ -29,12 +29,14 @@ public class DirectoryScanner {
 		List<ChangeScript> scripts = new ArrayList<ChangeScript>();
 		
 		for (File file : directory.listFiles()) {
-			String filename = file.getName();
-			try {
-				int id = filenameParser.extractIdFromFilename(filename);
-				scripts.add(new ChangeScript(id, file));
-			} catch (UnrecognisedFilenameException e) {
-				// ignore
+			if (file.isFile()) {
+				String filename = file.getName();
+				try {
+					int id = filenameParser.extractIdFromFilename(filename);
+					scripts.add(new ChangeScript(id, file));
+				} catch (UnrecognisedFilenameException e) {
+					// ignore
+				}
 			}
 		}
 		
