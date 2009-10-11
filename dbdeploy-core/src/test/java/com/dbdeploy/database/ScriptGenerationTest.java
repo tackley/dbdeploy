@@ -16,11 +16,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class ScriptGenerationTest {
-	// TODO: need to test undo scripts as well as do scripts
 
 	@Test
 	public void generateConsolidatedChangesScriptForAllDatabasesAndCompareAgainstTemplate() throws Exception {
-		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase")) {
+		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase", "db2")) {
 			try {
 				System.out.printf("Testing syntax %s\n", syntax);
 				runIntegratedTestAndConfirmOutputResults(syntax);
