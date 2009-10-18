@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.dbdeploy</groupId>
         <artifactId>dbdeploy-parent</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0M2</version>
     </parent>
 
     <artifactId>dbdeploy-ant</artifactId>
