@@ -11,7 +11,8 @@ import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
 import com.dbdeploy.scripts.DirectoryScanner;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 
 public class DbDeploy {
 	private String url;
@@ -201,11 +202,7 @@ public class DbDeploy {
 	}
 
 	public String getWelcomeString() {
-		InputStream stream = getClass().getClassLoader().getResourceAsStream("welcome.txt");
-		try {
-			return new BufferedReader(new InputStreamReader(stream)).readLine();
-		} catch (IOException e) {
-			return null;
-		}
+        String version = getClass().getPackage().getImplementationVersion();
+        return "dbdeploy " + version;
 	}
 }
