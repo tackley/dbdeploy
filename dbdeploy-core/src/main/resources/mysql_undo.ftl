@@ -9,7 +9,7 @@ START TRANSACTION;
 
 ${script.undoContent}
 
-DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id};
+DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id?c};
 
 COMMIT;
 

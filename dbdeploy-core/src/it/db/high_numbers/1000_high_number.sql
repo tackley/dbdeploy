@@ -1,0 +1,3 @@
+--
+-- This sql file has a number > 1000 - see http://code.google.com/p/dbdeploy/issues/detail?id=36
+--

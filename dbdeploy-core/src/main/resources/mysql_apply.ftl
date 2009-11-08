@@ -8,7 +8,7 @@
 ${script.content}
 
 INSERT INTO ${changeLogTableName} (change_number, complete_dt, applied_by, description)
- VALUES (${script.id}, CURRENT_TIMESTAMP, USER(), '${script.description}');
+ VALUES (${script.id?c}, CURRENT_TIMESTAMP, USER(), '${script.description}');
 
 COMMIT;
 

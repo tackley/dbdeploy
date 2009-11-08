@@ -92,6 +92,22 @@ public class OutputToFileIntegrationTest {
         assertThat(db.getChangelogEntries(), hasItems(1, 2));
     }
 
+    @Test
+	public void shouldNotAddCommaSeparatorsToHighNumberedScripts() throws Exception {
+		Database db = new Database("high_number_test");
+		db.createSchemaVersionTable();
+
+		File outputFile = File.createTempFile("high_number_test",".sql");
+
+		DbDeploy dbDeploy = new DbDeploy();
+		db.applyDatabaseSettingsTo(dbDeploy);
+		dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/high_numbers"));
+		dbDeploy.setOutputfile(outputFile);
+		dbDeploy.go();
+
+		db.applyScript(outputFile);
+	}
+
 	private File findScriptDirectory(String directoryName) {
 		File directoryWhenRunningUnderMaven = new File(directoryName);
 		if (directoryWhenRunningUnderMaven.isDirectory()) {
