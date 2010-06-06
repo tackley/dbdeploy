@@ -24,7 +24,7 @@ public class QueryStatementSplitter {
 
         for (String line : lineTokenizer.getTokenArray()) {
             if (!currentSql.isEmpty()) {
-                currentSql.appendNewLine();
+                currentSql.append("\n");
             }
 
             currentSql.append(line);
