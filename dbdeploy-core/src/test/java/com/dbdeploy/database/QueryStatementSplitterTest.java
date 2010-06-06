@@ -45,12 +45,6 @@ public class QueryStatementSplitterTest {
         assertThat(result.size(), is(2));
     }
 
-    @Test
-    public void shouldSplitStatementsOnASemicolonAtTheEndOfALineIgnoringWhitespace() throws Exception {
-        List<String> result = splitter.split("SELECT 1;  \nSELECT 2;  ");
-        assertThat(result, hasItems("SELECT 1", "SELECT 2"));
-        assertThat(result.size(), is(2));
-    }
 
     @Test
     public void shouldLeaveLineBreaksAlone() throws Exception {
