@@ -20,7 +20,6 @@ public class QueryStatementSplitter {
 
         StrTokenizer lineTokenizer = new StrTokenizer(input);
         lineTokenizer.setDelimiterMatcher(StrMatcher.charSetMatcher("\r\n"));
-        lineTokenizer.setTrimmerMatcher(StrMatcher.trimMatcher());
 
         for (String line : lineTokenizer.getTokenArray()) {
             if (!currentSql.isEmpty()) {
