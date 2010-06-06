@@ -9,22 +9,22 @@ import java.io.IOException;
 
 public class ChangeScript implements Comparable {
 
-	private final int id;
+	private final long id;
 	private final File file;
 	private final String description;
 	private static final String UNDO_MARKER = "--//@UNDO";
 
-	public ChangeScript(int id) {
+	public ChangeScript(long id) {
 		this(id, "test");
 	}
 
-	public ChangeScript(int id, File file) {
+	public ChangeScript(long id, File file) {
 		this.id = id;
 		this.file = file;
 		this.description = file.getName();
 	}
 
-	public ChangeScript(int id, String description) {
+	public ChangeScript(long id, String description) {
 		this.id = id;
 		this.file = null;
 		this.description = description;
@@ -34,7 +34,7 @@ public class ChangeScript implements Comparable {
 		return file;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -44,7 +44,7 @@ public class ChangeScript implements Comparable {
 
 	public int compareTo(Object o) {
 		ChangeScript other = (ChangeScript) o;
-		return this.id - other.id;
+		return Long.valueOf(this.id).compareTo(other.id);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class DbDeploy {
 	private File outputfile;
 	private File undoOutputfile;
 	private String dbms;
-	private Integer lastChangeToApply = Integer.MAX_VALUE;
+	private Long lastChangeToApply = Long.MAX_VALUE;
 	private String driver;
 	private String changeLogTableName = "changelog";
 	private String delimiter = ";";
@@ -57,7 +57,7 @@ public class DbDeploy {
 		this.dbms = dbms;
 	}
 
-	public void setLastChangeToApply(Integer lastChangeToApply) {
+	public void setLastChangeToApply(Long lastChangeToApply) {
 		this.lastChangeToApply = lastChangeToApply;
 	}
 
@@ -164,7 +164,7 @@ public class DbDeploy {
 		return dbms;
 	}
 
-	public Integer getLastChangeToApply() {
+	public Long getLastChangeToApply() {
 		return lastChangeToApply;
 	}
 

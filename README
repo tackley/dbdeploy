@@ -1,0 +1,5 @@
+For this fork, I am addressing two issues:
+# Reduce script numbering clashes between remote teams.  To do this, I am:
+## Changing the change script numbering to use a long instead of an int
+## Creating a ChangeScriptCreator class that can be run from the command line or ant script.
+# Fix issues our team is running into with running PL/SQL using the DirectToDbApplier (ref: "dbdeploy issue 43":http://code.google.com/p/dbdeploy/issues/detail?id=43).

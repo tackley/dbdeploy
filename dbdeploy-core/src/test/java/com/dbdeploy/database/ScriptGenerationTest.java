@@ -46,7 +46,7 @@ public class ScriptGenerationTest {
 		ChangeScriptApplier applier = new TemplateBasedApplier(printStream, syntaxName, "changelog", null);
 		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 
 		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
 	}
@@ -87,7 +87,7 @@ public class ScriptGenerationTest {
 		}
 
 		@Override
-		public List<Integer> getAppliedChanges() throws SchemaVersionTrackingException {
+		public List<Long> getAppliedChanges() throws SchemaVersionTrackingException {
 			return Collections.emptyList();
 		}
 	}
@@ -95,7 +95,7 @@ public class ScriptGenerationTest {
 	private class StubChangeScript extends ChangeScript {
 		private final String changeContents;
 
-		public StubChangeScript(int changeNumber, String description, String changeContents) {
+		public StubChangeScript(long changeNumber, String description, String changeContents) {
 			super(changeNumber, description);
 			this.changeContents = changeContents;
 		}

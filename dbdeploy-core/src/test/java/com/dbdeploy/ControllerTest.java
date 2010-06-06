@@ -42,9 +42,9 @@ public class ControllerTest {
 
 	@Test
 	public void shouldApplyChangeScriptsInOrder() throws Exception {
-		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Integer>emptyList());
+		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 
         assertThat(applier.changeScripts.size(), is(3));
 		assertThat(applier.changeScripts.get(0), is(change1));
@@ -56,16 +56,16 @@ public class ControllerTest {
 	public void shouldNotCrashWhenPassedANullUndoApplier() throws Exception {
 		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, null);
 
-		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Integer>emptyList());
+		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 	}
 
 	@Test
 	public void shouldApplyUndoScriptsInReverseOrder() throws Exception {
-		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Integer>emptyList());
+		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 
         assertThat(undoApplier.changeScripts.size(), is(3));
 		assertThat(undoApplier.changeScripts.get(0), is(change3));
@@ -76,9 +76,9 @@ public class ControllerTest {
 
 	@Test
 	public void shouldIgnoreChangesAlreadyAppliedToTheDatabase() throws Exception {
-		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Arrays.asList(1));
+		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Arrays.asList(1L));
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 
         assertThat(applier.changeScripts.size(), is(2));
 		assertThat(applier.changeScripts.get(0), is(change2));
@@ -87,9 +87,9 @@ public class ControllerTest {
 
 	@Test
 	public void shouldNotApplyChangesGreaterThanTheMaxChangeToApply() throws Exception {
-		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Integer>emptyList());
+		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 
-		controller.processChangeScripts(2);
+		controller.processChangeScripts(2L);
 
         assertThat(applier.changeScripts.size(), is(2));
 		assertThat(applier.changeScripts.get(0), is(change1));

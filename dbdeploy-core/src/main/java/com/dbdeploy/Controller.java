@@ -26,13 +26,13 @@ public class Controller {
 		this.undoScriptApplier = undoScriptApplier;
 	}
 
-	public void processChangeScripts(Integer lastChangeToApply) throws DbDeployException, IOException {
-		if (lastChangeToApply != Integer.MAX_VALUE) {
+	public void processChangeScripts(Long lastChangeToApply) throws DbDeployException, IOException {
+		if (lastChangeToApply != Long.MAX_VALUE) {
 			info("Only applying changes up and including change script #" + lastChangeToApply);
 		}
 
 		List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
-		List<Integer> applied = appliedChangesProvider.getAppliedChanges();
+		List<Long> applied = appliedChangesProvider.getAppliedChanges();
 		List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
 
 		logStatus(scripts, applied, toApply);
@@ -46,13 +46,13 @@ public class Controller {
         }
 	}
 
-    private void logStatus(List<ChangeScript> scripts, List<Integer> applied, List<ChangeScript> toApply) {
+    private void logStatus(List<ChangeScript> scripts, List<Long> applied, List<ChangeScript> toApply) {
 		info("Changes currently applied to database:\n  " + prettyPrinter.format(applied));
 		info("Scripts available:\n  " + prettyPrinter.formatChangeScriptList(scripts));
 		info("To be applied:\n  " + prettyPrinter.formatChangeScriptList(toApply));
 	}
 
-	private List<ChangeScript> identifyChangesToApply(Integer lastChangeToApply, List<ChangeScript> scripts, List<Integer> applied) {
+	private List<ChangeScript> identifyChangesToApply(Long lastChangeToApply, List<ChangeScript> scripts, List<Long> applied) {
 		List<ChangeScript> result = new ArrayList<ChangeScript>();
 
 		for (ChangeScript script : scripts) {

@@ -26,7 +26,7 @@ public class OutputToFileIntegrationTest {
 
 		db.applyScript(outputFile);
 
-		assertThat(db.getChangelogEntries(), hasItems(1, 2));
+		assertThat(db.getChangelogEntries(), hasItems(1L, 2L));
 
 		List<Object[]> results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(1));
@@ -54,8 +54,8 @@ public class OutputToFileIntegrationTest {
 		}
 
 		// script 2 failed, so it should not be considered applied to the database
-		assertThat(db.getChangelogEntries(), hasItems(1));
-		assertThat(db.getChangelogEntries(), not(hasItems(2)));
+		assertThat(db.getChangelogEntries(), hasItems(1L));
+		assertThat(db.getChangelogEntries(), not(hasItems(2L)));
 
 		List<Object[]> results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(0));
@@ -67,7 +67,7 @@ public class OutputToFileIntegrationTest {
 
 		db.applyScript(outputFile);
 
-		assertThat(db.getChangelogEntries(), hasItems(1, 2));
+		assertThat(db.getChangelogEntries(), hasItems(1L, 2L));
 
 		results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(1));
@@ -89,7 +89,7 @@ public class OutputToFileIntegrationTest {
 
         db.applyScript(outputFile);
 
-        assertThat(db.getChangelogEntries(), hasItems(1, 2));
+        assertThat(db.getChangelogEntries(), hasItems(1L, 2L));
     }
 
     @Test
