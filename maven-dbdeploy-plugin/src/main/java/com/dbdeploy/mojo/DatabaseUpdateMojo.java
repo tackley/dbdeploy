@@ -30,25 +30,29 @@ import java.io.File;
 public class DatabaseUpdateMojo extends AbstractMojo {
 
     /**
-     * Location of the file.
+     * Location of your scripts
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      */
     private File outputDirectory;
+
     /**
-     * Directory where delta scripts reside.
+     * Directory where change scripts reside
      *
      * @parameter
      * @required
      */
     private File dir;
+
     /**
-     * Class name of database driver to use.
+     * Class name of database driver to use
      *
      * @parameter
      * @required
      */
     private String driver;
+
     /**
      * URL for database.
      *
@@ -56,12 +60,14 @@ public class DatabaseUpdateMojo extends AbstractMojo {
      * @required
      */
     private String url;
+
     /**
      * Password for database userid.
      *
      * @parameter
      */
     private String password;
+
     /**
      * Userid that will run the dbdeploy scripts.
      *
@@ -69,35 +75,59 @@ public class DatabaseUpdateMojo extends AbstractMojo {
      * @required
      */
     private String userid;
+
     /**
+     * Output script path + name
+     *
      * @parameter
      */
     private File outputfile;
+
     /**
+     * String representing our DBMS (e.g. mysql, ora)
+     *
      * @parameter
      */
     private String dbms;
+
     /**
-     * @parameter
+     * Number of the last script to apply
+     * 
+     * @parameter expression="${dbdeploy.lastChange}"
      */
     private Long lastChangeToApply;
+
     /**
+     * Undo script path + name
+     *
      * @parameter
      */
     private File undoOutputfile;
+    
     /**
+     * Change log table name
+     *
      * @parameter
      */
     private String changeLogTableName;
+
     /**
+     * Statement delimiter
+     *
      * @parameter
      */
     private String delimiter;
+
     /**
+     * Statement delimiter type
+     *
      * @parameter
      */
     private DelimiterType delimiterType;
+
     /**
+     * Directory for your template scripts, if not using built-in
+     *
      * @parameter
      */
     private File templateDirectory;

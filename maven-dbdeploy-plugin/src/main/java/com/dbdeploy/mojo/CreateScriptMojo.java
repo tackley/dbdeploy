@@ -13,17 +13,19 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * @author jbogan
  *
- * @goal create
+ * @goal createScript
  */
 public class CreateScriptMojo extends AbstractMojo {
     /**
+     * Name suffix for the file that will be created (e.g. add_email_to_user_table).
+     *
      * @parameter expression="${dbdeploy.script.name}" default-value="new_delta_script"
      * @required
      */
     private String name;
 
     /**
-     * Directory where delta scripts reside.
+     * Directory where change scripts reside.
      *
      * @parameter
      * @required
@@ -35,7 +37,7 @@ public class CreateScriptMojo extends AbstractMojo {
             final ChangeScriptCreator changeScriptCreator = getConfiguredChangeScriptCreator();
             final File newChangeScript = changeScriptCreator.go();
 
-            getLog().info("Created new delta script:\n\t" + newChangeScript.getAbsolutePath());
+            getLog().info("Created new change script:\n\t" + newChangeScript.getAbsolutePath());
         } catch (Exception e) {
             getLog().error(e);
             throw new MojoExecutionException("create change script failed", e);
