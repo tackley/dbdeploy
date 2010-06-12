@@ -8,6 +8,7 @@
         <version>3.0-JB1-SNAPSHOT</version>
     </parent>
 
+    <name>maven-dbdeploy-plugin</name>
     <artifactId>maven-dbdeploy-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <description>maven plugin to invoke dbdeploy</description>
