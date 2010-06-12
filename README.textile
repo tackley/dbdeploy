@@ -1,5 +1,6 @@
-For this fork, I am addressing two issues:
+For this fork, I am addressing three issues:
 # Reduce script numbering clashes between remote teams.  To do this, I am:
-## Changing the change script numbering to use a long instead of an int
-## Creating a ChangeScriptCreator class that can be run from the command line or ant script.
+## Creating a ChangeScriptCreator class that timestamps change scripts (instead of using sequential numbering) and can be run from the command line, Ant, or Maven.
+## Changing the change script numbering to use a long instead of an int to support the timestamp numbering
 # Fix issues our team is running into with running PL/SQL using the DirectToDbApplier (ref: "dbdeploy issue 43":http://code.google.com/p/dbdeploy/issues/detail?id=43).
+# Create a Maven plugin to apply change scripts and create new change scripts
