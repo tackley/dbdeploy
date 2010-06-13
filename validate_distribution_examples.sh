@@ -19,4 +19,16 @@ ant default
 # if it's run in the same session as the updates.
 ant dump-tables
 
+mvn dbdeploy:change-script -Ddbdeploy.script.name=add_column_to_test_table
 
+mvn dbdeploy:db-scripts
+
+echo "Created apply.sql file..."
+cat apply.sql
+
+echo "Created undo.sql file..."
+cat undo.sql
+
+mvn dbdeploy:update
+
+ant dump-tables
