@@ -4,6 +4,7 @@
     <artifactId>dbdeploy-test</artifactId>
     <groupId>com.dbdeploy</groupId>
     <version>1.0-SNAPSHOT</version>
+    <name>dbdeploy Maven example</name>
     <description>Tests Dbdeploy Plugin</description>
 
     <build>

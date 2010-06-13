@@ -32,3 +32,7 @@ cat undo.sql
 mvn dbdeploy:update
 
 ant dump-tables
+
+mvn dbdeploy:update -Ddbdeploy.lastChange=1
+
+ant dump-tables
