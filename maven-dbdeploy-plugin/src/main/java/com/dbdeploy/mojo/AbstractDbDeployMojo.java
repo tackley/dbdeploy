@@ -88,7 +88,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      *
      * @parameter
      */
-    protected DelimiterType delimiterType;
+    protected String delimiterType;
 
     /**
      * The highest numbered delta script to apply.
@@ -118,7 +118,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
         }
 
         if (delimiterType != null) {
-            dbDeploy.setDelimiterType(delimiterType);
+            dbDeploy.setDelimiterType(DelimiterType.valueOf(delimiterType));
         }
 
         return dbDeploy;

@@ -21,6 +21,8 @@
                     <userid>sa</userid>
                     <password></password>
                     <dbms>hsql</dbms>
+                    <delimiter>;</delimiter>
+                    <delimiterType>row</delimiterType>
                     <outputfile>apply.sql</outputfile>
                     <undoOutputfile>undo.sql</undoOutputfile>
                 </configuration>
