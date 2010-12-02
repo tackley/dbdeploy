@@ -1,19 +1,22 @@
 package com.dbdeploy.appliers;
 
-import com.dbdeploy.exceptions.UsageException;
-import org.apache.commons.io.output.NullOutputStream;
 import static org.hamcrest.Matchers.is;
-import org.junit.Assert;
 import static org.junit.Assert.assertThat;
+
+import java.io.File;
+
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.dbdeploy.exceptions.UsageException;
 
 public class TemplateBasedApplierTest {
 
 	@Test
 	public void shouldThrowUsageExceptionWhenTemplateNotFound() throws Exception {
-		TemplateBasedApplier applier = new TemplateBasedApplier(new NullOutputStream(), "some_complete_rubbish", null, null);
+		TemplateBasedApplier applier = new TemplateBasedApplier(new File("outfile"), null, "some_complete_rubbish", null, null);
 		try {
-			applier.apply(null);
+			applier.apply(null, null);
 			Assert.fail("expected exception");
 		} catch (UsageException e) {
 			assertThat(e.getMessage(), is("Could not find template named some_complete_rubbish_apply.ftl\n" +

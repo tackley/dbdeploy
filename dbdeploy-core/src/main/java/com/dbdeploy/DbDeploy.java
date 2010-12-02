@@ -1,8 +1,10 @@
 package com.dbdeploy;
 
+import java.io.File;
+
+import com.dbdeploy.appliers.ChangeScriptApplier;
 import com.dbdeploy.appliers.DirectToDbApplier;
 import com.dbdeploy.appliers.TemplateBasedApplier;
-import com.dbdeploy.appliers.UndoTemplateBasedApplier;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
@@ -10,9 +12,6 @@ import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
 import com.dbdeploy.scripts.DirectoryScanner;
-
-import java.io.File;
-import java.io.PrintStream;
 
 public class DbDeploy {
 	private String url;
@@ -22,7 +21,7 @@ public class DbDeploy {
 	private File outputfile;
 	private File undoOutputfile;
 	private String dbms;
-	private Integer lastChangeToApply = Integer.MAX_VALUE;
+	private Integer targetVersion = Integer.MAX_VALUE; // based on the target version we decide if we need to upgrade or downgrade the database 
 	private String driver;
 	private String changeLogTableName = "changelog";
 	private String delimiter = ";";
@@ -57,8 +56,8 @@ public class DbDeploy {
 		this.dbms = dbms;
 	}
 
-	public void setLastChangeToApply(Integer lastChangeToApply) {
-		this.lastChangeToApply = lastChangeToApply;
+	public void setTargetVersion(Integer targetVersion) {
+		this.targetVersion = targetVersion;
 	}
 
 	public void setUndoOutputfile(File undoOutputfile) {
@@ -71,9 +70,7 @@ public class DbDeploy {
 
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
-
 		validate();
-
 		Class.forName(driver);
 
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
@@ -87,9 +84,8 @@ public class DbDeploy {
 		ChangeScriptApplier doScriptApplier;
 
 		if (outputfile != null) {
-			doScriptApplier = new TemplateBasedApplier(
-					new PrintStream(outputfile), dbms,
-					changeLogTableName, getTemplatedir());
+			doScriptApplier = new TemplateBasedApplier(outputfile, undoOutputfile, 
+			        dbms, changeLogTableName, getTemplatedir());
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
@@ -97,18 +93,9 @@ public class DbDeploy {
 			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
 		}
 
-		ChangeScriptApplier undoScriptApplier = null;
+		Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier);
 
-		if (undoOutputfile != null) {
-			undoScriptApplier =
-					new UndoTemplateBasedApplier(
-							new PrintStream(undoOutputfile), dbms, changeLogTableName, getTemplatedir());
-
-		}
-
-		Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier, undoScriptApplier);
-
-		controller.processChangeScripts(lastChangeToApply);
+		controller.processChangeScripts(targetVersion);
 
 		queryExecuter.close();
 	}
@@ -164,8 +151,8 @@ public class DbDeploy {
 		return dbms;
 	}
 
-	public Integer getLastChangeToApply() {
-		return lastChangeToApply;
+	public Integer getTargetVersion() {
+		return targetVersion;
 	}
 
 	public String getDriver() {

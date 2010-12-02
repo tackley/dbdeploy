@@ -21,7 +21,7 @@ public class AntTarget extends Task {
 			+ "\n\t\ttemplatedir=\"[DIRECTORY FOR DBMS TEMPLATE SCRIPTS, IF NOT USING BUILT-IN]\""
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
-			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
+			+ "\n\t\ttargetVersion=\"[TARGET VERSION OF DATABASE]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
@@ -69,8 +69,8 @@ public class AntTarget extends Task {
 		dbDeploy.setDbms(dbms);
 	}
 
-	public void setLastChangeToApply(Integer lastChangeToApply) {
-		dbDeploy.setLastChangeToApply(lastChangeToApply);
+	public void setTargetVersion(Integer targetVersion) {
+		dbDeploy.setTargetVersion(targetVersion);
 	}
 
 	public void setUndoOutputfile(File undoOutputfile) {

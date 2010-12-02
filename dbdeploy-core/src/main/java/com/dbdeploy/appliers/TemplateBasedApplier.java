@@ -1,6 +1,5 @@
 package com.dbdeploy.appliers;
 
-import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScript;
 import freemarker.cache.ClassTemplateLoader;
@@ -19,13 +18,15 @@ import java.util.Map;
 public class TemplateBasedApplier implements ChangeScriptApplier {
 	private Configuration configuration;
 	private Writer writer;
+	private Writer undoWriter;
 	private String syntax;
 	private String changeLogTableName;
 
-	public TemplateBasedApplier(OutputStream outputStream, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
+	public TemplateBasedApplier(File outputfile, File undoOutputfile, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
 		this.syntax = syntax;
 		this.changeLogTableName = changeLogTableName;
-		this.writer = new PrintWriter(outputStream);
+		this.writer = new PrintWriter(new PrintStream(outputfile));
+		if (undoOutputfile != null) this.undoWriter= new PrintWriter(new PrintStream(undoOutputfile));
 		this.configuration = new Configuration();
 
 		FileTemplateLoader fileTemplateLoader = createFileTemplateLoader(templateDirectory);
@@ -36,7 +37,7 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 				}));
 	}
 
-	private FileTemplateLoader createFileTemplateLoader(File templateDirectory) throws IOException {
+    private FileTemplateLoader createFileTemplateLoader(File templateDirectory) throws IOException {
 		if (templateDirectory == null) {
 			return new FileTemplateLoader();
 		} else {
@@ -44,8 +45,8 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 		}
 	}
 
-	public void apply(List<ChangeScript> changeScripts) {
-		String filename = syntax + "_" + getTemplateQualifier() + ".ftl";
+	public void apply(List<ChangeScript> changeScripts, ApplyMode applyMode) {
+		String filename = syntax + "_" + getTemplateQualifier(applyMode) + ".ftl";
 
 		try {
 			Map<String, Object> model = new HashMap<String, Object>();
@@ -53,7 +54,10 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 			model.put("changeLogTableName", changeLogTableName);
 
 			Template template = configuration.getTemplate(filename);
-			template.process(model, writer);
+			if (applyMode == ApplyMode.DO)
+			    template.process(model, writer);
+			else if (undoWriter != null)
+			    template.process(model, undoWriter);
 		} catch (FileNotFoundException ex) {
 			throw new UsageException("Could not find template named " + filename + "\n" +
 					"Check that you have got the name of the database syntax correct.", ex);
@@ -62,8 +66,11 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 		}
 	}
 
-	protected String getTemplateQualifier() {
-		return "apply";
+	protected String getTemplateQualifier(ApplyMode applyMode) {
+	    if (applyMode == ApplyMode.UNDO)
+	        return "undo";
+	    else 
+	        return "apply";
 	}
 
 }

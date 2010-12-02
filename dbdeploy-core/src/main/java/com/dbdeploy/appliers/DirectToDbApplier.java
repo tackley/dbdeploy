@@ -1,6 +1,5 @@
 package com.dbdeploy.appliers;
 
-import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
@@ -20,15 +19,18 @@ public class DirectToDbApplier implements ChangeScriptApplier {
         this.splitter = splitter;
     }
 
-    public void apply(List<ChangeScript> changeScript) {
+    public void apply(List<ChangeScript> changeScript, ApplyMode applyMode) {
         begin();
 
         for (ChangeScript script : changeScript) {
             System.err.println("Applying " + script + "...");
 
-            applyChangeScriptContent(script.getContent());
+            if (applyMode == ApplyMode.DO)
+                applyChangeScriptContent(script.getContent());
+            else if (applyMode == ApplyMode.UNDO)
+                applyChangeScriptContent(script.getUndoContent());
+            
             insertToSchemaVersionTable(script);
-
             commitTransaction();
         }
     }
