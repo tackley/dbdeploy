@@ -19,7 +19,6 @@ public class DbDeploy {
 	private String password;
 	private File scriptdirectory;
 	private File outputfile;
-	private File undoOutputfile;
 	private String dbms;
 	private Integer targetVersion = Integer.MAX_VALUE; // based on the target version we decide if we need to upgrade or downgrade the database 
 	private String driver;
@@ -60,10 +59,6 @@ public class DbDeploy {
 		this.targetVersion = targetVersion;
 	}
 
-	public void setUndoOutputfile(File undoOutputfile) {
-		this.undoOutputfile = undoOutputfile;
-	}
-
 	public void setChangeLogTableName(String changeLogTableName) {
 		this.changeLogTableName = changeLogTableName;
 	}
@@ -84,8 +79,7 @@ public class DbDeploy {
 		ChangeScriptApplier doScriptApplier;
 
 		if (outputfile != null) {
-			doScriptApplier = new TemplateBasedApplier(outputfile, undoOutputfile, 
-			        dbms, changeLogTableName, getTemplatedir());
+			doScriptApplier = new TemplateBasedApplier(outputfile, dbms, changeLogTableName, getTemplatedir());
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
@@ -141,10 +135,6 @@ public class DbDeploy {
 
 	public File getOutputfile() {
 		return outputfile;
-	}
-
-	public File getUndoOutputfile() {
-		return undoOutputfile;
 	}
 
 	public String getDbms() {

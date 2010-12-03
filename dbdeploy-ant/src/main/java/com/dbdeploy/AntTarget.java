@@ -22,7 +22,6 @@ public class AntTarget extends Task {
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\ttargetVersion=\"[TARGET VERSION OF DATABASE]\""
-			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
 			+ "\n\t\tdelimitertype=\"[STATEMENT DELIMITER TYPE - row or normal, default normal]\""
@@ -71,10 +70,6 @@ public class AntTarget extends Task {
 
 	public void setTargetVersion(Integer targetVersion) {
 		dbDeploy.setTargetVersion(targetVersion);
-	}
-
-	public void setUndoOutputfile(File undoOutputfile) {
-		dbDeploy.setUndoOutputfile(undoOutputfile);
 	}
 
 	public void setChangeLogTableName(String changeLogTableName) {

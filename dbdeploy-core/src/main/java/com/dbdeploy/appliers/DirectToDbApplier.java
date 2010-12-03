@@ -30,7 +30,7 @@ public class DirectToDbApplier implements ChangeScriptApplier {
             else if (applyMode == ApplyMode.UNDO)
                 applyChangeScriptContent(script.getUndoContent());
             
-            insertToSchemaVersionTable(script);
+            insertToSchemaVersionTable(script, applyMode);
             commitTransaction();
         }
     }
@@ -53,8 +53,11 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		}
 	}
 
-	protected void insertToSchemaVersionTable(ChangeScript changeScript) {
-        schemaVersionManager.recordScriptApplied(changeScript);
+	protected void insertToSchemaVersionTable(ChangeScript changeScript, ApplyMode applyMode) {
+        if (applyMode == ApplyMode.DO)
+            schemaVersionManager.recordScriptApplied(changeScript);
+        else if (applyMode == ApplyMode.UNDO)
+            schemaVersionManager.recordUndoScriptApplied(changeScript);
 	}
 
     protected void commitTransaction() {

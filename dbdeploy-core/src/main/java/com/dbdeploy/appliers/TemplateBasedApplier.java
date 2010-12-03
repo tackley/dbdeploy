@@ -17,16 +17,14 @@ import java.util.Map;
 
 public class TemplateBasedApplier implements ChangeScriptApplier {
 	private Configuration configuration;
-	private Writer writer;
-	private Writer undoWriter;
+	private Writer outputFileWriter;
 	private String syntax;
 	private String changeLogTableName;
 
-	public TemplateBasedApplier(File outputfile, File undoOutputfile, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
+	public TemplateBasedApplier(File outputfile, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
 		this.syntax = syntax;
 		this.changeLogTableName = changeLogTableName;
-		this.writer = new PrintWriter(new PrintStream(outputfile));
-		if (undoOutputfile != null) this.undoWriter= new PrintWriter(new PrintStream(undoOutputfile));
+		this.outputFileWriter = new PrintWriter(new PrintStream(outputfile));
 		this.configuration = new Configuration();
 
 		FileTemplateLoader fileTemplateLoader = createFileTemplateLoader(templateDirectory);
@@ -54,10 +52,7 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 			model.put("changeLogTableName", changeLogTableName);
 
 			Template template = configuration.getTemplate(filename);
-			if (applyMode == ApplyMode.DO)
-			    template.process(model, writer);
-			else if (undoWriter != null)
-			    template.process(model, undoWriter);
+			template.process(model, outputFileWriter);
 		} catch (FileNotFoundException ex) {
 			throw new UsageException("Could not find template named " + filename + "\n" +
 					"Check that you have got the name of the database syntax correct.", ex);

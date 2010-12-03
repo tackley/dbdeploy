@@ -58,7 +58,6 @@
                   password=""
                   dir="."
                   outputfile="output.sql"
-                  undoOutputfile="undo.sql"
                   dbms="hsql"
                 />
 
@@ -68,6 +67,39 @@
             <fileset file="output.sql"/>
         </sql>
 
+    </target>
+    
+    <target name="downgrade-database">
+        <!-- if you don't specify an output file, dbdeploy will apply the changes for you
+
+        you may need to specify delimiter and delimitertype for your scripts to be split properly - these
+         work the same as in the ant sql task, see http://ant.apache.org/manual/CoreTasks/sql.html
+        -->
+        <dbdeploy driver="${db.driver}" url="${db.url}"
+                  userid="sa"
+                  password=""
+                  dir="."
+                  targetVersion="0"
+                />
+    </target>
+    
+    
+    <target name="downgrade-database-and-apply-as-separate-step">
+        <!-- use dbdeploy to generate the change script -->
+        <dbdeploy driver="${db.driver}" url="${db.url}"
+                  userid="sa"
+                  password=""
+                  dir="."
+                  outputfile="output.sql"
+                  dbms="hsql"
+                  targetVersion="0"
+                />
+
+        <!-- now apply the changescript to the database -->
+        <sql driver="${db.driver}" url="${db.url}"
+             userid="sa" password="" classpathref="hsql.classpath">
+            <fileset file="output.sql"/>
+        </sql>
     </target>
 
     <target name="dump-tables">

@@ -62,8 +62,17 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
                     script.getDescription()
                     );
         } catch (SQLException e) {
-            throw new SchemaVersionTrackingException("Could not update change log because: "
-                    + e.getMessage(), e);
+            throw new SchemaVersionTrackingException("Could not update changelog!", e);
+        }
+    }
+    
+    public void recordUndoScriptApplied(ChangeScript script) {
+        try {
+            queryExecuter.execute(
+                    "DELETE FROM " + changeLogTableName + " WHERE change_number = ?",
+                    script.getId());
+        } catch (SQLException e) {
+            throw new SchemaVersionTrackingException("Could not remove entry from changelog!", e);
         }
     }
 
