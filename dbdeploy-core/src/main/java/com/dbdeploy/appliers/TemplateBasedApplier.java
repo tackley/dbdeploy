@@ -52,8 +52,12 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 			model.put("scripts", changeScripts);
 			model.put("changeLogTableName", changeLogTableName);
 
-			Template template = configuration.getTemplate(filename);
-			template.process(model, writer);
+			try {
+				Template template = configuration.getTemplate(filename);
+				template.process(model, writer);
+			} finally {
+				writer.close();
+			}
 		} catch (FileNotFoundException ex) {
 			throw new UsageException("Could not find template named " + filename + "\n" +
 					"Check that you have got the name of the database syntax correct.", ex);
