@@ -7,13 +7,15 @@ import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import com.dbdeploy.scripts.ChangeScript;
 import com.dbdeploy.scripts.ChangeScriptRepository;
-import static org.junit.Assert.assertEquals;
+import com.dbdeploy.scripts.StubChangeScript;
 import org.junit.Test;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ScriptGenerationTest {
 
@@ -92,17 +94,4 @@ public class ScriptGenerationTest {
 		}
 	}
 
-	private class StubChangeScript extends ChangeScript {
-		private final String changeContents;
-
-		public StubChangeScript(int changeNumber, String description, String changeContents) {
-			super(changeNumber, description);
-			this.changeContents = changeContents;
-		}
-
-		@Override
-		public String getContent() {
-			return changeContents;
-		}
-	}
 }

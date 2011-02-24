@@ -3,16 +3,22 @@ package com.dbdeploy.appliers;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
+import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
+import com.dbdeploy.scripts.StubChangeScript;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnit44Runner;
 
+import java.sql.SQLException;
 import java.util.Arrays;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnit44Runner.class)
 public class DirectToDbApplierTest {
@@ -35,12 +41,30 @@ public class DirectToDbApplierTest {
 
 	@Test
 	public void shouldApplyChangeScriptBySplittingContentUsingTheSplitter() throws Exception {
-        when(splitter.split("content")).thenReturn(Arrays.asList("split", "content"));
+        when(splitter.split("split; content")).thenReturn(Arrays.asList("split", "content"));
 
-		applier.applyChangeScriptContent("content");
+		applier.applyChangeScript(new StubChangeScript(1, "script", "split; content"));
 		
 		verify(queryExecuter).execute("split");
 		verify(queryExecuter).execute("content");
+	}
+
+	@Test
+	public void shouldRethrowSqlExceptionsWithInformationAboutWhatStringFailed() throws Exception {
+		when(splitter.split("split; content")).thenReturn(Arrays.asList("split", "content"));
+		ChangeScript script = new StubChangeScript(1, "script", "split; content");
+
+		doThrow(new SQLException("dummy exception")).when(queryExecuter).execute("split");
+
+		try {
+			applier.applyChangeScript(script);
+			fail("exception expected");
+		} catch (ChangeScriptFailedException e) {
+			assertThat(e.getExecutedSql(), is("split"));
+			assertThat(e.getScript(), is(script));
+		}
+
+		verify(queryExecuter, never()).execute("content");
 	}
 
 	@Test

@@ -4,6 +4,7 @@ import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
+import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
 
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class DirectToDbApplier implements ChangeScriptApplier {
         for (ChangeScript script : changeScript) {
             System.err.println("Applying " + script + "...");
 
-            applyChangeScriptContent(script.getContent());
+            applyChangeScript(script);
             insertToSchemaVersionTable(script);
 
             commitTransaction();
@@ -41,13 +42,19 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		}
 	}
 
-	protected void applyChangeScriptContent(String scriptContent) {
-		try {
-            for (String statement : splitter.split(scriptContent)) {
-                queryExecuter.execute(statement);
-            }
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+	protected void applyChangeScript(ChangeScript script) {
+		List<String> statements = splitter.split(script.getContent());
+
+		for (int i = 0; i < statements.size(); i++) {
+			String statement = statements.get(i);
+			try {
+				if (statements.size() > 1) {
+					System.err.println(" -> statement " + (i+1) + " of " + statements.size() + "...");
+				}
+				queryExecuter.execute(statement);
+			} catch (SQLException e) {
+				throw new ChangeScriptFailedException(e, script, i+1, statement);
+			}
 		}
 	}
 

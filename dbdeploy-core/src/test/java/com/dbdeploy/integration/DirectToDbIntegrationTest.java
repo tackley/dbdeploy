@@ -1,13 +1,14 @@
 package com.dbdeploy.integration;
 
 import com.dbdeploy.DbDeploy;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 public class DirectToDbIntegrationTest {
 	@Test
@@ -57,7 +58,7 @@ public class DirectToDbIntegrationTest {
 			dbDeploy.go();
 		} catch (Exception ex) {
 			//expected
-			assertThat(ex.getMessage(), startsWith("java.sql.SQLException: Column count does not match in statement"));
+			assertThat(ex.getMessage(), containsString("Column count does not match in statement"));
 		}
 
 		// script 2 failed, so it should not be considered applied to the database
