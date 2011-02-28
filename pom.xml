@@ -1,11 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dbdeploy</groupId>
     <artifactId>dbdeploy-parent</artifactId>
     <packaging>pom</packaging>
     <version>3.0-SNAPSHOT</version>
     <name>dbdeploy</name>
+    <description>dbdeploy: java tools to manage agile database management</description>
     <url>http://www.dbdeploy.com</url>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>6</version>
+    </parent>
 
     <modules>
         <module>dbdeploy-core</module>
@@ -16,30 +24,33 @@
 
     <scm>
         <!--
-            This github account is used as a staging area for dbdeploy commits.
-            Currently all checkins are mirred to the google code svn repository
-            at http://dbdeploy.googlecode.com/svn/trunk/
+                      This github account is used as a staging area for dbdeploy commits.
+                      Currently all checkins are mirred to the google code svn repository
+                      at http://dbdeploy.googlecode.com/svn/trunk/
 
-            This may change in due course - git makes collaberation so much easier...
-        -->
+                      This may change in due course - git makes collaberation so much easier...
+                  -->
+        <url>http://github.com/tackley/dbdeploy</url>
         <connection>scm:git:git://github.com/tackley/dbdeploy.git</connection>
     </scm>
 
-    <distributionManagement>
-        <downloadUrl>http://dbdeploy.googlecode.com/svn/m2-repo</downloadUrl>
-        <repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>dbdeploy</id>
-            <name>Dbdeploy Repository</name>
-            <url>file:///var/maven-repo/repository</url>
-        </repository>
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>dbdeploySnapshots</id>
-            <name>Dbdeploy Snapshot Repository</name>
-            <url>file:///var/maven-repo/snapshot-repository</url>
-        </snapshotRepository>
-    </distributionManagement>
+    <!--
+     <distributionManagement>
+         <downloadUrl>http://dbdeploy.googlecode.com/svn/m2-repo</downloadUrl>
+         <repository>
+             <uniqueVersion>false</uniqueVersion>
+             <id>dbdeploy</id>
+             <name>Dbdeploy Repository</name>
+             <url>file:///var/maven-repo/repository</url>
+         </repository>
+         <snapshotRepository>
+             <uniqueVersion>false</uniqueVersion>
+             <id>dbdeploySnapshots</id>
+             <name>Dbdeploy Snapshot Repository</name>
+             <url>file:///var/maven-repo/snapshot-repository</url>
+         </snapshotRepository>
+     </distributionManagement>
+     -->
 
     <licenses>
         <license>
@@ -54,6 +65,15 @@
             <archive>http://groups.google.com/group/db-deploy-users</archive>
         </mailingList>
     </mailingLists>
+
+    <developers>
+        <developer>
+            <name>Graham Tackley</name>
+            <email>graham@tackley.net</email>
+            <url>http://blog.tackley.net</url>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <hsqldb.version>1.8.0.7</hsqldb.version>
@@ -86,11 +106,11 @@
                     <version>1.4</version>
                 </plugin>
 
-	            <plugin>
-		            <groupId>org.apache.maven.plugins</groupId>
-		            <artifactId>maven-source-plugin</artifactId>
-		            <version>2.1.2</version>
-	            </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                </plugin>
 
 
                 <plugin>
