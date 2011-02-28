@@ -10,11 +10,25 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 
 public class DbDeployCommandLineParser {
-	public void parse(String[] args, DbDeploy dbDeploy) throws UsageException {
+    private final UserInputReader userInputReader;
+
+    public DbDeployCommandLineParser() {
+        this(new UserInputReader());
+    }
+
+    public DbDeployCommandLineParser(UserInputReader userInputReader) {
+        this.userInputReader = userInputReader;
+    }
+
+    public void parse(String[] args, DbDeploy dbDeploy) throws UsageException {
 		try {
 			dbDeploy.setScriptdirectory(new File("."));
-			final CommandLine commandLine = getParser().parse(getOptions(), args);
+            final CommandLine commandLine = new GnuParser().parse(getOptions(), args);
 			copyValuesFromCommandLineToDbDeployBean(dbDeploy, commandLine);
+
+            if (commandLine.hasOption("password") && commandLine.getOptionValue("password") == null) {
+                dbDeploy.setPassword(userInputReader.read("Password"));
+            }
 		} catch (ParseException e) {
 			throw new UsageException(e.getMessage(), e);
 		}
@@ -52,11 +66,7 @@ public class DbDeployCommandLineParser {
 
 	}
 
-	private CommandLineParser getParser() {
-		return new GnuParser();
-	}
-
-	@SuppressWarnings({"AccessStaticViaInstance"})
+    @SuppressWarnings({"AccessStaticViaInstance"})
 	private Options getOptions() {
 		final Options options = new Options();
 
@@ -67,8 +77,8 @@ public class DbDeployCommandLineParser {
 				.create("U"));
 
 		options.addOption(OptionBuilder
-				.hasArg()
-				.withDescription("database password")
+				.hasOptionalArg()
+				.withDescription("database password (use -P without a argument value to be prompted)")
 				.withLongOpt("password")
 				.create("P"));
 

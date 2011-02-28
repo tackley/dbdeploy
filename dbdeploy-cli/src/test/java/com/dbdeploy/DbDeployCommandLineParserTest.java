@@ -1,14 +1,23 @@
 package com.dbdeploy;
 
+import com.dbdeploy.database.DelimiterType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnit44Runner;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
-import com.dbdeploy.database.DelimiterType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 public class DbDeployCommandLineParserTest {
+    UserInputReader userInputReader = mock(UserInputReader.class);
+
 	private final DbDeploy dbDeploy = new DbDeploy();
-	private final DbDeployCommandLineParser parser = new DbDeployCommandLineParser();
+	private final DbDeployCommandLineParser parser = new DbDeployCommandLineParser(userInputReader);
 
 	@Test
 	public void canParseUserIdFromCommandLine() throws Exception {
@@ -42,6 +51,28 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
 		assertThat(dbDeploy.getTemplatedir().getPath(), is("/tmp/mytemplates"));
 	}
+
+    @Test
+    public void shouldPromptFromStdinForPasswordIfPasswordParamSuppliedWithNoArg() throws Exception {
+        when(userInputReader.read("Password")).thenReturn("user entered password");
+
+        parser.parse(new String[] { "-P" }, dbDeploy);
+
+        assertThat(dbDeploy.getPassword(), is("user entered password"));
+    }
+
+    @Test
+    public void shouldNotPromptForPasswordWhenSupplied() throws Exception {
+        parser.parse(new String[]{"-P", "password"}, dbDeploy);
+        verifyZeroInteractions(userInputReader);
+    }
+
+    @Test
+    public void shouldNotPromptForPasswordNotSpecifiedOnCommandLine() throws Exception {
+        // this is important: not all databases require passwords :)
+        parser.parse(new String[] {}, dbDeploy);
+        verifyZeroInteractions(userInputReader);
+    }
 
 }
 
