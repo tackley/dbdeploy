@@ -1,0 +1,11 @@
+dbdeploy todo:
+
+1. implement maven plugin
+
+2. implement line endings parameter
+
+3. publish new snapshot to oss.sonatype
+
+4. add a sensible readme for github
+
+4. release new milestone release to sonatype
