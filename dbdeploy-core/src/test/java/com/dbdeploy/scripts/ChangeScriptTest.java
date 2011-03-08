@@ -17,7 +17,7 @@ public class ChangeScriptTest {
 	public void changeScriptsHaveAnIdAndAFile() throws Exception {
 		File file = new File("abc.txt");
 		ChangeScript changeScript = new ChangeScript(5, file);
-		assertThat(changeScript.getId(), equalTo(5));
+		assertThat(changeScript.getId(), equalTo(5L));
 		assertThat(changeScript.getFile(), sameInstance(file));
 	}
 

@@ -42,10 +42,10 @@ public class DatabaseSchemaVersionManagerTest {
     @Test
     public void shouldUseQueryExecuterToReadInformationFromTheChangelogTable() throws Exception {
         when(expectedResultSet.next()).thenReturn(true, true, true, false);
-        when(expectedResultSet.getInt(1)).thenReturn(5, 9, 12);
+        when(expectedResultSet.getLong(1)).thenReturn(5L, 9L, 12L);
 
-        final List<Integer> numbers = schemaVersionManager.getAppliedChanges();
-        assertThat(numbers, hasItems(5, 9, 12));
+        final List<Long> numbers = schemaVersionManager.getAppliedChanges();
+        assertThat(numbers, hasItems(5L, 9L, 12L));
     }
 
 

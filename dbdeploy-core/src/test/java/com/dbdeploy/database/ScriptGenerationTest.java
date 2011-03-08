@@ -48,7 +48,7 @@ public class ScriptGenerationTest {
 		ChangeScriptApplier applier = new TemplateBasedApplier(printStream, syntaxName, "changelog", null);
 		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
 
-		controller.processChangeScripts(Integer.MAX_VALUE);
+		controller.processChangeScripts(Long.MAX_VALUE);
 
 		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
 	}
@@ -89,9 +89,8 @@ public class ScriptGenerationTest {
 		}
 
 		@Override
-		public List<Integer> getAppliedChanges() throws SchemaVersionTrackingException {
+		public List<Long> getAppliedChanges() throws SchemaVersionTrackingException {
 			return Collections.emptyList();
 		}
 	}
-
 }

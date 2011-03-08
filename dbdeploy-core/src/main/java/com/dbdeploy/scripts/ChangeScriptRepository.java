@@ -21,7 +21,7 @@ public class ChangeScriptRepository implements AvailableChangeScriptsProvider {
 	}
 	
 	private void checkForDuplicateIds(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
-		int lastId = -1;
+		long lastId = -1;
 		
 		for (ChangeScript script : scripts) {
 			if (script.getId() == lastId) {

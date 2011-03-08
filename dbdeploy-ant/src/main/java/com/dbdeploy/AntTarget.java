@@ -69,7 +69,7 @@ public class AntTarget extends Task {
 		dbDeploy.setDbms(dbms);
 	}
 
-	public void setLastChangeToApply(Integer lastChangeToApply) {
+	public void setLastChangeToApply(Long lastChangeToApply) {
 		dbDeploy.setLastChangeToApply(lastChangeToApply);
 	}
 

@@ -7,17 +7,17 @@ import java.util.List;
 
 public class PrettyPrinter {
 
-	public String format(List<Integer> appliedChanges) {
+	public String format(List<Long> appliedChanges) {
 		if (appliedChanges.isEmpty()) {
 			return "(none)";
 		}
 		
 		StringBuilder builder = new StringBuilder();
 		
-		Integer lastRangeStart = null;
-		Integer lastNumber = null;
+		Long lastRangeStart = null;
+		Long lastNumber = null;
 		
-		for (Integer thisNumber : appliedChanges) {
+		for (Long thisNumber : appliedChanges) {
 			if (lastNumber == null) {
 				// first in loop
 				lastNumber = thisNumber;
@@ -38,7 +38,7 @@ public class PrettyPrinter {
 		return builder.toString();
 	}
 
-	private void appendRange(StringBuilder builder, Integer lastRangeStart, Integer lastNumber) {
+	private void appendRange(StringBuilder builder, Long lastRangeStart, Long lastNumber) {
 		if (lastRangeStart == lastNumber) {
 			appendWithPossibleComma(builder, lastNumber);
 		} else if (lastRangeStart + 1 == lastNumber) {
@@ -57,7 +57,7 @@ public class PrettyPrinter {
 	}
 
 	public String formatChangeScriptList(List<ChangeScript> changeScripts) {
-		List<Integer> numberList = new ArrayList<Integer>(changeScripts.size());
+		List<Long> numberList = new ArrayList<Long>(changeScripts.size());
 		
 		for (ChangeScript changeScript : changeScripts) {
 			numberList.add(changeScript.getId());

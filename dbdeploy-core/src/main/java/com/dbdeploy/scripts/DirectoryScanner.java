@@ -32,7 +32,7 @@ public class DirectoryScanner {
 			if (file.isFile()) {
 				String filename = file.getName();
 				try {
-					int id = filenameParser.extractIdFromFilename(filename);
+					long id = filenameParser.extractIdFromFilename(filename);
 					scripts.add(new ChangeScript(id, file));
 				} catch (UnrecognisedFilenameException e) {
 					// ignore
