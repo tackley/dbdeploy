@@ -7,7 +7,7 @@ if [ "$?" -ne "0" ]; then
   exit 99
 fi
 
-TMPDIR=$(mktemp --directory)
+TMPDIR=$(mktemp -d -t dbdeploy)
 
 unzip dbdeploy-dist/target/dbdeploy-dist-*-distribution.zip -d $TMPDIR
 
