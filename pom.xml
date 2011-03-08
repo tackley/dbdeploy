@@ -19,8 +19,9 @@
         <module>dbdeploy-core</module>
         <module>dbdeploy-ant</module>
         <module>dbdeploy-cli</module>
+        <module>maven-dbdeploy-plugin</module>
         <module>dbdeploy-dist</module>
-    </modules>
+  </modules>
 
     <scm>
         <!--

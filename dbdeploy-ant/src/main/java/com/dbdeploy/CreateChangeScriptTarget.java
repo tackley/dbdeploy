@@ -13,7 +13,7 @@ import org.apache.tools.ant.Task;
  *
  * @author jbogan
  */
-public class    CreateChangeScriptTarget extends Task {
+public class CreateChangeScriptTarget extends Task {
     final ChangeScriptCreator changeScriptCreator = new ChangeScriptCreator();
 
     private static String ANT_USAGE = "\n\nDbdeploy Create Script Ant Task Usage"
