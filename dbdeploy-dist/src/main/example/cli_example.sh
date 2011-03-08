@@ -15,4 +15,10 @@ java -cp $CP com.dbdeploy.CommandLineTarget \
 --driver "org.hsqldb.jdbcDriver" \
 --url "jdbc:hsqldb:file:db/testdb;shutdown=true" \
 --userid "sa" \
---password
+--password ""
+
+# NB: if you don't want to include the database password on the
+# command line (as you probably don't), miss out the parameter to
+# --password and dbdeploy will then read from stdin. You can then
+# do "echo password | java -cp $CP com.dbdeploy...."
+
