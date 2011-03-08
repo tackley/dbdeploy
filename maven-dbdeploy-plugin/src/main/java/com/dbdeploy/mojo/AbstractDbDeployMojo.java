@@ -27,15 +27,15 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
     /**
      * Full or relative path to the directory containing the delta scripts.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.scriptdirectory}" default-value="${project.src.directory}/main/sql"
      * @required
      */
-    protected File dir;
+    protected File scriptdirectory;
 
     /**
      * Specifies the jdbc driver.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.driver}"
      * @required
      */
     protected String driver;
@@ -43,7 +43,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
     /**
      * Specifies the url of the database that the deltas are to be applied to. 
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.url}"
      * @required
      */
     protected String url;
@@ -52,7 +52,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * The password of the dbms user who has permissions to select from the
      * schema version table.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.password}"
      */
     protected String password;
 
@@ -60,7 +60,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * The ID of a dbms user who has permissions to select from the schema
      * version table.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.userid}"
      * @required
      */
     protected String userid;
@@ -70,7 +70,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * DDL and DML when deploying to replicated environments. If not supplied
      * defaults to "changelog"
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.changeLogTableName}"
      */
     protected String changeLogTableName;
 
@@ -78,7 +78,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * Delimiter to use to separate scripts into statements, if dbdeploy will
      * apply the scripts for you i.e. you haven't specified outputfile. Default ;
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.delimiter}"
      */
     protected String delimiter;
 
@@ -86,7 +86,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * Either normal: split on delimiter wherever it occurs or row  only split
      * on delimiter if it features on a line by itself. Default normal.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.delimiterType}"
      */
     protected String delimiterType;
 
@@ -99,7 +99,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 
     protected DbDeploy getConfiguredDbDeploy() {
         DbDeploy dbDeploy = new DbDeploy();
-        dbDeploy.setScriptdirectory(dir);
+        dbDeploy.setScriptdirectory(scriptdirectory);
         dbDeploy.setDriver(driver);
         dbDeploy.setUrl(url);
         dbDeploy.setPassword(password);

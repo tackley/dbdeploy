@@ -15,7 +15,7 @@
                 <version>3.0-SNAPSHOT</version>
 
                 <configuration>
-                    <dir>.</dir>
+                    <scriptdirectory>.</scriptdirectory>
                     <driver>org.hsqldb.jdbcDriver</driver>
                     <url>jdbc:hsqldb:file:db/testdb;shutdown=true</url>
                     <userid>sa</userid>

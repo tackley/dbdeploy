@@ -37,10 +37,10 @@ public class CreateChangeScriptMojo extends AbstractMojo {
     /**
      * Directory where change scripts reside.
      *
-     * @parameter
+     * @parameter expression="${dbdeploy.scriptdirectory}" default-value="${project.src.directory}/main/sql"
      * @required
      */
-    private File dir;
+    private File scriptdirectory;
 
     public void execute() throws MojoExecutionException {
         try {
@@ -57,7 +57,7 @@ public class CreateChangeScriptMojo extends AbstractMojo {
     private ChangeScriptCreator getConfiguredChangeScriptCreator() {
         final ChangeScriptCreator changeScriptCreator = new ChangeScriptCreator();
         changeScriptCreator.setScriptDescription(name);
-        changeScriptCreator.setScriptDirectory(dir);
+        changeScriptCreator.setScriptDirectory(scriptdirectory);
 
         return changeScriptCreator;
     }
