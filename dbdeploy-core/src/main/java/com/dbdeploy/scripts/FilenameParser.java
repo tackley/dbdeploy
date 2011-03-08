@@ -12,12 +12,12 @@ public class FilenameParser {
 		pattern = Pattern.compile("(\\d+).*");
 	}
 
-	public int extractIdFromFilename(String filename) throws UnrecognisedFilenameException {
+	public long extractIdFromFilename(String filename) throws UnrecognisedFilenameException {
 		Matcher matches = pattern.matcher(filename);
 		if (!matches.matches() || matches.groupCount() != 1)
 			throw new UnrecognisedFilenameException("Could not extract a change script number from filename: " + filename);
 		
-		return Integer.parseInt(matches.group(1));	
+		return Long.parseLong(matches.group(1));
 	 }
 
 }
