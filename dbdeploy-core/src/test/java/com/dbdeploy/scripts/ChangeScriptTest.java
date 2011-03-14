@@ -1,7 +1,5 @@
 package com.dbdeploy.scripts;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
@@ -9,14 +7,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.dbdeploy.scripts.ChangeScript;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class ChangeScriptTest {
 
 	@Test
-	public void changeScriptsHaveAnIdAndAFile() throws Exception {
+	public void changeScriptsHaveAnIdAndAFileAndEncoding() throws Exception {
 		File file = new File("abc.txt");
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.getId(), equalTo(5L));
 		assertThat(changeScript.getFile(), sameInstance(file));
 	}
@@ -25,7 +24,7 @@ public class ChangeScriptTest {
 	public void shouldReturnContentsOfFile() throws Exception {
 		File file = createTemporaryFileWithContent("Hello\nThere!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
@@ -37,7 +36,7 @@ public class ChangeScriptTest {
 				"--//@UNDO\n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
@@ -49,7 +48,7 @@ public class ChangeScriptTest {
 				"--//@UNDO   \n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
@@ -61,7 +60,7 @@ public class ChangeScriptTest {
 				"--//@UNDO\n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.getUndoContent(), is("This is after the undo marker!\n"));		
 	}
 
@@ -87,7 +86,7 @@ public class ChangeScriptTest {
 	@Test
 	public void toStringReturnsASensibleValue() throws Exception {
 		File file = new File("abc.txt");
-		ChangeScript changeScript = new ChangeScript(5, file);
+		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
 		assertThat(changeScript.toString(), equalTo("#5: abc.txt"));
 		
 		changeScript = new ChangeScript(5, "abc.txt");

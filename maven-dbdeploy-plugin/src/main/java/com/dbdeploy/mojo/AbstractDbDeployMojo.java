@@ -17,8 +17,9 @@ package com.dbdeploy.mojo;
  */
 import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.DelimiterType;
-import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
+
+import java.io.File;
 
 /**
  * Abstract class that all dbdeploy database goals should extend.
@@ -31,6 +32,14 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      * @required
      */
     protected File scriptdirectory;
+
+	/**
+	 * Encoding to use for change scripts and output files.
+	 *
+	 * @parameter expression="${dbdeploy.encoding}" default-value="${project.build.sourceEncoding}"
+	 */
+	protected String encoding;
+
 
     /**
      * Specifies the jdbc driver.
@@ -104,6 +113,10 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
         dbDeploy.setUrl(url);
         dbDeploy.setPassword(password);
         dbDeploy.setUserid(userid);
+
+	    if (encoding != null) {
+	        dbDeploy.setEncoding(encoding);
+	    }
 
         if (lastChangeToApply != null) {
             dbDeploy.setLastChangeToApply(lastChangeToApply);

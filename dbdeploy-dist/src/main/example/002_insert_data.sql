@@ -5,8 +5,8 @@
 -- so therefore dbdeploy will ensure that either the whole of this script applies
 -- or none of it does.
 --
-INSERT INTO Test VALUES (6);
-INSERT INTO Test VALUES (7);
+INSERT INTO Test VALUES (6, 'This is simple text');
+INSERT INTO Test VALUES (7, 'Some UTF-8 chars: åßéá');
 
 --//@UNDO
 

@@ -33,8 +33,7 @@ public class ScriptGenerationTest {
 
 	private void runIntegratedTestAndConfirmOutputResults(String syntaxName) throws Exception {
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		PrintStream printStream = new PrintStream(outputStream);
+		StringWriter writer = new StringWriter();
 
 		ChangeScript changeOne = new StubChangeScript(1, "001_change.sql", "-- contents of change script 1");
 		ChangeScript changeTwo = new StubChangeScript(2, "002_change.sql", "-- contents of change script 2");
@@ -45,12 +44,12 @@ public class ScriptGenerationTest {
 
 
 		final StubSchemaManager schemaManager = new StubSchemaManager();
-		ChangeScriptApplier applier = new TemplateBasedApplier(printStream, syntaxName, "changelog", null);
+		ChangeScriptApplier applier = new TemplateBasedApplier(writer, syntaxName, "changelog", null);
 		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
 
 		controller.processChangeScripts(Long.MAX_VALUE);
 
-		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), outputStream.toString());
+		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), writer.toString());
 	}
 
 	private String getExpectedFilename(String dbSyntaxName) {

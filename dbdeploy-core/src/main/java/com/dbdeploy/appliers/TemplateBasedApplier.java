@@ -22,10 +22,10 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 	private String syntax;
 	private String changeLogTableName;
 
-	public TemplateBasedApplier(OutputStream outputStream, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
+	public TemplateBasedApplier(Writer writer, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
 		this.syntax = syntax;
 		this.changeLogTableName = changeLogTableName;
-		this.writer = new PrintWriter(outputStream);
+		this.writer = writer;
 		this.configuration = new Configuration();
 
 		FileTemplateLoader fileTemplateLoader = createFileTemplateLoader(templateDirectory);

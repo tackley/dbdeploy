@@ -20,6 +20,7 @@ public class AntTarget extends Task {
 			+ "\n\t\tdbms=\"[YOUR DBMS]\""
 			+ "\n\t\ttemplatedir=\"[DIRECTORY FOR DBMS TEMPLATE SCRIPTS, IF NOT USING BUILT-IN]\""
 			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
+			+ "\n\t\tencoding=\"[CHARSET OF SQL SCRIPTS - default UTF-8]\""
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
@@ -91,6 +92,10 @@ public class AntTarget extends Task {
 
 	public void setTemplatedir(File templateDirectory) {
 		dbDeploy.setTemplatedir(templateDirectory);
+	}
+
+	public void setEncoding(String encoding) {
+		dbDeploy.setEncoding(encoding);
 	}
 }
 

@@ -12,12 +12,13 @@ import com.dbdeploy.scripts.ChangeScriptRepository;
 import com.dbdeploy.scripts.DirectoryScanner;
 
 import java.io.File;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 public class DbDeploy {
 	private String url;
 	private String userid;
 	private String password;
+	private String encoding = "UTF-8";
 	private File scriptdirectory;
 	private File outputfile;
 	private File undoOutputfile;
@@ -69,6 +70,10 @@ public class DbDeploy {
 		this.changeLogTableName = changeLogTableName;
 	}
 
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
 
@@ -82,13 +87,13 @@ public class DbDeploy {
 				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 
 		ChangeScriptRepository changeScriptRepository =
-				new ChangeScriptRepository(new DirectoryScanner().getChangeScriptsForDirectory(scriptdirectory));
+				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
 
 		ChangeScriptApplier doScriptApplier;
 
 		if (outputfile != null) {
 			doScriptApplier = new TemplateBasedApplier(
-					new PrintStream(outputfile), dbms,
+					new PrintWriter(outputfile, encoding), dbms,
 					changeLogTableName, getTemplatedir());
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
@@ -100,9 +105,8 @@ public class DbDeploy {
 		ChangeScriptApplier undoScriptApplier = null;
 
 		if (undoOutputfile != null) {
-			undoScriptApplier =
-					new UndoTemplateBasedApplier(
-							new PrintStream(undoOutputfile), dbms, changeLogTableName, getTemplatedir());
+			undoScriptApplier = new UndoTemplateBasedApplier(
+				new PrintWriter(undoOutputfile), dbms, changeLogTableName, getTemplatedir());
 
 		}
 

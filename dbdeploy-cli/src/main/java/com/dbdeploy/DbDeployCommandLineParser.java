@@ -100,6 +100,12 @@ public class DbDeployCommandLineParser {
 				.withLongOpt("scriptdirectory")
 				.create("s"));
 
+	    options.addOption(OptionBuilder
+			    .hasArg()
+			    .withDescription("encoding for input and output files (default: UTF-8)")
+			    .withLongOpt("encoding")
+			    .create("e"));
+
 		options.addOption(OptionBuilder
 				.hasArg()
 				.withDescription("output file")

@@ -2,32 +2,32 @@ package com.dbdeploy.scripts;
 
 import com.dbdeploy.exceptions.DbDeployException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class ChangeScript implements Comparable {
 
 	private final long id;
 	private final File file;
 	private final String description;
+    private final String encoding;
 	private static final String UNDO_MARKER = "--//@UNDO";
 
 	public ChangeScript(long id) {
 		this(id, "test");
 	}
 
-	public ChangeScript(long id, File file) {
+    public ChangeScript(long id, String description) {
+        this.id = id;
+        this.file = null;
+        this.description = description;
+        this.encoding = "UTF-8";
+    }
+
+	public ChangeScript(long id, File file, String encoding) {
 		this.id = id;
 		this.file = file;
 		this.description = file.getName();
-	}
-
-	public ChangeScript(long id, String description) {
-		this.id = id;
-		this.file = null;
-		this.description = description;
+        this.encoding = encoding;
 	}
 
 	public File getFile() {
@@ -64,7 +64,7 @@ public class ChangeScript implements Comparable {
 		try {
 			StringBuilder content = new StringBuilder();
 			boolean foundUndoMarker = false;
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
 
 			try {
 				for (;;) {
