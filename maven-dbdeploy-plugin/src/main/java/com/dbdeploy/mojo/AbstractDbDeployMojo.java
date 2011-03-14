@@ -17,6 +17,7 @@ package com.dbdeploy.mojo;
  */
 import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.DelimiterType;
+import com.dbdeploy.database.LineEnding;
 import org.apache.maven.plugin.AbstractMojo;
 
 import java.io.File;
@@ -99,6 +100,15 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      */
     protected String delimiterType;
 
+	/**
+	 * Line ending to separate indiviual statement lines when applying directly
+	 * to the database. Can be platform (the default line ending for the current platform),
+	 * cr, crlf or lf. Default platform.
+	 *
+	 * @parameter expression="${dbdeploy.lineEnding}"
+	 */
+	protected String lineEnding;
+
     /**
      * The highest numbered delta script to apply.
      *
@@ -133,6 +143,10 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
         if (delimiterType != null) {
             dbDeploy.setDelimiterType(DelimiterType.valueOf(delimiterType));
         }
+
+	    if (lineEnding != null) {
+		    dbDeploy.setLineEnding(LineEnding.valueOf(lineEnding));
+	    }
 
         return dbDeploy;
     }

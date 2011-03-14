@@ -1,6 +1,7 @@
 package com.dbdeploy;
 
 import com.dbdeploy.database.DelimiterType;
+import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.exceptions.UsageException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -96,6 +97,10 @@ public class AntTarget extends Task {
 
 	public void setEncoding(String encoding) {
 		dbDeploy.setEncoding(encoding);
+	}
+
+	public void setLineEnding(LineEnding lineEnding) {
+		dbDeploy.setLineEnding(lineEnding);
 	}
 }
 

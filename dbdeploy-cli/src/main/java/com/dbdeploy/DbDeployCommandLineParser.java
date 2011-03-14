@@ -1,5 +1,6 @@
 package com.dbdeploy;
 
+import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.database.DelimiterType;
 import org.apache.commons.cli.*;
@@ -53,6 +54,10 @@ public class DbDeployCommandLineParser {
 
 			if (commandLine.hasOption("delimitertype")) {
 				dbDeploy.setDelimiterType(DelimiterType.valueOf(commandLine.getOptionValue("delimitertype")));
+			}
+
+			if (commandLine.hasOption("lineending")) {
+				dbDeploy.setLineEnding(LineEnding.valueOf(commandLine.getOptionValue("lineending")));
 			}
 
 		} catch (Exception e) {
@@ -141,6 +146,12 @@ public class DbDeployCommandLineParser {
 				.withDescription("delimiter type to separate sql statements (row or normal)")
 				.withLongOpt("delimitertype")
 				.create());
+
+	    options.addOption(OptionBuilder
+			    .hasArg()
+			    .withDescription("line ending to use when applying scripts direct to db (platform, cr, crlf, lf)")
+			    .withLongOpt("lineending")
+			    .create());
 
 
 		return options;

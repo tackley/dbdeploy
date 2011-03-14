@@ -4,6 +4,7 @@ import com.dbdeploy.appliers.DirectToDbApplier;
 import com.dbdeploy.appliers.TemplateBasedApplier;
 import com.dbdeploy.appliers.UndoTemplateBasedApplier;
 import com.dbdeploy.database.DelimiterType;
+import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
@@ -22,6 +23,7 @@ public class DbDeploy {
 	private File scriptdirectory;
 	private File outputfile;
 	private File undoOutputfile;
+	private LineEnding lineEnding = LineEnding.platform;
 	private String dbms;
 	private Long lastChangeToApply = Long.MAX_VALUE;
 	private String driver;
@@ -74,6 +76,10 @@ public class DbDeploy {
 		this.encoding = encoding;
 	}
 
+	public void setLineEnding(LineEnding lineEnding) {
+		this.lineEnding = lineEnding;
+	}
+
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
 
@@ -99,6 +105,7 @@ public class DbDeploy {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
 			splitter.setDelimiterType(getDelimiterType());
+			splitter.setOutputLineEnding(lineEnding);
 			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
 		}
 
@@ -208,5 +215,13 @@ public class DbDeploy {
 	public String getWelcomeString() {
         String version = getClass().getPackage().getImplementationVersion();
         return "dbdeploy " + version;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public LineEnding getLineEnding() {
+		return lineEnding;
 	}
 }

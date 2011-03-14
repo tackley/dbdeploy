@@ -1,17 +1,13 @@
 package com.dbdeploy;
 
 import com.dbdeploy.database.DelimiterType;
+import com.dbdeploy.database.LineEnding;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnit44Runner;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DbDeployCommandLineParserTest {
     UserInputReader userInputReader = mock(UserInputReader.class);
@@ -50,6 +46,33 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
 		assertThat(dbDeploy.getTemplatedir().getPath(), is("/tmp/mytemplates"));
+	}
+
+	@Test
+	public void delimiterTypeWorksOk() throws Exception {
+		parser.parse("--delimitertype normal".split(" "), dbDeploy);
+		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.normal));
+
+		parser.parse("--delimitertype row".split(" "), dbDeploy);
+		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
+	}
+
+	@Test
+	public void lineEndingWorksOk() throws Exception {
+		assertThat(dbDeploy.getLineEnding(), is(LineEnding.platform));
+
+		parser.parse("--lineending cr".split(" "), dbDeploy);
+		assertThat(dbDeploy.getLineEnding(), is(LineEnding.cr));
+
+		parser.parse("--lineending crlf".split(" "), dbDeploy);
+		assertThat(dbDeploy.getLineEnding(), is(LineEnding.crlf));
+
+		parser.parse("--lineending lf".split(" "), dbDeploy);
+		assertThat(dbDeploy.getLineEnding(), is(LineEnding.lf));
+
+		parser.parse("--lineending platform".split(" "), dbDeploy);
+		assertThat(dbDeploy.getLineEnding(), is(LineEnding.platform));
+
 	}
 
     @Test

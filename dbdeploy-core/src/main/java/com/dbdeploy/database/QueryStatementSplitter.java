@@ -1,5 +1,6 @@
 package com.dbdeploy.database;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -10,8 +11,9 @@ import java.util.List;
 public class QueryStatementSplitter {
     private String delimiter = ";";
     private DelimiterType delimiterType = DelimiterType.normal;
+	private LineEnding lineEnding = LineEnding.platform;
 
-    public QueryStatementSplitter() {
+	public QueryStatementSplitter() {
     }
 
     public List<String> split(String input) {
@@ -20,16 +22,16 @@ public class QueryStatementSplitter {
 
         StrTokenizer lineTokenizer = new StrTokenizer(input);
         lineTokenizer.setDelimiterMatcher(StrMatcher.charSetMatcher("\r\n"));
-        lineTokenizer.setTrimmerMatcher(StrMatcher.trimMatcher());
 
         for (String line : lineTokenizer.getTokenArray()) {
+	        String strippedLine = StringUtils.stripEnd(line, null);
             if (!currentSql.isEmpty()) {
-                currentSql.appendNewLine();
+                currentSql.append(lineEnding.get());
             }
 
-            currentSql.append(line);
+            currentSql.append(strippedLine);
 
-           if (delimiterType.matches(line, delimiter)) {
+           if (delimiterType.matches(strippedLine, delimiter)) {
                 statements.add(currentSql.substring(0, currentSql.length() - delimiter.length()));
                 currentSql.clear();
             }
@@ -57,4 +59,8 @@ public class QueryStatementSplitter {
     public void setDelimiterType(DelimiterType delimiterType) {
         this.delimiterType = delimiterType;
     }
+
+	public void setOutputLineEnding(LineEnding lineEnding) {
+		this.lineEnding = lineEnding;
+	}
 }
