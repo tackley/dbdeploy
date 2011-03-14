@@ -32,7 +32,7 @@
                   -->
         <url>http://github.com/tackley/dbdeploy</url>
         <connection>scm:git:git://github.com/tackley/dbdeploy.git</connection>
-        <developerConnection>scm:git:git://github.com/tackley/dbdeploy.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:tackley/dbdeploy.git</developerConnection>
     </scm>
 
     <licenses>
