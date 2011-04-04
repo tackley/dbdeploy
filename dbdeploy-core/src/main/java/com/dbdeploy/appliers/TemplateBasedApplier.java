@@ -1,6 +1,7 @@
 package com.dbdeploy.appliers;
 
 import com.dbdeploy.ChangeScriptApplier;
+import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScript;
 import freemarker.cache.ClassTemplateLoader;
@@ -21,10 +22,14 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 	private Writer writer;
 	private String syntax;
 	private String changeLogTableName;
+	private String delimiter;
+	private DelimiterType delimiterType;
 
-	public TemplateBasedApplier(Writer writer, String syntax, String changeLogTableName, File templateDirectory) throws IOException {
+	public TemplateBasedApplier(Writer writer, String syntax, String changeLogTableName, String delimiter, DelimiterType delimiterType, File templateDirectory) throws IOException {
 		this.syntax = syntax;
 		this.changeLogTableName = changeLogTableName;
+		this.delimiter = delimiter;
+		this.delimiterType = delimiterType;
 		this.writer = writer;
 		this.configuration = new Configuration();
 
@@ -51,6 +56,8 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("scripts", changeScripts);
 			model.put("changeLogTableName", changeLogTableName);
+			model.put("delimiter", delimiter);
+			model.put("separator", delimiterType == DelimiterType.row ? "\n" : "");
 
 			try {
 				Template template = configuration.getTemplate(filename);

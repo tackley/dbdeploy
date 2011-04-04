@@ -100,7 +100,7 @@ public class DbDeploy {
 		if (outputfile != null) {
 			doScriptApplier = new TemplateBasedApplier(
 					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, getTemplatedir());
+					changeLogTableName, delimiter, delimiterType, getTemplatedir());
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
@@ -113,7 +113,7 @@ public class DbDeploy {
 
 		if (undoOutputfile != null) {
 			undoScriptApplier = new UndoTemplateBasedApplier(
-				new PrintWriter(undoOutputfile), dbms, changeLogTableName, getTemplatedir());
+				new PrintWriter(undoOutputfile), dbms, changeLogTableName, delimiter, delimiterType, templatedir);
 
 		}
 
