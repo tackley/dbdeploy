@@ -4,6 +4,8 @@ import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -45,7 +47,7 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
-		assertThat(dbDeploy.getTemplatedir().getPath(), is("/tmp/mytemplates"));
+		assertThat(dbDeploy.getTemplatedir().getPath(), is(File.separator + "tmp" + File.separator + "mytemplates"));
 	}
 
 	@Test
