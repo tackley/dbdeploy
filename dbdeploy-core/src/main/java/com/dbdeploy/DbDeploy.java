@@ -105,13 +105,13 @@ public class DbDeploy {
 		if (outputfile != null) {
 			doScriptApplier = new TemplateBasedApplier(
 					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, delimiter, delimiterType, getTemplatedir());
+					changeLogTableName, delimiter, delimiterType, getTemplatedir(), fake);
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
 			splitter.setDelimiterType(getDelimiterType());
 			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
+			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, fake);
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;

@@ -14,20 +14,27 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 	private final QueryExecuter queryExecuter;
 	private final DatabaseSchemaVersionManager schemaVersionManager;
     private final QueryStatementSplitter splitter;
+    private final boolean fake;
 
-    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter) {
+    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter,
+                             boolean fake) {
 		this.queryExecuter = queryExecuter;
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
+        this.fake = fake;
     }
 
     public void apply(List<ChangeScript> changeScript) {
         begin();
 
-        for (ChangeScript script : changeScript) {
-            System.err.println("Applying " + script + "...");
+        String applyType = fake ? "Faking " : "Applying ";
 
-            applyChangeScript(script);
+        for (ChangeScript script : changeScript) {
+            System.err.println(applyType + script + "...");
+
+            if (! fake) {
+                applyChangeScript(script);
+            }
             insertToSchemaVersionTable(script);
 
             commitTransaction();
