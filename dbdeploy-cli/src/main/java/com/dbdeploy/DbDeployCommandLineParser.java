@@ -47,10 +47,18 @@ public class DbDeployCommandLineParser {
 					if (p.getPropertyType().isAssignableFrom(File.class)) {
 						value = new File((String) value);
 					}
-
-					p.getWriteMethod().invoke(dbDeploy, value);
+                    if (p.getPropertyType() == Long.class) {
+                        value = Long.parseLong(value.toString());
+                    }
+                    if (value != null) {
+                        p.getWriteMethod().invoke(dbDeploy, value);
+                    }
 				}
 			}
+
+            if (commandLine.hasOption("fake")) {
+                dbDeploy.setFake(true);
+            }
 
 			if (commandLine.hasOption("delimitertype")) {
 				dbDeploy.setDelimiterType(DelimiterType.valueOf(commandLine.getOptionValue("delimitertype")));
@@ -59,6 +67,7 @@ public class DbDeployCommandLineParser {
 			if (commandLine.hasOption("lineending")) {
 				dbDeploy.setLineEnding(LineEnding.valueOf(commandLine.getOptionValue("lineending")));
 			}
+
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -153,6 +162,17 @@ public class DbDeployCommandLineParser {
 			    .withLongOpt("lineending")
 			    .create());
 
+        options.addOption(OptionBuilder
+			    .hasArg().withType(Long.class)
+			    .withDescription("The highest numbered delta script to apply")
+			    .withLongOpt("lastChangeToApply")
+			    .create());
+
+
+        options.addOption(OptionBuilder
+                .withDescription("fake a migration - only make changes to Changelog")
+                .withLongOpt("fake")
+                .create());
 
 		return options;
 	}

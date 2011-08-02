@@ -31,6 +31,7 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+    private boolean fake = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -79,6 +80,10 @@ public class DbDeploy {
 	public void setLineEnding(LineEnding lineEnding) {
 		this.lineEnding = lineEnding;
 	}
+
+    public void setFake(boolean fake) {
+        this.fake = fake;
+    }
 
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
@@ -224,4 +229,8 @@ public class DbDeploy {
 	public LineEnding getLineEnding() {
 		return lineEnding;
 	}
+
+    public boolean getFake() {
+        return fake;
+    }
 }
