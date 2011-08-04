@@ -86,8 +86,7 @@ public class DbDeploy {
         this.fake = fake;
     }
 
-    public void setQuiet(boolean quiet)
-    {
+    public void setQuiet(boolean quiet) {
         this.quiet = quiet;
     }
 

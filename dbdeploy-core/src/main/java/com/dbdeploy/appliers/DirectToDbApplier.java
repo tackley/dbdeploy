@@ -25,13 +25,11 @@ public class DirectToDbApplier implements ChangeScriptApplier {
         this.fake = fake;
     }
 
-    public void setQuiet(boolean quiet)
-    {
+    public void setQuiet(boolean quiet) {
         this.quiet = quiet;
     }
 
-    public boolean getQuiet()
-    {
+    public boolean getQuiet() {
         return this.quiet;
     }
 
