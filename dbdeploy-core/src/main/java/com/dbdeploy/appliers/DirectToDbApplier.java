@@ -15,6 +15,7 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 	private final DatabaseSchemaVersionManager schemaVersionManager;
     private final QueryStatementSplitter splitter;
     private final boolean fake;
+    private boolean quiet=false;
 
     public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter,
                              boolean fake) {
@@ -22,6 +23,16 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
         this.fake = fake;
+    }
+
+    public void setQuiet(boolean quiet)
+    {
+        this.quiet = quiet;
+    }
+
+    public boolean getQuiet()
+    {
+        return this.quiet;
     }
 
     public void apply(List<ChangeScript> changeScript) {
@@ -55,7 +66,7 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		for (int i = 0; i < statements.size(); i++) {
 			String statement = statements.get(i);
 			try {
-				if (statements.size() > 1) {
+				if (statements.size() > 1 && !quiet) {
 					System.err.println(" -> statement " + (i+1) + " of " + statements.size() + "...");
 				}
 				queryExecuter.execute(statement);

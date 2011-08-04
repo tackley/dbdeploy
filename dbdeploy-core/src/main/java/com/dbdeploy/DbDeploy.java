@@ -32,6 +32,7 @@ public class DbDeploy {
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
     private boolean fake = false;
+    private boolean quiet = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -85,6 +86,16 @@ public class DbDeploy {
         this.fake = fake;
     }
 
+    public void setQuiet(boolean quiet)
+    {
+        this.quiet = quiet;
+    }
+
+    public boolean getQuiet()
+    {
+        return this.quiet;
+    }
+
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
 
@@ -111,7 +122,9 @@ public class DbDeploy {
 			splitter.setDelimiter(getDelimiter());
 			splitter.setDelimiterType(getDelimiterType());
 			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, fake);
+            DirectToDbApplier applier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, fake);
+            applier.setQuiet(quiet);
+			doScriptApplier = applier;
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;
