@@ -1,7 +1,7 @@
 package com.dbdeploy.appliers;
 
 import com.dbdeploy.ChangeScriptApplier;
-import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.QueryStatementSplitterExt;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
@@ -13,9 +13,9 @@ import java.util.List;
 public class DirectToDbApplier implements ChangeScriptApplier {
 	private final QueryExecuter queryExecuter;
 	private final DatabaseSchemaVersionManager schemaVersionManager;
-    private final QueryStatementSplitter splitter;
+    private final QueryStatementSplitterExt splitter;
 
-    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter) {
+    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitterExt splitter) {
 		this.queryExecuter = queryExecuter;
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
