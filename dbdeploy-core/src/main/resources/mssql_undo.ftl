@@ -10,9 +10,6 @@ ${script.undoContent}
 DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id?c}
 GO
 
-COMMIT
-GO
-
 -- END UNDO OF CHANGE SCRIPT ${script}
 
 [/#list]
