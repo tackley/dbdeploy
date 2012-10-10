@@ -1,11 +1,11 @@
 package com.dbdeploy.appliers;
 
-import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
 import com.dbdeploy.scripts.StubChangeScript;
+import com.dbdeploy.database.QueryStatementSplitterExt;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,7 @@ import org.mockito.runners.MockitoJUnit44Runner;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class DirectToDbApplierTest {
 	@Mock private QueryExecuter queryExecuter;
 	@Mock private DatabaseSchemaVersionManager schemaVersionManager;
-    @Mock private QueryStatementSplitter splitter;
+    @Mock private QueryStatementSplitterExt splitter;
 	private DirectToDbApplier applier;
 
 	@Before

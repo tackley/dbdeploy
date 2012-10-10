@@ -3,9 +3,7 @@ package com.dbdeploy;
 import com.dbdeploy.appliers.DirectToDbApplier;
 import com.dbdeploy.appliers.TemplateBasedApplier;
 import com.dbdeploy.appliers.UndoTemplateBasedApplier;
-import com.dbdeploy.database.DelimiterType;
-import com.dbdeploy.database.LineEnding;
-import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.*;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
@@ -102,9 +100,12 @@ public class DbDeploy {
 					new PrintWriter(outputfile, encoding), dbms,
 					changeLogTableName, delimiter, delimiterType, getTemplatedir());
 		} else {
-			QueryStatementSplitter splitter = new QueryStatementSplitter();
-			splitter.setDelimiter(getDelimiter());
-			splitter.setDelimiterType(getDelimiterType());
+            QueryStatementSplitterExt splitter = new QueryStatementSplitterExt(getDelimiter(),getDelimiterType());
+
+
+            splitter.addDelimiter("SQL",new Delimiter(";",DelimiterType.normal));
+            splitter.addDelimiter("PLSQL",new Delimiter("/",DelimiterType.row));
+
 			splitter.setOutputLineEnding(lineEnding);
 			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
 		}
