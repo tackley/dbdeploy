@@ -37,7 +37,7 @@ public class CreateChangeScriptMojo extends AbstractMojo {
     /**
      * Directory where change scripts reside.
      *
-     * @parameter expression="${dbdeploy.scriptdirectory}" default-value="${project.src.directory}/main/sql"
+     * @parameter expression="${dbdeploy.scriptdirectory}" default-value="${project.basedir}/src/main/sql"
      * @required
      */
     private File scriptdirectory;
