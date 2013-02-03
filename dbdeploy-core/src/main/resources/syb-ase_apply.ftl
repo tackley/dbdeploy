@@ -8,11 +8,9 @@
 ${script.content}
 
 INSERT INTO ${changeLogTableName} (change_number, complete_dt, applied_by, description)
- VALUES (${script.id?c}, getdate(), user_name(), '${script.description}')
-GO
+ VALUES (${script.id?c}, getdate(), user_name(), '${script.description}')${separator}${delimiter}
 
-COMMIT
-GO
+COMMIT${separator}${delimiter}
 
 -- END CHANGE SCRIPT ${script}
 
