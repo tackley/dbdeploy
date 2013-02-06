@@ -1,16 +1,15 @@
 package com.dbdeploy.appliers;
 
-import com.dbdeploy.database.DelimiterType;
+import com.dbdeploy.database.QueryStatementSplitter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 
 public class UndoTemplateBasedApplier extends TemplateBasedApplier {
 	public UndoTemplateBasedApplier(Writer writer, String syntax,
-									String changeLogTableName, String delimiter, DelimiterType delimiterType, File templateDirectory) throws IOException {
-		super(writer, syntax, changeLogTableName, delimiter, delimiterType, templateDirectory);
+									String changeLogTableName, QueryStatementSplitter splitter, File templateDirectory) throws IOException {
+		super(writer, syntax, changeLogTableName, null, splitter, templateDirectory);
 	}
 
 	@Override

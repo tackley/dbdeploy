@@ -38,6 +38,35 @@ public class QueryExecuter {
         }
     }
 
+    public boolean doesTableExist(String tableName) throws SQLException {
+        ResultSet rsSame = null;
+        ResultSet rsLower = null;
+        ResultSet rsUpper = null;
+        try {
+            rsSame = connection.getMetaData().getTables(null, null, tableName, null);
+            rsLower = connection.getMetaData().getTables(null, null, tableName.toLowerCase(), null);
+            rsUpper = connection.getMetaData().getTables(null, null, tableName.toUpperCase(), null);
+
+            return rsSame.next() || rsLower.next() || rsUpper.next();
+        } finally {
+            try {
+                if (rsUpper != null) {
+                    rsUpper.close();
+                }
+            } finally {
+                try {
+                    if (rsLower != null) {
+                        rsLower.close();
+                    }
+                } finally {
+                    if (rsSame != null) {
+                        rsSame.close();
+                    }
+                }
+            }
+        }
+    }
+
 	public void close() throws SQLException {
 		connection.close();
 	}

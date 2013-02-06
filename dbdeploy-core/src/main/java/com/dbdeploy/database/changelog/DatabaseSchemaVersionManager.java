@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -25,24 +26,36 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
         this.changeLogTableName = changeLogTableName;
     }
 
-	public List<Long> getAppliedChanges() {
-		try {
-			ResultSet rs = queryExecuter.executeQuery(
-					"SELECT change_number FROM " + changeLogTableName + "  ORDER BY change_number");
+    private boolean changelogTableExists() {
+        try {
+            return queryExecuter.doesTableExist(changeLogTableName);
+        } catch (SQLException e) {
+            throw new SchemaVersionTrackingException("Could not determine presence of change log table", e);
+        }
+    }
 
-			List<Long> changeNumbers = new ArrayList<Long>();
+    public List<Long> getAppliedChanges() {
+        if (changelogTableExists()) {
+            try {
+                ResultSet rs = queryExecuter.executeQuery(
+                        "SELECT change_number FROM " + changeLogTableName + "  ORDER BY change_number");
 
-			while (rs.next()) {
-				changeNumbers.add(rs.getLong(1));
-			}
+                List<Long> changeNumbers = new ArrayList<Long>();
 
-			rs.close();
+                while (rs.next()) {
+                    changeNumbers.add(rs.getLong(1));
+                }
 
-			return changeNumbers;
-		} catch (SQLException e) {
-			throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "
-					+ e.getMessage(), e);
-		}
+                rs.close();
+
+                return changeNumbers;
+            } catch (SQLException e) {
+                throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "
+                        + e.getMessage(), e);
+            }
+        } else {
+            return Collections.emptyList();
+        }
 	}
 
     public String getChangelogDeleteSql(ChangeScript script) {

@@ -11,6 +11,15 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 public class DirectToDbIntegrationTest {
+    @Test
+    public void shouldDeterminePresenceOfChangelogTable() throws Exception {
+        Database db = new Database("todb_changelog_check");
+        db.createSchemaVersionTable();
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        //dbDeploy
+    }
 	@Test
 	public void shouldSuccessfullyApplyAValidSetOfDeltas() throws Exception {
 		Database db = new Database("todb_success_test");

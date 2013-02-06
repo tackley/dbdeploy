@@ -1,6 +1,7 @@
 package com.dbdeploy.appliers;
 
 import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
@@ -14,6 +15,7 @@ import org.mockito.runners.MockitoJUnit44Runner;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -25,11 +27,12 @@ public class DirectToDbApplierTest {
 	@Mock private QueryExecuter queryExecuter;
 	@Mock private DatabaseSchemaVersionManager schemaVersionManager;
     @Mock private QueryStatementSplitter splitter;
+    @Mock private ChangeLogTableCreator tableCreator;
 	private DirectToDbApplier applier;
 
 	@Before
 	public void setUp() {
-		applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter);
+		applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter, tableCreator);
 	}
 	
 	@Test
@@ -84,5 +87,20 @@ public class DirectToDbApplierTest {
 		verify(queryExecuter).commit();
 	}
 
+    @Test
+    public void shouldCreateChangeLogTableIfRequired() {
+        applier.apply(Collections.<ChangeScript> emptyList());
 
+        verify(tableCreator).create();
+    }
+
+    @Test
+    public void shouldSplitChangeLogDDL() throws Exception {
+        when(tableCreator.create()).thenReturn("split; ddl");
+
+        applier.apply(Collections.<ChangeScript> emptyList());
+
+        verify(queryExecuter).execute("split");
+        verify(queryExecuter).execute("ddl");
+    }
 }

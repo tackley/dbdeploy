@@ -6,6 +6,7 @@ import com.dbdeploy.appliers.UndoTemplateBasedApplier;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
@@ -14,6 +15,7 @@ import com.dbdeploy.scripts.DirectoryScanner;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class DbDeploy {
 	private String url;
@@ -31,6 +33,8 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+    private boolean createChangeLogTableIfNotExists = false;
+    private boolean forceCreateChangeLogTable = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -97,23 +101,32 @@ public class DbDeploy {
 
 		ChangeScriptApplier doScriptApplier;
 
+        QueryStatementSplitter splitter = new QueryStatementSplitter();
+        splitter.setDelimiter(getDelimiter());
+        splitter.setDelimiterType(getDelimiterType());
+        splitter.setOutputLineEnding(lineEnding);
+
+        ChangeLogTableCreator tableCreator = null;
+        if ((createChangeLogTableIfNotExists && !queryExecuter.doesTableExist(changeLogTableName))
+                || forceCreateChangeLogTable) {
+            tableCreator = new ChangeLogTableCreator(changeLogTableName, dbms, splitter, getTemplatedir());
+        }
+
 		if (outputfile != null) {
-			doScriptApplier = new TemplateBasedApplier(
-					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, delimiter, delimiterType, getTemplatedir());
+            PrintWriter writer = new PrintWriter(outputfile, encoding);
+            doScriptApplier = new TemplateBasedApplier(
+                    writer, dbms,
+					changeLogTableName, tableCreator, splitter, getTemplatedir());
+
 		} else {
-			QueryStatementSplitter splitter = new QueryStatementSplitter();
-			splitter.setDelimiter(getDelimiter());
-			splitter.setDelimiterType(getDelimiterType());
-			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
+			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, tableCreator);
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;
 
 		if (undoOutputfile != null) {
 			undoScriptApplier = new UndoTemplateBasedApplier(
-				new PrintWriter(undoOutputfile), dbms, changeLogTableName, delimiter, delimiterType, templatedir);
+				new PrintWriter(undoOutputfile), dbms, changeLogTableName, splitter, templatedir);
 
 		}
 
@@ -224,4 +237,20 @@ public class DbDeploy {
 	public LineEnding getLineEnding() {
 		return lineEnding;
 	}
+
+    public boolean getCreateChangeLogTableIfNotExists() {
+        return createChangeLogTableIfNotExists;
+    }
+
+    public void setCreateChangeLogTableIfNotExists(boolean createChangeLogTableIfNotExists) {
+        this.createChangeLogTableIfNotExists = createChangeLogTableIfNotExists;
+    }
+
+    public boolean getForceCreateChangeLogTable() {
+        return forceCreateChangeLogTable;
+    }
+
+    public void setForceCreateChangeLogTable(boolean forceCreateChangeLogTable) {
+        this.forceCreateChangeLogTable = forceCreateChangeLogTable;
+    }
 }

@@ -2,16 +2,20 @@ package com.dbdeploy.database.changelog;
 
 import com.dbdeploy.scripts.ChangeScript;
 import org.hamcrest.Matchers;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
-import static org.hamcrest.Matchers.hasItems;
+
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.startsWith;
 import org.mockito.Mock;
+
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.ResultSet;
@@ -34,6 +38,7 @@ public class DatabaseSchemaVersionManagerTest {
         MockitoAnnotations.initMocks(this);
 
         when(queryExecuter.executeQuery(anyString())).thenReturn(expectedResultSet);
+        when(queryExecuter.doesTableExist(anyString())).thenReturn(true);
 
         schemaVersionManager = new DatabaseSchemaVersionManager(queryExecuter, "changelog");
         schemaVersionManager.setTimeProvider(timeProvider);
@@ -93,6 +98,18 @@ public class DatabaseSchemaVersionManagerTest {
         String updateSql = schemaVersionManagerWithDifferentTableName.getChangelogDeleteSql(script);
 
         assertThat(updateSql, Matchers.startsWith("DELETE FROM user_specified_changelog "));
+    }
+
+    @Test
+    public void shouldIdentifyWhenChangelogTableNotPresent() throws SQLException {
+        DatabaseSchemaVersionManager schemaVersionManagerWithChangelog =
+                new DatabaseSchemaVersionManager(queryExecuter, "test_changelog");
+        when(queryExecuter.doesTableExist("test_changelog")).thenReturn(true);
+
+        assertThat(schemaVersionManagerWithChangelog.getAppliedChanges().size(), is(0));
+
+        verify(queryExecuter).doesTableExist("test_changelog");
+        verify(queryExecuter, never()).execute(Mockito.any(String.class));
     }
 }
 
