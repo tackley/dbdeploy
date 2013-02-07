@@ -7,9 +7,11 @@
 
 ${script.undoContent}
 
-DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id?c}${separator}${delimiter}
+DELETE FROM ${changeLogTableName} WHERE change_number = ${script.id?c}
+GO
 
-COMMIT${separator}${delimiter}
+COMMIT
+GO
 
 -- END UNDO OF CHANGE SCRIPT ${script}
 
