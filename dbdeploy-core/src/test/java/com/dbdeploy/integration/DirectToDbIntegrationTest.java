@@ -1,6 +1,8 @@
 package com.dbdeploy.integration;
 
 import com.dbdeploy.DbDeploy;
+import com.dbdeploy.exceptions.SchemaVersionTrackingException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -86,6 +88,47 @@ public class DirectToDbIntegrationTest {
 		results = db.executeQuery("select id from Test");
 		assertThat(results.size(), is(1));
 	}
+
+    @Test(expected = SchemaVersionTrackingException.class)
+    public void shouldNotGenerateChangelogTableByDefault() throws Exception {
+        Database db = new Database("todb_no_changelog_default");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
+        dbDeploy.go();
+
+        List<Long> entries = db.getChangelogEntries();
+    }
+
+    @Test
+    public void shouldGenerateChangelogTableWhenRequestAndNotExists() throws Exception {
+        Database db = new Database("todb_no_changelog_with_create");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setCreateChangeLogTableIfNotExists(true);
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
+        dbDeploy.go();
+
+        List<Long> entries = db.getChangelogEntries();// No error
+        assertThat(entries.size(), is(0));
+    }
+
+    @Test
+    public void shouldNotFailWhenChangelogTableRequestedAndAlreadyExists() throws Exception {
+        Database db = new Database("todb_with_changelog_with_create");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        db.createSchemaVersionTable();
+        dbDeploy.setCreateChangeLogTableIfNotExists(true);
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
+
+        dbDeploy.go();
+
+        Assert.assertThat(db.getChangelogEntries().size(), is(0));
+    }
 
 	private File findScriptDirectory(String directoryName) {
 		File directoryWhenRunningUnderMaven = new File(directoryName);

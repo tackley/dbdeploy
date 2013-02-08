@@ -7,7 +7,7 @@
 
 CREATE TABLE ${changeLogTableName} (
   change_number BIGINT NOT NULL,
-  complete_dt, TIMESTAMP WITH TIMEZONE NOT NULL,
+  complete_dt TIMESTAMP NOT NULL,
   applied_by VARCHAR(100) NOT NULL,
   description VARCHAR(500) NOT NULL
 )${separator}${delimiter}

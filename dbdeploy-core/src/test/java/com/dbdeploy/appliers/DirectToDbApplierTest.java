@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -100,7 +100,6 @@ public class DirectToDbApplierTest {
 
         applier.apply(Collections.<ChangeScript> emptyList());
 
-        verify(queryExecuter).execute("split");
-        verify(queryExecuter).execute("ddl");
+        verify(splitter).split("split; ddl");
     }
 }

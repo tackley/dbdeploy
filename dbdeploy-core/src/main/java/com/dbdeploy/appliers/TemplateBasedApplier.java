@@ -5,6 +5,7 @@ import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.scripts.ChangeScript;
 import com.dbdeploy.template.TemplateProcessor;
+import freemarker.template.TemplateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +47,9 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
             templateProcessor.addToModel("scripts", changeScripts);
 
 			templateProcessor.process(filename);
-		} catch (Exception e) {
+		} catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
 			throw new RuntimeException(e);
 		}
 	}

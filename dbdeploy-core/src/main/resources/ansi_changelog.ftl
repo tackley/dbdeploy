@@ -12,4 +12,4 @@ CREATE TABLE ${changeLogTableName} (
   description VARCHAR(500) NOT NULL
 )${separator}${delimiter}
 
-ALTER TABLE ${changeLogTableName} ADD CONSTRAINT Pk${changeLogTableName} PRIMARY KEY (change_number)${delimiter}${separator}
+ALTER TABLE ${changeLogTableName} ADD CONSTRAINT Pk${changeLogTableName} PRIMARY KEY (change_number)${separator}${delimiter}

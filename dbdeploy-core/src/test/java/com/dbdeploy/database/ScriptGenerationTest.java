@@ -3,6 +3,7 @@ package com.dbdeploy.database;
 import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.Controller;
 import com.dbdeploy.appliers.TemplateBasedApplier;
+import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import com.dbdeploy.scripts.ChangeScript;
@@ -19,19 +20,23 @@ import static org.junit.Assert.assertEquals;
 
 public class ScriptGenerationTest {
 
-	@Test
+    public static final List<String> DATABASE_SYNTAXES =
+            Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase", "db2", "pgsql", "derby", "ansi");
+
+    @Test
 	public void generateConsolidatedChangesScriptForAllDatabasesAndCompareAgainstTemplate() throws Exception {
-		for (String syntax : Arrays.asList("hsql", "mssql", "mysql", "ora", "syb-ase", "db2", "pgsql")) {
+		for (String syntax : DATABASE_SYNTAXES) {
 			try {
 				System.out.printf("Testing syntax %s\n", syntax);
-				runIntegratedTestAndConfirmOutputResults(syntax);
+				runIntegratedTestAndConfirmOutputResults(syntax, false);
+				runIntegratedTestAndConfirmOutputResults(syntax, true);
 			} catch (Exception e) {
-				throw new RuntimeException("Failed while testing syntax " + syntax, e);
+				throw new Exception("Failed while testing syntax " + syntax, e);
 			}
 		}
 	}
 
-	private void runIntegratedTestAndConfirmOutputResults(String syntaxName) throws Exception {
+	private void runIntegratedTestAndConfirmOutputResults(String syntaxName, boolean withChangelog) throws Exception {
 
 		StringWriter writer = new StringWriter();
 
@@ -46,16 +51,22 @@ public class ScriptGenerationTest {
 		final StubSchemaManager schemaManager = new StubSchemaManager();
         QueryStatementSplitter qss = new QueryStatementSplitter();
         qss.setDelimiterType(DelimiterType.normal);
-		ChangeScriptApplier applier = new TemplateBasedApplier(writer, syntaxName, "changelog", null, qss, null);
+
+        ChangeLogTableCreator clCreator = null;
+        if (withChangelog) {
+            clCreator = new ChangeLogTableCreator("changelog", syntaxName, qss, null);
+        }
+
+		ChangeScriptApplier applier = new TemplateBasedApplier(writer, syntaxName, "changelog", clCreator, qss, null);
 		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
 
 		controller.processChangeScripts(Long.MAX_VALUE);
 
-		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName)), writer.toString());
+		assertEquals(readExpectedFileContents(getExpectedFilename(syntaxName, withChangelog)), writer.toString());
 	}
 
-	private String getExpectedFilename(String dbSyntaxName) {
-		return dbSyntaxName + "_expected.sql";
+	private String getExpectedFilename(String dbSyntaxName, boolean withChangelog) {
+		return dbSyntaxName + "_expected" + (withChangelog ? "_changelog.sql" : ".sql");
 	}
 
 	private String readExpectedFileContents(String expectedFilename) throws IOException {

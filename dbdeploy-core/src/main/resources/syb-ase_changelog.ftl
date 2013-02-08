@@ -10,6 +10,8 @@ CREATE TABLE ${changeLogTableName} (
   complete_dt DATETIME NOT NULL,
   applied_by VARCHAR(100) NOT NULL,
   description VARCHAR(500) NOT NULL
-)${separator}${delimiter}
+)
+GO
 
-ALTER TABLE ${changeLogTableName} ADD CONSTRAINT Pk${changeLogTableName} PRIMARY KEY (change_number)${separator}${delimiter}
+ALTER TABLE ${changeLogTableName} ADD CONSTRAINT Pk${changeLogTableName} PRIMARY KEY (change_number)
+GO

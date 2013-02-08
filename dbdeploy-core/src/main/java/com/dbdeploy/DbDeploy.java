@@ -8,6 +8,7 @@ import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import com.dbdeploy.database.changelog.EmptyDatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
@@ -15,7 +16,6 @@ import com.dbdeploy.scripts.DirectoryScanner;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class DbDeploy {
 	private String url;
@@ -34,7 +34,6 @@ public class DbDeploy {
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
     private boolean createChangeLogTableIfNotExists = false;
-    private boolean forceCreateChangeLogTable = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -93,10 +92,19 @@ public class DbDeploy {
 
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
-		DatabaseSchemaVersionManager databaseSchemaVersionManager =
-				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        boolean createChangelog = false;
+        if ((createChangeLogTableIfNotExists && !queryExecuter.doesTableExist(changeLogTableName))) {
+            createChangelog = true;
+        }
+		DatabaseSchemaVersionManager databaseSchemaVersionManager;
 
-		ChangeScriptRepository changeScriptRepository =
+        if (createChangelog) {
+            databaseSchemaVersionManager = new EmptyDatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        } else {
+            databaseSchemaVersionManager = new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        }
+
+        ChangeScriptRepository changeScriptRepository =
 				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
 
 		ChangeScriptApplier doScriptApplier;
@@ -107,8 +115,7 @@ public class DbDeploy {
         splitter.setOutputLineEnding(lineEnding);
 
         ChangeLogTableCreator tableCreator = null;
-        if ((createChangeLogTableIfNotExists && !queryExecuter.doesTableExist(changeLogTableName))
-                || forceCreateChangeLogTable) {
+        if (createChangelog) {
             tableCreator = new ChangeLogTableCreator(changeLogTableName, dbms, splitter, getTemplatedir());
         }
 
@@ -246,11 +253,4 @@ public class DbDeploy {
         this.createChangeLogTableIfNotExists = createChangeLogTableIfNotExists;
     }
 
-    public boolean getForceCreateChangeLogTable() {
-        return forceCreateChangeLogTable;
-    }
-
-    public void setForceCreateChangeLogTable(boolean forceCreateChangeLogTable) {
-        this.forceCreateChangeLogTable = forceCreateChangeLogTable;
-    }
 }
