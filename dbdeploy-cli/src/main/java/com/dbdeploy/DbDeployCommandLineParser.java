@@ -60,7 +60,7 @@ public class DbDeployCommandLineParser {
 				dbDeploy.setLineEnding(LineEnding.valueOf(commandLine.getOptionValue("lineending")));
 			}
 
-            if (commandLine.hasOption("createChangeLogTableIfNotPresent")) {
+            if (commandLine.hasOption("create")) {
                 dbDeploy.setCreateChangeLogTableIfNotPresent(true);
             }
 
@@ -141,8 +141,7 @@ public class DbDeployCommandLineParser {
 
         options.addOption(OptionBuilder
                 .withDescription("create the changelog table if it doesn't already exist")
-                .withLongOpt("createChangeLogTableIfNotPresent")
-                .withType(Boolean.TYPE)
+                .withLongOpt("create")
                 .create("C"));
 
 		options.addOption(OptionBuilder

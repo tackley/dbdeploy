@@ -32,7 +32,7 @@ public class DbDeployCommandLineParserTest {
 	public void checkAllOfTheOtherFieldsParseOkHere() throws Exception {
 		parser.parse(("-U userid -Ppassword --driver a.b.c --url b:c:d " +
 				"--scriptdirectory . -o output.sql " +
-				"--changeLogTableName my-change-log --createChangeLogTableIfNotPresent " +
+				"--changeLogTableName my-change-log --create " +
 				"--dbms ora " +
 				"--templatedir /tmp/mytemplates " +
 				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
