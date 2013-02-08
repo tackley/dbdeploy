@@ -39,30 +39,31 @@ public class QueryExecuter {
     }
 
     public boolean doesTableExist(String tableName) throws SQLException {
-        ResultSet rsSame = null;
-        ResultSet rsLower = null;
-        ResultSet rsUpper = null;
+        ResultSet rs = null;
+        String searchName = tableName;
         try {
-            rsSame = connection.getMetaData().getTables(null, null, tableName, null);
-            rsLower = connection.getMetaData().getTables(null, null, tableName.toLowerCase(), null);
-            rsUpper = connection.getMetaData().getTables(null, null, tableName.toUpperCase(), null);
-
-            return rsSame.next() || rsLower.next() || rsUpper.next();
-        } finally {
+            DatabaseMetaData metaData = connection.getMetaData();
+            if (metaData.storesLowerCaseIdentifiers()) {
+                searchName = tableName.toLowerCase();
+            } else if (metaData.storesUpperCaseIdentifiers()) {
+                searchName = tableName.toUpperCase();
+            }
+            String catalog = connection.getCatalog();
+            String schema = null;
             try {
-                if (rsUpper != null) {
-                    rsUpper.close();
+                if (!connection.getClass().getMethod("getSchema").getDeclaringClass().isInterface()) {
+                    schema = connection.getSchema();
                 }
-            } finally {
-                try {
-                    if (rsLower != null) {
-                        rsLower.close();
-                    }
-                } finally {
-                    if (rsSame != null) {
-                        rsSame.close();
-                    }
-                }
+            } catch (NoSuchMethodException e) {
+                //continue
+            }
+            rs = metaData.getTables(catalog, schema, searchName, null);
+
+            boolean next = rs.next();
+            return next;
+        } finally {
+            if (rs != null) {
+                rs.close();
             }
         }
     }

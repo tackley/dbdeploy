@@ -5,6 +5,8 @@ import com.dbdeploy.scripts.ChangeScript;
 import java.sql.SQLException;
 
 public class ChangeScriptFailedException extends DbDeployException {
+    private static final long serialVersionUID = 1L;
+
 	private final ChangeScript script;
 	private final int statement;
 	private final String executedSql;

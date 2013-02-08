@@ -133,7 +133,7 @@ public class OutputToFileIntegrationTest {
         db.applyDatabaseSettingsTo(dbDeploy);
         dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
         dbDeploy.setOutputfile(outputFile);
-        dbDeploy.setCreateChangeLogTableIfNotExists(true);
+        dbDeploy.setCreateChangeLogTableIfNotPresent(true);
         dbDeploy.go();
 
         db.applyScript(outputFile);

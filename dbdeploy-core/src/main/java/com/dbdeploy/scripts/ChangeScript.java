@@ -4,7 +4,7 @@ import com.dbdeploy.exceptions.DbDeployException;
 
 import java.io.*;
 
-public class ChangeScript implements Comparable {
+public class ChangeScript implements Comparable<ChangeScript> {
 
 	private final long id;
 	private final File file;
@@ -42,8 +42,7 @@ public class ChangeScript implements Comparable {
 		return description;
 	}
 
-	public int compareTo(Object o) {
-		ChangeScript other = (ChangeScript) o;
+	public int compareTo(ChangeScript other) {
 		return Long.valueOf(this.id).compareTo(other.id);
 	}
 

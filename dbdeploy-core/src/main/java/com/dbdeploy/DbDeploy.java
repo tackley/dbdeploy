@@ -245,11 +245,11 @@ public class DbDeploy {
 		return lineEnding;
 	}
 
-    public boolean getCreateChangeLogTableIfNotExists() {
+    public boolean getCreateChangeLogTableIfNotPresent() {
         return createChangeLogTableIfNotExists;
     }
 
-    public void setCreateChangeLogTableIfNotExists(boolean createChangeLogTableIfNotExists) {
+    public void setCreateChangeLogTableIfNotPresent(boolean createChangeLogTableIfNotExists) {
         this.createChangeLogTableIfNotExists = createChangeLogTableIfNotExists;
     }
 

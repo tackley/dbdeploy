@@ -26,6 +26,7 @@ public class AntTarget extends Task {
 			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
 			+ "\n\t\tundoOutputfile=\"[UNDO SCRIPT PATH + NAME]\""
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
+            + "\n\t\tcreateChangeLogTableIfNotPresent=\"true|false\" - default false"
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
 			+ "\n\t\tdelimitertype=\"[STATEMENT DELIMITER TYPE - row or normal, default normal]\""
 			+ "\n\t/>"
@@ -82,6 +83,10 @@ public class AntTarget extends Task {
 	public void setChangeLogTableName(String changeLogTableName) {
 		dbDeploy.setChangeLogTableName(changeLogTableName);
 	}
+
+    public void setCreateChangeLogTableIfNotPresent(boolean create) {
+        dbDeploy.setCreateChangeLogTableIfNotPresent(create);
+    }
 
 	public void setDelimiter(String delimiter) {
 		dbDeploy.setDelimiter(delimiter);

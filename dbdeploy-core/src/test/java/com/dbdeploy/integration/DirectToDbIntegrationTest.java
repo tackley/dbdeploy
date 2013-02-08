@@ -13,15 +13,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
 public class DirectToDbIntegrationTest {
-    @Test
-    public void shouldDeterminePresenceOfChangelogTable() throws Exception {
-        Database db = new Database("todb_changelog_check");
-        db.createSchemaVersionTable();
-
-        DbDeploy dbDeploy = new DbDeploy();
-        db.applyDatabaseSettingsTo(dbDeploy);
-        //dbDeploy
-    }
 	@Test
 	public void shouldSuccessfullyApplyAValidSetOfDeltas() throws Exception {
 		Database db = new Database("todb_success_test");
@@ -107,7 +98,7 @@ public class DirectToDbIntegrationTest {
 
         DbDeploy dbDeploy = new DbDeploy();
         db.applyDatabaseSettingsTo(dbDeploy);
-        dbDeploy.setCreateChangeLogTableIfNotExists(true);
+        dbDeploy.setCreateChangeLogTableIfNotPresent(true);
         dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
         dbDeploy.go();
 
@@ -122,7 +113,7 @@ public class DirectToDbIntegrationTest {
         DbDeploy dbDeploy = new DbDeploy();
         db.applyDatabaseSettingsTo(dbDeploy);
         db.createSchemaVersionTable();
-        dbDeploy.setCreateChangeLogTableIfNotExists(true);
+        dbDeploy.setCreateChangeLogTableIfNotPresent(true);
         dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
 
         dbDeploy.go();

@@ -11,6 +11,7 @@ public class ChangeScriptRepository implements AvailableChangeScriptsProvider {
 
 	private final List<ChangeScript> scripts;
 
+    @SuppressWarnings("unchecked")
 	public ChangeScriptRepository(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
 		this.scripts = scripts;
 
