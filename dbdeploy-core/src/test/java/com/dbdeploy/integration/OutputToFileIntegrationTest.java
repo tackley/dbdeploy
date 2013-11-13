@@ -1,14 +1,16 @@
 package com.dbdeploy.integration;
 
 import com.dbdeploy.DbDeploy;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import com.dbdeploy.exceptions.SchemaVersionTrackingException;
 import org.junit.Test;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.fail;
 
 public class OutputToFileIntegrationTest {
 	@Test
@@ -107,6 +109,38 @@ public class OutputToFileIntegrationTest {
 
 		db.applyScript(outputFile);
 	}
+
+    @Test(expected = SchemaVersionTrackingException.class)
+    public void shouldFailWhenNoChangelogTableByDefault() throws Exception {
+        Database db = new Database("no_changelog_default");
+
+        File outputFile = File.createTempFile("no_changelog_default", ".sql");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
+        dbDeploy.setOutputfile(outputFile);
+        dbDeploy.go();
+    }
+
+    @Test
+    public void shouldCreateChangelogTableWhenRequested() throws Exception {
+        Database db = new Database("no_changelog_create");
+
+        File outputFile = File.createTempFile("no_changelog_create", ".sql");
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/empty"));
+        dbDeploy.setOutputfile(outputFile);
+        dbDeploy.setCreateChangeLogTableIfNotPresent(true);
+        dbDeploy.go();
+
+        db.applyScript(outputFile);
+
+        List<Long> changelogEntries = db.getChangelogEntries(); // no error
+        assertThat(changelogEntries.size(), is(0));
+    }
 
 	private File findScriptDirectory(String directoryName) {
 		File directoryWhenRunningUnderMaven = new File(directoryName);

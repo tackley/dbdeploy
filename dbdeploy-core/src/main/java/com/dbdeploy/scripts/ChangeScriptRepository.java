@@ -1,7 +1,7 @@
 package com.dbdeploy.scripts;
 
-import com.dbdeploy.exceptions.DuplicateChangeScriptException;
 import com.dbdeploy.AvailableChangeScriptsProvider;
+import com.dbdeploy.exceptions.DuplicateChangeScriptException;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ public class ChangeScriptRepository implements AvailableChangeScriptsProvider {
 
 	private final List<ChangeScript> scripts;
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	public ChangeScriptRepository(List<ChangeScript> scripts) throws DuplicateChangeScriptException {
 		this.scripts = scripts;
 

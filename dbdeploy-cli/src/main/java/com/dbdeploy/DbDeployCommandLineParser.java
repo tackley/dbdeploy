@@ -1,8 +1,8 @@
 package com.dbdeploy;
 
+import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.exceptions.UsageException;
-import com.dbdeploy.database.DelimiterType;
 import org.apache.commons.cli.*;
 
 import java.beans.BeanInfo;
@@ -59,6 +59,10 @@ public class DbDeployCommandLineParser {
 			if (commandLine.hasOption("lineending")) {
 				dbDeploy.setLineEnding(LineEnding.valueOf(commandLine.getOptionValue("lineending")));
 			}
+
+            if (commandLine.hasOption("create")) {
+                dbDeploy.setCreateChangeLogTableIfNotPresent(true);
+            }
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -134,6 +138,11 @@ public class DbDeployCommandLineParser {
 				.withDescription("name of change log table to use (default: changelog)")
 				.withLongOpt("changeLogTableName")
 				.create("t"));
+
+        options.addOption(OptionBuilder
+                .withDescription("create the changelog table if it doesn't already exist")
+                .withLongOpt("create")
+                .create("C"));
 
 		options.addOption(OptionBuilder
 				.hasArg()

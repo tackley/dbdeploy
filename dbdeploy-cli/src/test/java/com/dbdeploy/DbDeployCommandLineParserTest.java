@@ -32,7 +32,7 @@ public class DbDeployCommandLineParserTest {
 	public void checkAllOfTheOtherFieldsParseOkHere() throws Exception {
 		parser.parse(("-U userid -Ppassword --driver a.b.c --url b:c:d " +
 				"--scriptdirectory . -o output.sql " +
-				"--changeLogTableName my-change-log " +
+				"--changeLogTableName my-change-log --create " +
 				"--dbms ora " +
 				"--templatedir /tmp/mytemplates " +
 				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
@@ -45,6 +45,7 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getOutputfile().getName(), is("output.sql"));
 		assertThat(dbDeploy.getDbms(), is("ora"));
 		assertThat(dbDeploy.getChangeLogTableName(), is("my-change-log"));
+        assertThat(dbDeploy.getCreateChangeLogTableIfNotPresent(), is(true));
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
 		assertThat(dbDeploy.getTemplatedir().getPath(), is(File.separator + "tmp" + File.separator + "mytemplates"));

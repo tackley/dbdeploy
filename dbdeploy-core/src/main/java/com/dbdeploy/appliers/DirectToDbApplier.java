@@ -1,12 +1,17 @@
 package com.dbdeploy.appliers;
 
 import com.dbdeploy.ChangeScriptApplier;
+import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
+import com.dbdeploy.template.TemplateProcessor;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,15 +19,29 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 	private final QueryExecuter queryExecuter;
 	private final DatabaseSchemaVersionManager schemaVersionManager;
     private final QueryStatementSplitter splitter;
+    private final ChangeLogTableCreator tableCreator;
 
-    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter) {
+    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter, ChangeLogTableCreator tableCreator) {
 		this.queryExecuter = queryExecuter;
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
+        this.tableCreator = tableCreator;
     }
 
     public void apply(List<ChangeScript> changeScript) {
         begin();
+
+        try {
+            if (tableCreator != null) {
+                System.err.println("Creating Schema Version Table...");
+                List<String> statements = splitter.split(tableCreator.create());
+                for (String statement : statements) {
+                    queryExecuter.execute(statement);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         for (ChangeScript script : changeScript) {
             System.err.println("Applying " + script + "...");
@@ -42,7 +61,11 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		}
 	}
 
-	protected void applyChangeScript(ChangeScript script) {
+    public void createChangeLogTable(String databaseType) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    protected void applyChangeScript(ChangeScript script) {
 		List<String> statements = splitter.split(script.getContent());
 
 		for (int i = 0; i < statements.size(); i++) {

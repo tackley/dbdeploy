@@ -105,5 +105,8 @@ public class ControllerTest {
             this.changeScripts = new ArrayList<ChangeScript>(changeScripts);
         }
 
+        public void createChangeLogTable(String databaseType) {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
     }
 }

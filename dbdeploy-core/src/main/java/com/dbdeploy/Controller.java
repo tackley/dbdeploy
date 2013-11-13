@@ -32,10 +32,10 @@ public class Controller {
 		}
 
 		List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
-		List<Long> applied = appliedChangesProvider.getAppliedChanges();
-		List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
+        List<Long> applied = appliedChangesProvider.getAppliedChanges();
+        List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
 
-		logStatus(scripts, applied, toApply);
+        logStatus(scripts, applied, toApply);
 
         changeScriptApplier.apply(Collections.unmodifiableList(toApply));
 

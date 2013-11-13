@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
 
-    private final QueryExecuter queryExecuter;
-    private final String changeLogTableName;
+    protected final QueryExecuter queryExecuter;
+    protected final String changeLogTableName;
     private CurrentTimeProvider timeProvider = new CurrentTimeProvider();
 
     public DatabaseSchemaVersionManager(QueryExecuter queryExecuter, String changeLogTableName) {
@@ -25,24 +25,24 @@ public class DatabaseSchemaVersionManager implements AppliedChangesProvider {
         this.changeLogTableName = changeLogTableName;
     }
 
-	public List<Long> getAppliedChanges() {
-		try {
-			ResultSet rs = queryExecuter.executeQuery(
-					"SELECT change_number FROM " + changeLogTableName + "  ORDER BY change_number");
+    public List<Long> getAppliedChanges() {
+        try {
+            ResultSet rs = queryExecuter.executeQuery(
+                    "SELECT change_number FROM " + changeLogTableName + "  ORDER BY change_number");
 
-			List<Long> changeNumbers = new ArrayList<Long>();
+            List<Long> changeNumbers = new ArrayList<Long>();
 
-			while (rs.next()) {
-				changeNumbers.add(rs.getLong(1));
-			}
+            while (rs.next()) {
+                changeNumbers.add(rs.getLong(1));
+            }
 
-			rs.close();
+            rs.close();
 
-			return changeNumbers;
-		} catch (SQLException e) {
-			throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "
-					+ e.getMessage(), e);
-		}
+            return changeNumbers;
+        } catch (SQLException e) {
+            throw new SchemaVersionTrackingException("Could not retrieve change log from database because: "
+                    + e.getMessage(), e);
+        }
 	}
 
     public String getChangelogDeleteSql(ChangeScript script) {

@@ -6,7 +6,9 @@ import com.dbdeploy.appliers.UndoTemplateBasedApplier;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.database.QueryStatementSplitter;
+import com.dbdeploy.database.changelog.ChangeLogTableCreator;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
+import com.dbdeploy.database.changelog.EmptyDatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
@@ -31,6 +33,7 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+    private boolean createChangeLogTableIfNotExists = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -89,31 +92,48 @@ public class DbDeploy {
 
 		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
-		DatabaseSchemaVersionManager databaseSchemaVersionManager =
-				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        boolean createChangelog = false;
+        if ((createChangeLogTableIfNotExists && !queryExecuter.doesTableExist(changeLogTableName))) {
+            createChangelog = true;
+        }
+		DatabaseSchemaVersionManager databaseSchemaVersionManager;
 
-		ChangeScriptRepository changeScriptRepository =
+        if (createChangelog) {
+            databaseSchemaVersionManager = new EmptyDatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        } else {
+            databaseSchemaVersionManager = new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        }
+
+        ChangeScriptRepository changeScriptRepository =
 				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
 
 		ChangeScriptApplier doScriptApplier;
 
+        QueryStatementSplitter splitter = new QueryStatementSplitter();
+        splitter.setDelimiter(getDelimiter());
+        splitter.setDelimiterType(getDelimiterType());
+        splitter.setOutputLineEnding(lineEnding);
+
+        ChangeLogTableCreator tableCreator = null;
+        if (createChangelog) {
+            tableCreator = new ChangeLogTableCreator(changeLogTableName, dbms, splitter, getTemplatedir());
+        }
+
 		if (outputfile != null) {
-			doScriptApplier = new TemplateBasedApplier(
-					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, delimiter, delimiterType, getTemplatedir());
+            PrintWriter writer = new PrintWriter(outputfile, encoding);
+            doScriptApplier = new TemplateBasedApplier(
+                    writer, dbms,
+					changeLogTableName, tableCreator, splitter, getTemplatedir());
+
 		} else {
-			QueryStatementSplitter splitter = new QueryStatementSplitter();
-			splitter.setDelimiter(getDelimiter());
-			splitter.setDelimiterType(getDelimiterType());
-			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
+			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, tableCreator);
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;
 
 		if (undoOutputfile != null) {
 			undoScriptApplier = new UndoTemplateBasedApplier(
-				new PrintWriter(undoOutputfile), dbms, changeLogTableName, delimiter, delimiterType, templatedir);
+				new PrintWriter(undoOutputfile), dbms, changeLogTableName, splitter, templatedir);
 
 		}
 
@@ -224,4 +244,13 @@ public class DbDeploy {
 	public LineEnding getLineEnding() {
 		return lineEnding;
 	}
+
+    public boolean getCreateChangeLogTableIfNotPresent() {
+        return createChangeLogTableIfNotExists;
+    }
+
+    public void setCreateChangeLogTableIfNotPresent(boolean createChangeLogTableIfNotExists) {
+        this.createChangeLogTableIfNotExists = createChangeLogTableIfNotExists;
+    }
+
 }

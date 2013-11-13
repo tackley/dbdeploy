@@ -85,6 +85,13 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
     protected String changeLogTableName;
 
     /**
+     * Create the changelog table if it doesn't already exist
+     *
+     * @parameter expression="${dbdeploy.createChangeLogTable}" default-value="false"
+     */
+    protected boolean createChangeLogTable;
+
+    /**
      * Delimiter to use to separate scripts into statements, if dbdeploy will
      * apply the scripts for you i.e. you haven't specified outputfile. Default ;
      *
@@ -123,6 +130,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
         dbDeploy.setUrl(url);
         dbDeploy.setPassword(password);
         dbDeploy.setUserid(userid);
+        dbDeploy.setCreateChangeLogTableIfNotPresent(createChangeLogTable);
 
 	    if (encoding != null) {
 	        dbDeploy.setEncoding(encoding);

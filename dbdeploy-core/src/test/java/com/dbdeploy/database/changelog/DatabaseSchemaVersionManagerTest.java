@@ -2,16 +2,9 @@ package com.dbdeploy.database.changelog;
 
 import com.dbdeploy.scripts.ChangeScript;
 import org.hamcrest.Matchers;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
-import static org.hamcrest.Matchers.hasItems;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.startsWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.ResultSet;
@@ -19,6 +12,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.startsWith;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DatabaseSchemaVersionManagerTest {
     private final ChangeScript script = new ChangeScript(99, "Some Description");
@@ -34,6 +35,7 @@ public class DatabaseSchemaVersionManagerTest {
         MockitoAnnotations.initMocks(this);
 
         when(queryExecuter.executeQuery(anyString())).thenReturn(expectedResultSet);
+        when(queryExecuter.doesTableExist(anyString())).thenReturn(true);
 
         schemaVersionManager = new DatabaseSchemaVersionManager(queryExecuter, "changelog");
         schemaVersionManager.setTimeProvider(timeProvider);
