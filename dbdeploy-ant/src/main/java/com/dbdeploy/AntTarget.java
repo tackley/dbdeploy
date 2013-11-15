@@ -20,7 +20,8 @@ public class AntTarget extends Task {
 			+ "\n\t\turl=\"[DATABASE URL]\" *"
 			+ "\n\t\tdbms=\"[YOUR DBMS]\""
 			+ "\n\t\ttemplatedir=\"[DIRECTORY FOR DBMS TEMPLATE SCRIPTS, IF NOT USING BUILT-IN]\""
-			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" *"
+			+ "\n\t\tdir=\"[YOUR SCRIPT FOLDER]\" * or"
+            + "\n\t\tpackage=\"[PACKAGE CONTAINING SCRIPTS]\""
 			+ "\n\t\tencoding=\"[CHARSET OF SQL SCRIPTS - default UTF-8]\""
 			+ "\n\t\toutputfile=\"[OUTPUT SCRIPT PATH + NAME]\""
 			+ "\n\t\tlastChangeToApply=\"[NUMBER OF THE LAST SCRIPT TO APPLY]\""
@@ -46,6 +47,10 @@ public class AntTarget extends Task {
 	public void setDir(File dir) {
 		dbDeploy.setScriptdirectory(dir);
 	}
+
+    public void setPackage(String scriptPackage) {
+        dbDeploy.setScriptPackage(scriptPackage);
+    }
 
 	public void setDriver(String driver) {
 		dbDeploy.setDriver(driver);

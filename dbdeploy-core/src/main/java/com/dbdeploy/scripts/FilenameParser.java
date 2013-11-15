@@ -6,14 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FilenameParser {
-	private final Pattern pattern;
+	public static final Pattern PATTERN = Pattern.compile("(\\d+).*");
 
-	public FilenameParser() {
-		pattern = Pattern.compile("(\\d+).*");
-	}
-
-	public long extractIdFromFilename(String filename) throws UnrecognisedFilenameException {
-		Matcher matches = pattern.matcher(filename);
+	public static long extractIdFromFilename(String filename) throws UnrecognisedFilenameException {
+		Matcher matches = PATTERN.matcher(filename);
 		if (!matches.matches() || matches.groupCount() != 1)
 			throw new UnrecognisedFilenameException("Could not extract a change script number from filename: " + filename);
 		

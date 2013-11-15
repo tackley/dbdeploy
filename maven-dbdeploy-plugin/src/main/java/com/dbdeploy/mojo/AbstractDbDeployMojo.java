@@ -19,6 +19,8 @@ import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.File;
 
@@ -29,10 +31,19 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
     /**
      * Full or relative path to the directory containing the delta scripts.
      *
+     * Either this or scriptPackage is required.
+     *
      * @parameter expression="${dbdeploy.scriptdirectory}" default-value="${project.src.directory}/main/sql"
-     * @required
      */
     protected File scriptdirectory;
+    /**
+     * Package containing delta scripts
+     *
+     * Either this or scriptdirectory is required.
+     *
+     * @parameter expression="${dbdeploy.scriptPackage}"
+     */
+    protected String scriptPackage;
 
 	/**
 	 * Encoding to use for change scripts and output files.
@@ -116,9 +127,17 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      */
     protected Long lastChangeToApply;
 
-    protected DbDeploy getConfiguredDbDeploy() {
+    protected DbDeploy getConfiguredDbDeploy() throws MojoExecutionException {
         DbDeploy dbDeploy = new DbDeploy();
-        dbDeploy.setScriptdirectory(scriptdirectory);
+
+        if (scriptdirectory != null) {
+            dbDeploy.setScriptdirectory(scriptdirectory);
+        } else if (scriptPackage != null) {
+            dbDeploy.setScriptPackage(scriptPackage);
+        } else {
+            throw new MojoExecutionException("scriptdirectory or scriptPackage parameter must be set");
+        }
+
         dbDeploy.setDriver(driver);
         dbDeploy.setUrl(url);
         dbDeploy.setPassword(password);
