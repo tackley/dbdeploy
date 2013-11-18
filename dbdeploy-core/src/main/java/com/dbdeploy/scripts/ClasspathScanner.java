@@ -36,7 +36,6 @@ public class ClasspathScanner implements Scanner {
     public List<ChangeScript> getChangeScripts() {
         final List<ChangeScript> scripts = new ArrayList<ChangeScript>();
         try {
-            System.out.println(System.getProperty("java.class.path"));
             final Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(packagePath);
 
             while (resources.hasMoreElements()) {
