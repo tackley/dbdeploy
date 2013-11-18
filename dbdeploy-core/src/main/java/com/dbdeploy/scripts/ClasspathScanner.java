@@ -1,6 +1,7 @@
 package com.dbdeploy.scripts;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public class ClasspathScanner implements Scanner {
     private Supplier<Reader> supplyFileContent(final File script) {
         return new Supplier<Reader>() {
             public Reader get() throws Exception {
-                return new FileReader(script);
+                return new InputStreamReader(new FileInputStream(script), encoding);
             }
         };
     }
