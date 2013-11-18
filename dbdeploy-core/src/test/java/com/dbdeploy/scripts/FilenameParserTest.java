@@ -8,20 +8,18 @@ public class FilenameParserTest {
 
 	@Test
 	public void canParseAnyFilenameThatStartsWithANumber() throws Exception {
-		FilenameParser parser = new FilenameParser();
-		assertEquals(1L, parser.extractIdFromFilename("0001_a_filename.txt"));
-		assertEquals(1L, parser.extractIdFromFilename("1_a_filename.txt"));
-		assertEquals(1L, parser.extractIdFromFilename("1 a filename.txt"));
-		assertEquals(1L, parser.extractIdFromFilename("1.txt"));
-		assertEquals(123L, parser.extractIdFromFilename("00123_something.txt"));
+		assertEquals(1L, FilenameParser.extractIdFromFilename("0001_a_filename.txt"));
+		assertEquals(1L, FilenameParser.extractIdFromFilename("1_a_filename.txt"));
+		assertEquals(1L, FilenameParser.extractIdFromFilename("1 a filename.txt"));
+		assertEquals(1L, FilenameParser.extractIdFromFilename("1.txt"));
+		assertEquals(123L, FilenameParser.extractIdFromFilename("00123_something.txt"));
 	}
 
 	@Test
 	public void throwsWhenFilenameDoesNotStartWithANumber() throws Exception {
-		FilenameParser parser = new FilenameParser();
 		try {
-		parser.extractIdFromFilename("blah blah blah");
-		fail("expected exception");
+		    FilenameParser.extractIdFromFilename("blah blah blah");
+		    fail("expected exception");
 		} catch (UnrecognisedFilenameException e) {
 			assertEquals("Could not extract a change script number from filename: blah blah blah", e.getMessage() );
 		}

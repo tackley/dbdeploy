@@ -72,7 +72,7 @@ public class CreateDatabaseScriptsMojo extends AbstractDbDeployMojo {
     }
 
     @Override
-    protected DbDeploy getConfiguredDbDeploy() {
+    protected DbDeploy getConfiguredDbDeploy() throws MojoExecutionException {
         DbDeploy dbDeploy = super.getConfiguredDbDeploy();
         dbDeploy.setOutputfile(outputfile);
         dbDeploy.setUndoOutputfile(undoOutputfile);

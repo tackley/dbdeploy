@@ -10,7 +10,9 @@ import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
 import com.dbdeploy.exceptions.UsageException;
 import com.dbdeploy.scripts.ChangeScriptRepository;
+import com.dbdeploy.scripts.ClasspathScanner;
 import com.dbdeploy.scripts.DirectoryScanner;
+import com.dbdeploy.scripts.Scanner;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -21,6 +23,7 @@ public class DbDeploy {
 	private String password;
 	private String encoding = "UTF-8";
 	private File scriptdirectory;
+    private String scriptPackage;
 	private File outputfile;
 	private File undoOutputfile;
 	private LineEnding lineEnding = LineEnding.platform;
@@ -48,9 +51,13 @@ public class DbDeploy {
 		this.password = password;
 	}
 
-	public void setScriptdirectory(File scriptdirectory) {
+    public void setScriptdirectory(File scriptdirectory) {
 		this.scriptdirectory = scriptdirectory;
 	}
+
+    public void setScriptPackage(String scriptPackage) {
+        this.scriptPackage = scriptPackage;
+    }
 
 	public void setOutputfile(File outputfile) {
 		this.outputfile = outputfile;
@@ -92,8 +99,13 @@ public class DbDeploy {
 		DatabaseSchemaVersionManager databaseSchemaVersionManager =
 				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 
-		ChangeScriptRepository changeScriptRepository =
-				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
+        Scanner finder;
+        if (scriptPackage == null) {
+            finder = new DirectoryScanner(encoding, scriptdirectory);
+        } else {
+            finder = new ClasspathScanner(scriptPackage, encoding);
+        }
+        ChangeScriptRepository changeScriptRepository = new ChangeScriptRepository(finder.getChangeScripts());
 
 		ChangeScriptApplier doScriptApplier;
 
@@ -128,9 +140,11 @@ public class DbDeploy {
 		checkForRequiredParameter(userid, "userid");
 		checkForRequiredParameter(driver, "driver");
 		checkForRequiredParameter(url, "url");
-		checkForRequiredParameter(scriptdirectory, "dir");
+		if (scriptdirectory == null && scriptPackage == null) {
+            throw new UsageException("scriptdirectory or scriptPackage must be set");
+        }
 
-		if (scriptdirectory == null || !scriptdirectory.isDirectory()) {
+		if (scriptdirectory != null && !scriptdirectory.isDirectory()) {
 			throw new UsageException("Script directory must point to a valid directory");
 		}
 	}

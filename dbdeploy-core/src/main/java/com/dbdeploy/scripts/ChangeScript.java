@@ -7,10 +7,9 @@ import java.io.*;
 public class ChangeScript implements Comparable {
 
 	private final long id;
-	private final File file;
+	private final Supplier<Reader> readerSupplier;
 	private final String description;
-    private final String encoding;
-	private static final String UNDO_MARKER = "--//@UNDO";
+    private static final String UNDO_MARKER = "--//@UNDO";
 
 	public ChangeScript(long id) {
 		this(id, "test");
@@ -18,21 +17,15 @@ public class ChangeScript implements Comparable {
 
     public ChangeScript(long id, String description) {
         this.id = id;
-        this.file = null;
+        this.readerSupplier = null;
         this.description = description;
-        this.encoding = "UTF-8";
     }
 
-	public ChangeScript(long id, File file, String encoding) {
+	public ChangeScript(long id, Supplier<Reader> readerSupplier, String description) {
 		this.id = id;
-		this.file = file;
-		this.description = file.getName();
-        this.encoding = encoding;
-	}
-
-	public File getFile() {
-		return file;
-	}
+		this.readerSupplier = readerSupplier;
+		this.description = description;
+    }
 
 	public long getId() {
 		return id;
@@ -64,11 +57,11 @@ public class ChangeScript implements Comparable {
 		try {
 			StringBuilder content = new StringBuilder();
 			boolean foundUndoMarker = false;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+            BufferedReader bufferedReader = new BufferedReader(readerSupplier.get());
 
 			try {
 				for (;;) {
-					String str = reader.readLine();
+					String str = bufferedReader.readLine();
 
 					if (str == null)
 						break;
@@ -84,12 +77,12 @@ public class ChangeScript implements Comparable {
 					}
 				}
 			} finally {
-				reader.close();
+				bufferedReader.close();
 			}
 
 			return content.toString();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new DbDeployException("Failed to read change script file", e);
 		}
-	}
+    }
 }

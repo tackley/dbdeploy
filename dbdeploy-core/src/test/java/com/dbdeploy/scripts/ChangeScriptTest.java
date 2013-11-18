@@ -4,74 +4,71 @@ import org.junit.Test;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class ChangeScriptTest {
+    private static class StringReaderSupplier implements Supplier<Reader> {
+        private final String content;
 
-	@Test
-	public void changeScriptsHaveAnIdAndAFileAndEncoding() throws Exception {
-		File file = new File("abc.txt");
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
-		assertThat(changeScript.getId(), equalTo(5L));
-		assertThat(changeScript.getFile(), sameInstance(file));
-	}
+        public StringReaderSupplier(String content) {
+            this.content = content;
+        }
+
+        public Reader get() throws Exception {
+            return new StringReader(content);
+        }
+    }
 
 	@Test
 	public void shouldReturnContentsOfFile() throws Exception {
-		File file = createTemporaryFileWithContent("Hello\nThere!\n");
+		final Supplier<Reader> readerSupplier = new StringReaderSupplier("Hello\nThere!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
+        ChangeScript changeScript = new ChangeScript(5, readerSupplier, "description");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
 	@Test
 	public void contentsOfFileShouldExcludeAnythingAfterAnUndoMarker() throws Exception {
-		File file = createTemporaryFileWithContent(
+		Supplier<Reader> readerSupplier = new StringReaderSupplier(
 				"Hello\n" +
 				"There!\n" +
 				"--//@UNDO\n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
+		ChangeScript changeScript = new ChangeScript(5, readerSupplier, "description");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
 	@Test
 	public void contentsOfFileShouldExcludeAnythingAfterAnUndoMarkerEvenWhenThatMarkerHasSomeWhitespaceAtTheEnd() throws Exception {
-		File file = createTemporaryFileWithContent(
+		Supplier<Reader> readerSupplier = new StringReaderSupplier(
 				"Hello\n" +
 				"There!\n" +
 				"--//@UNDO   \n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
+		ChangeScript changeScript = new ChangeScript(5, readerSupplier, "description");
 		assertThat(changeScript.getContent(), is("Hello\nThere!\n"));
 	}
 
 	@Test
 	public void shouldReturnUndoContentsOfFile() throws Exception {
-		File file = createTemporaryFileWithContent(
+		Supplier<Reader> readerSupplier = new StringReaderSupplier(
 				"Hello\n" +
 				"There!\n" +
 				"--//@UNDO\n" +
 				"This is after the undo marker!\n");
 
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
+		ChangeScript changeScript = new ChangeScript(5, readerSupplier, "");
 		assertThat(changeScript.getUndoContent(), is("This is after the undo marker!\n"));		
-	}
-
-	private File createTemporaryFileWithContent(String content) throws IOException {
-		File file = File.createTempFile("changeScriptTest", ".sql");
-		file.deleteOnExit();
-
-		BufferedWriter out = new BufferedWriter(new FileWriter(file));
-		out.write(content);
-		out.close();
-		return file;
 	}
 
 	@Test
@@ -85,8 +82,7 @@ public class ChangeScriptTest {
 
 	@Test
 	public void toStringReturnsASensibleValue() throws Exception {
-		File file = new File("abc.txt");
-		ChangeScript changeScript = new ChangeScript(5, file, "UTF-8");
+		ChangeScript changeScript = new ChangeScript(5, null, "abc.txt");
 		assertThat(changeScript.toString(), equalTo("#5: abc.txt"));
 		
 		changeScript = new ChangeScript(5, "abc.txt");
