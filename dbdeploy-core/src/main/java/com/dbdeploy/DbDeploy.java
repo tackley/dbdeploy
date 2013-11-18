@@ -140,9 +140,11 @@ public class DbDeploy {
 		checkForRequiredParameter(userid, "userid");
 		checkForRequiredParameter(driver, "driver");
 		checkForRequiredParameter(url, "url");
-		checkForRequiredParameter(scriptdirectory, "dir");
+		if (scriptdirectory == null && scriptPackage == null) {
+            throw new UsageException("scriptdirectory or scriptPackage must be set");
+        }
 
-		if (scriptdirectory == null || !scriptdirectory.isDirectory()) {
+		if (scriptdirectory != null && !scriptdirectory.isDirectory()) {
 			throw new UsageException("Script directory must point to a valid directory");
 		}
 	}
