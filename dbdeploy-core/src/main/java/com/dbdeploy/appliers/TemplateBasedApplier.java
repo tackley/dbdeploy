@@ -24,14 +24,17 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 	private String changeLogTableName;
 	private String delimiter;
 	private DelimiterType delimiterType;
+    private boolean fake;
 
-	public TemplateBasedApplier(Writer writer, String syntax, String changeLogTableName, String delimiter, DelimiterType delimiterType, File templateDirectory) throws IOException {
+	public TemplateBasedApplier(Writer writer, String syntax, String changeLogTableName, String delimiter, DelimiterType delimiterType, File templateDirectory,
+                                boolean fake) throws IOException {
 		this.syntax = syntax;
 		this.changeLogTableName = changeLogTableName;
 		this.delimiter = delimiter;
 		this.delimiterType = delimiterType;
 		this.writer = writer;
 		this.configuration = new Configuration();
+        this.fake = fake;
 
 		FileTemplateLoader fileTemplateLoader = createFileTemplateLoader(templateDirectory);
 		this.configuration.setTemplateLoader(
@@ -74,7 +77,10 @@ public class TemplateBasedApplier implements ChangeScriptApplier {
 	}
 
 	protected String getTemplateQualifier() {
-		return "apply";
+        if (fake)
+            return "fake";
+        else
+		    return "apply";
 	}
 
 }

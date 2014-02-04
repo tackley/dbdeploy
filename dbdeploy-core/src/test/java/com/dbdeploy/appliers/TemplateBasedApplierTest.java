@@ -13,7 +13,7 @@ public class TemplateBasedApplierTest {
 
 	@Test
 	public void shouldThrowUsageExceptionWhenTemplateNotFound() throws Exception {
-		TemplateBasedApplier applier = new TemplateBasedApplier(new NullWriter(), "some_complete_rubbish", null, ";", DelimiterType.normal, null);
+		TemplateBasedApplier applier = new TemplateBasedApplier(new NullWriter(), "some_complete_rubbish", null, ";", DelimiterType.normal, null, false);
 		try {
 			applier.apply(null);
 			Assert.fail("expected exception");

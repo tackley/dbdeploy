@@ -29,7 +29,7 @@ public class DirectToDbApplierTest {
 
 	@Before
 	public void setUp() {
-		applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter);
+		applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter, false);
 	}
 	
 	@Test

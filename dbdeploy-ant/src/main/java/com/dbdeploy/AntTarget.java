@@ -28,6 +28,8 @@ public class AntTarget extends Task {
 			+ "\n\t\tchangeLogTableName=\"[CHANGE LOG TABLE NAME]\""
 			+ "\n\t\tdelimiter=\"[STATEMENT DELIMITER - default ;]\""
 			+ "\n\t\tdelimitertype=\"[STATEMENT DELIMITER TYPE - row or normal, default normal]\""
+            + "\n\t\tfake=\"[BOOLEAN - fake migrations]\""
+            + "\n\t\tquiet=\"[BOOLEAN - be quieter (omit messages about each statement)]\""
 			+ "\n\t/>"
 			+ "\n\n* - Indicates mandatory parameter";
 
@@ -102,5 +104,14 @@ public class AntTarget extends Task {
 	public void setLineEnding(LineEnding lineEnding) {
 		dbDeploy.setLineEnding(lineEnding);
 	}
+
+    public void setQuiet(boolean quiet) {
+        dbDeploy.setQuiet(quiet);
+    }
+
+    public void setFake(boolean fake) {
+        dbDeploy.setFake(fake);
+    }
+
 }
 

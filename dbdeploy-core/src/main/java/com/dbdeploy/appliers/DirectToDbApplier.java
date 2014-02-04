@@ -14,20 +14,36 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 	private final QueryExecuter queryExecuter;
 	private final DatabaseSchemaVersionManager schemaVersionManager;
     private final QueryStatementSplitter splitter;
+    private final boolean fake;
+    private boolean quiet=false;
 
-    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter) {
+    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter,
+                             boolean fake) {
 		this.queryExecuter = queryExecuter;
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
+        this.fake = fake;
+    }
+
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    public boolean getQuiet() {
+        return this.quiet;
     }
 
     public void apply(List<ChangeScript> changeScript) {
         begin();
 
-        for (ChangeScript script : changeScript) {
-            System.err.println("Applying " + script + "...");
+        String applyType = fake ? "Faking " : "Applying ";
 
-            applyChangeScript(script);
+        for (ChangeScript script : changeScript) {
+            System.err.println(applyType + script + "...");
+
+            if (! fake) {
+                applyChangeScript(script);
+            }
             insertToSchemaVersionTable(script);
 
             commitTransaction();
@@ -48,7 +64,7 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 		for (int i = 0; i < statements.size(); i++) {
 			String statement = statements.get(i);
 			try {
-				if (statements.size() > 1) {
+				if (statements.size() > 1 && !quiet) {
 					System.err.println(" -> statement " + (i+1) + " of " + statements.size() + "...");
 				}
 				queryExecuter.execute(statement);

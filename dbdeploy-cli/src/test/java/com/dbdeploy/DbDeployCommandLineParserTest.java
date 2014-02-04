@@ -35,6 +35,8 @@ public class DbDeployCommandLineParserTest {
 				"--changeLogTableName my-change-log " +
 				"--dbms ora " +
 				"--templatedir /tmp/mytemplates " +
+                "--fake " +
+                "--lastChangeToApply 2345 " +
 				"--delimiter \\ --delimitertype row").split(" "), dbDeploy);
 
 		assertThat(dbDeploy.getUserid(), is("userid"));
@@ -48,6 +50,8 @@ public class DbDeployCommandLineParserTest {
 		assertThat(dbDeploy.getDelimiter(), is("\\"));
 		assertThat(dbDeploy.getDelimiterType(), is(DelimiterType.row));
 		assertThat(dbDeploy.getTemplatedir().getPath(), is(File.separator + "tmp" + File.separator + "mytemplates"));
+        assertThat(dbDeploy.getLastChangeToApply(), is(2345L));
+        assertThat(dbDeploy.getFake(), is(true));
 	}
 
 	@Test

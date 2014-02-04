@@ -31,6 +31,8 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+    private boolean fake = false;
+    private boolean quiet = false;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -80,6 +82,19 @@ public class DbDeploy {
 		this.lineEnding = lineEnding;
 	}
 
+    public void setFake(boolean fake) {
+        this.fake = fake;
+    }
+
+    public void setQuiet(boolean quiet) {
+        this.quiet = quiet;
+    }
+
+    public boolean getQuiet()
+    {
+        return this.quiet;
+    }
+
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
 
@@ -100,13 +115,15 @@ public class DbDeploy {
 		if (outputfile != null) {
 			doScriptApplier = new TemplateBasedApplier(
 					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, delimiter, delimiterType, getTemplatedir());
+					changeLogTableName, delimiter, delimiterType, getTemplatedir(), fake);
 		} else {
 			QueryStatementSplitter splitter = new QueryStatementSplitter();
 			splitter.setDelimiter(getDelimiter());
 			splitter.setDelimiterType(getDelimiterType());
 			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
+            DirectToDbApplier applier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, fake);
+            applier.setQuiet(quiet);
+			doScriptApplier = applier;
 		}
 
 		ChangeScriptApplier undoScriptApplier = null;
@@ -224,4 +241,8 @@ public class DbDeploy {
 	public LineEnding getLineEnding() {
 		return lineEnding;
 	}
+
+    public boolean getFake() {
+        return fake;
+    }
 }
