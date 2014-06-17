@@ -15,12 +15,14 @@ package com.dbdeploy.mojo;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.io.File;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
 import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
-import org.apache.maven.plugin.AbstractMojo;
-
-import java.io.File;
 
 /**
  * Abstract class that all dbdeploy database goals should extend.
@@ -121,7 +123,7 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
         dbDeploy.setScriptdirectory(scriptdirectory);
         dbDeploy.setDriver(driver);
         dbDeploy.setUrl(url);
-        dbDeploy.setPassword(password);
+        dbDeploy.setPassword(getPassword());
         dbDeploy.setUserid(userid);
 
 	    if (encoding != null) {
@@ -150,4 +152,35 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 
         return dbDeploy;
     }
+    
+	private String getPassword() {
+		return isEncrypted(password) ? unwrapAndDecrypt(password) : password;
+	}
+
+	private boolean isEncrypted(String password) {
+		return password != null && password.startsWith("ENC(") && password.endsWith(")");
+	}
+	
+	private String unwrapAndDecrypt(String password) {
+		return decrypt(unwrap(password));
+	}
+	
+	private String unwrap(String password) {
+		return password.substring(4, password.length() - 1);
+	}
+	
+	private String decrypt(String encrypted) {
+		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+		String encryptionKey = System.getProperty("encryptionKey");
+		if (encryptionKey == null || encryptionKey.trim().isEmpty()) {
+			throw new IllegalArgumentException("VM property 'encryptionKey' must be set when using encrypted password.");
+		}
+		encryptor.setPassword(encryptionKey);
+
+		try {
+			return encryptor.decrypt(encrypted);
+		} catch (Exception e) {
+			throw new RuntimeException("There was an error decrypting the password. Make sure it is a valid encrypted password.", e);
+		}
+	}
 }
