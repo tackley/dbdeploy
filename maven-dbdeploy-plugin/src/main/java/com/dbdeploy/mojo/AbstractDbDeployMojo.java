@@ -16,6 +16,8 @@ package com.dbdeploy.mojo;
  * limitations under the License.
  */
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
@@ -118,6 +120,13 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      */
     protected Long lastChangeToApply;
 
+    /**
+    * The change scripts to ignore.
+    *
+    * @parameter expression="${dbdeploy.changeScriptIdsToIgnore}"
+    */
+	protected List<String> changeScriptIdsToIgnore;
+
     protected DbDeploy getConfiguredDbDeploy() {
         DbDeploy dbDeploy = new DbDeploy();
         dbDeploy.setScriptdirectory(scriptdirectory);
@@ -149,10 +158,15 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 	    if (lineEnding != null) {
 		    dbDeploy.setLineEnding(LineEnding.valueOf(lineEnding));
 	    }
+	    
+	    if (changeScriptIdsToIgnore != null && !changeScriptIdsToIgnore.isEmpty()) {
+	    	List<Long> changeScriptLongIdsToIgnore = toLongs(changeScriptIdsToIgnore);
+			dbDeploy.setChangeScriptIdsToIgnore(changeScriptLongIdsToIgnore);
+	    }
 
         return dbDeploy;
     }
-    
+
 	private String getPassword() {
 		return isEncrypted(password) ? unwrapAndDecrypt(password) : password;
 	}
@@ -182,5 +196,13 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 		} catch (Exception e) {
 			throw new RuntimeException("There was an error decrypting the password. Make sure it is a valid encrypted password.", e);
 		}
+	}
+	
+	private List<Long> toLongs(List<String> stringIds) {
+		List<Long> longIds = new ArrayList<Long>();
+		for (String id : stringIds) {
+			longIds.add(Long.valueOf(id));
+		}
+		return longIds;
 	}
 }

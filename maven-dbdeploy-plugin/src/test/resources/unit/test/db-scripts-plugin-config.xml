@@ -12,6 +12,11 @@
                     <dbms>hsql</dbms>
                     <outputfile>apply.sql</outputfile>
                     <undoOutputfile>undo.sql</undoOutputfile>
+                    <changeScriptIdsToIgnore>
+                    	<id>1</id>
+                    	<id>2</id>
+                    	<id>3</id>
+                    </changeScriptIdsToIgnore>
                 </configuration>
             </plugin>
         </plugins>
