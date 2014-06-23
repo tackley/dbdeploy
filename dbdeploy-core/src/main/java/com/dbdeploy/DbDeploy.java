@@ -14,6 +14,7 @@ import com.dbdeploy.scripts.DirectoryScanner;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class DbDeploy {
 	private String url;
@@ -31,6 +32,7 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+	private List<Long> changeScriptIdsToIgnore;
 
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -79,6 +81,10 @@ public class DbDeploy {
 	public void setLineEnding(LineEnding lineEnding) {
 		this.lineEnding = lineEnding;
 	}
+	
+	public void setChangeScriptIdsToIgnore(List<Long> changeScriptIdsToIgnore) {
+		this.changeScriptIdsToIgnore = changeScriptIdsToIgnore;
+	}
 
 	public void go() throws Exception {
 		System.err.println(getWelcomeString());
@@ -93,7 +99,7 @@ public class DbDeploy {
 				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 
 		ChangeScriptRepository changeScriptRepository =
-				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
+				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory, changeScriptIdsToIgnore));
 
 		ChangeScriptApplier doScriptApplier;
 
@@ -223,5 +229,9 @@ public class DbDeploy {
 
 	public LineEnding getLineEnding() {
 		return lineEnding;
+	}
+	
+	public List<Long> getChangeScriptIdsToIgnore() {
+		return changeScriptIdsToIgnore;
 	}
 }

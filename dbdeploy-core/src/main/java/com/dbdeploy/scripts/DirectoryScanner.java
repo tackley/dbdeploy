@@ -16,7 +16,7 @@ public class DirectoryScanner {
         this.encoding = encoding;
     }
 	
-	public List<ChangeScript> getChangeScriptsForDirectory(File directory)  {
+	public List<ChangeScript> getChangeScriptsForDirectory(File directory, List<Long> changeScriptIdsToIgnore)  {
 		try {
 			System.err.println("Reading change scripts from directory " + directory.getCanonicalPath() + "...");
 		} catch (IOException e1) {
@@ -30,7 +30,13 @@ public class DirectoryScanner {
 				String filename = file.getName();
 				try {
 					long id = filenameParser.extractIdFromFilename(filename);
-					scripts.add(new ChangeScript(id, file, encoding));
+					if (changeScriptIdsToIgnore == null) {
+						scripts.add(new ChangeScript(id, file, encoding));
+					} else {
+						if (!changeScriptIdsToIgnore.contains(id)) {
+							scripts.add(new ChangeScript(id, file, encoding));
+						}
+					}
 				} catch (UnrecognisedFilenameException e) {
 					// ignore
 				}
