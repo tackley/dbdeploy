@@ -15,12 +15,17 @@ package com.dbdeploy.mojo;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.maven.plugin.AbstractMojo;
+
 import com.dbdeploy.DbDeploy;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
-import org.apache.maven.plugin.AbstractMojo;
-
-import java.io.File;
 
 /**
  * Abstract class that all dbdeploy database goals should extend.
@@ -116,6 +121,13 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
      */
     protected Long lastChangeToApply;
 
+    /**
+    * The change scripts to ignore as comma separated values.
+    *
+    * @parameter expression="${dbdeploy.changeScriptIdsToIgnore}"
+    */
+	protected String changeScriptIdsToIgnore;
+
     protected DbDeploy getConfiguredDbDeploy() {
         DbDeploy dbDeploy = new DbDeploy();
         dbDeploy.setScriptdirectory(scriptdirectory);
@@ -147,7 +159,22 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 	    if (lineEnding != null) {
 		    dbDeploy.setLineEnding(LineEnding.valueOf(lineEnding));
 	    }
+	    
+	    if (StringUtils.isNotBlank(changeScriptIdsToIgnore)) {
+	    	List<Long> changeScriptLongIdsToIgnore = toListOfLongs(changeScriptIdsToIgnore);
+			dbDeploy.setChangeScriptIdsToIgnore(changeScriptLongIdsToIgnore);
+	    }
 
         return dbDeploy;
     }
+
+	private List<Long> toListOfLongs(String idsAsString) {
+		List<String> stringIds = Arrays.asList(StringUtils.split(idsAsString, ","));
+		List<Long> longIds = new ArrayList<Long>();
+		for (String stringId : stringIds) {
+			longIds.add(Long.valueOf(stringId));
+		}
+		return longIds;
+	}
+		
 }
