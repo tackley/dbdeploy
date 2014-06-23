@@ -17,8 +17,10 @@ package com.dbdeploy.mojo;
  */
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
@@ -121,11 +123,11 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
     protected Long lastChangeToApply;
 
     /**
-    * The change scripts to ignore.
+    * The change scripts to ignore as comma separated values.
     *
     * @parameter expression="${dbdeploy.changeScriptIdsToIgnore}"
     */
-	protected List<String> changeScriptIdsToIgnore;
+	protected String changeScriptIdsToIgnore;
 
     protected DbDeploy getConfiguredDbDeploy() {
         DbDeploy dbDeploy = new DbDeploy();
@@ -159,8 +161,8 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 		    dbDeploy.setLineEnding(LineEnding.valueOf(lineEnding));
 	    }
 	    
-	    if (changeScriptIdsToIgnore != null && !changeScriptIdsToIgnore.isEmpty()) {
-	    	List<Long> changeScriptLongIdsToIgnore = toLongs(changeScriptIdsToIgnore);
+	    if (StringUtils.isNotBlank(changeScriptIdsToIgnore)) {
+	    	List<Long> changeScriptLongIdsToIgnore = toListOfLongs(changeScriptIdsToIgnore);
 			dbDeploy.setChangeScriptIdsToIgnore(changeScriptLongIdsToIgnore);
 	    }
 
@@ -198,11 +200,13 @@ public abstract class AbstractDbDeployMojo extends AbstractMojo {
 		}
 	}
 	
-	private List<Long> toLongs(List<String> stringIds) {
+	private List<Long> toListOfLongs(String idsAsString) {
+		List<String> stringIds = Arrays.asList(StringUtils.split(idsAsString, ","));
 		List<Long> longIds = new ArrayList<Long>();
-		for (String id : stringIds) {
-			longIds.add(Long.valueOf(id));
+		for (String stringId : stringIds) {
+			longIds.add(Long.valueOf(stringId));
 		}
 		return longIds;
 	}
+		
 }
