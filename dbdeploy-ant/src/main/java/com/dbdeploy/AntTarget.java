@@ -102,5 +102,13 @@ public class AntTarget extends Task {
 	public void setLineEnding(LineEnding lineEnding) {
 		dbDeploy.setLineEnding(lineEnding);
 	}
+
+    public void setChangeListValidatorProviderClassName(String className) {
+        dbDeploy.setChangeListValidatorProviderClassName(className);
+    }
+
+    public void setExceptionsToContinueExecutionOn(String exceptionsCsv) {
+        dbDeploy.setExceptionsToContinueExecutionOn(exceptionsCsv);
+    }
 }
 

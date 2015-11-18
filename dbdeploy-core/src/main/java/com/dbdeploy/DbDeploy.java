@@ -14,6 +14,9 @@ import com.dbdeploy.scripts.DirectoryScanner;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class DbDeploy {
 	private String url;
@@ -31,8 +34,10 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
+    private String changeListValidatorProviderClassName;
+    private List<String> exceptionsToContinueExecutionOn = new ArrayList<String>();
 
-	public void setDriver(String driver) {
+    public void setDriver(String driver) {
 		this.driver = driver;
 	}
 
@@ -80,51 +85,62 @@ public class DbDeploy {
 		this.lineEnding = lineEnding;
 	}
 
-	public void go() throws Exception {
-		System.err.println(getWelcomeString());
+    public void go() throws Exception {
+        System.err.println(getWelcomeString());
 
-		validate();
+        validate();
 
-		Class.forName(driver);
+        Class.forName(driver);
 
-		QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
+        QueryExecuter queryExecuter = new QueryExecuter(url, userid, password);
 
-		DatabaseSchemaVersionManager databaseSchemaVersionManager =
-				new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
+        DatabaseSchemaVersionManager databaseSchemaVersionManager =
+                new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 
-		ChangeScriptRepository changeScriptRepository =
-				new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
+        ChangeScriptRepository changeScriptRepository =
+                new ChangeScriptRepository(new DirectoryScanner(encoding).getChangeScriptsForDirectory(scriptdirectory));
 
-		ChangeScriptApplier doScriptApplier;
+        ChangeScriptApplier doScriptApplier;
 
-		if (outputfile != null) {
-			doScriptApplier = new TemplateBasedApplier(
-					new PrintWriter(outputfile, encoding), dbms,
-					changeLogTableName, delimiter, delimiterType, getTemplatedir());
-		} else {
-			QueryStatementSplitter splitter = new QueryStatementSplitter();
-			splitter.setDelimiter(getDelimiter());
-			splitter.setDelimiterType(getDelimiterType());
-			splitter.setOutputLineEnding(lineEnding);
-			doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter);
-		}
+        if (outputfile != null) {
+            doScriptApplier = new TemplateBasedApplier(
+                    new PrintWriter(outputfile, encoding), dbms,
+                    changeLogTableName, delimiter, delimiterType, getTemplatedir());
+        } else {
+            QueryStatementSplitter splitter = new QueryStatementSplitter();
+            splitter.setDelimiter(getDelimiter());
+            splitter.setDelimiterType(getDelimiterType());
+            splitter.setOutputLineEnding(lineEnding);
+            doScriptApplier = new DirectToDbApplier(queryExecuter, databaseSchemaVersionManager, splitter, exceptionsToContinueExecutionOn);
 
-		ChangeScriptApplier undoScriptApplier = null;
+        }
 
-		if (undoOutputfile != null) {
-			undoScriptApplier = new UndoTemplateBasedApplier(
-				new PrintWriter(undoOutputfile), dbms, changeLogTableName, delimiter, delimiterType, templatedir);
+        ChangeScriptApplier undoScriptApplier = null;
 
-		}
+        if (undoOutputfile != null) {
+            undoScriptApplier = new UndoTemplateBasedApplier(
+                    new PrintWriter(undoOutputfile), dbms, changeLogTableName, delimiter, delimiterType, templatedir);
 
-		Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier, undoScriptApplier);
+        }
 
-		controller.processChangeScripts(lastChangeToApply);
+        List<ChangeScriptValidator> validators = getChangeScriptValidators();
+        Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier, undoScriptApplier, validators);
 
-		queryExecuter.close();
-	}
+        controller.processChangeScripts(lastChangeToApply);
 
-	private void validate() throws UsageException {
+        queryExecuter.close();
+    }
+
+    private List<ChangeScriptValidator> getChangeScriptValidators() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        List<ChangeScriptValidator> validators = new ArrayList<ChangeScriptValidator>();
+        if (changeListValidatorProviderClassName != null && !"".equals(changeListValidatorProviderClassName)) {
+            ChangeScriptValidatorProvider validatorProvider = (ChangeScriptValidatorProvider) getClass().getClassLoader().loadClass(changeListValidatorProviderClassName).newInstance();
+            validators.addAll(validatorProvider.getValidators());
+        }
+        return validators;
+    }
+
+    private void validate() throws UsageException {
 		checkForRequiredParameter(userid, "userid");
 		checkForRequiredParameter(driver, "driver");
 		checkForRequiredParameter(url, "url");
@@ -224,4 +240,19 @@ public class DbDeploy {
 	public LineEnding getLineEnding() {
 		return lineEnding;
 	}
+
+    public void setChangeListValidatorProviderClassName(String changeListValidatorProviderClassName) {
+        this.changeListValidatorProviderClassName = changeListValidatorProviderClassName;
+    }
+
+    public void setExceptionsToContinueExecutionOn(String exceptionsCsv) {
+        StringTokenizer tokenizer = new StringTokenizer(exceptionsCsv, ",");
+        while(tokenizer.hasMoreTokens()) {
+            exceptionsToContinueExecutionOn.add(tokenizer.nextToken());
+        }
+    }
+
+    public List<String> getExceptionsToContinueExecutionOn() {
+        return exceptionsToContinueExecutionOn;
+    }
 }

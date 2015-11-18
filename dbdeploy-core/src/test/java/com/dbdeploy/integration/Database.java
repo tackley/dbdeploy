@@ -21,6 +21,7 @@ public class Database {
 	private static final String DATABASE_DRIVER = "org.hsqldb.jdbcDriver";
 	private static final String DATABASE_USERNAME = "sa";
 	private static final String DATABASE_PASSWORD = "";
+    private String changeListValidatorProviderClassName;
 
     public Database(String databaseName) throws ClassNotFoundException, SQLException {
         this(databaseName, "changelog");
@@ -40,7 +41,7 @@ public class Database {
 	public void createSchemaVersionTable() throws SQLException {
 		execute("CREATE TABLE " + changeLogTableName +
                 " ( " +
-				"  change_number INTEGER NOT NULL, " +
+				"  change_number BIGINT NOT NULL, " +
 				"  complete_dt TIMESTAMP NOT NULL, " +
 				"  applied_by VARCHAR(100) NOT NULL, " +
 				"  description VARCHAR(500) NOT NULL " +
@@ -105,4 +106,12 @@ public class Database {
                 new DatabaseSchemaVersionManager(queryExecuter, changeLogTableName);
 		return schemaVersionManager.getAppliedChanges();
 	}
+
+    public void setChangeListValidatorProviderClassName(String changeListValidatorProviderClassName) {
+        this.changeListValidatorProviderClassName = changeListValidatorProviderClassName;
+    }
+
+    public String getChangeListValidatorProviderClassName() {
+        return changeListValidatorProviderClassName;
+    }
 }

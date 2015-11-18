@@ -1,13 +1,17 @@
 package com.dbdeploy.integration;
 
 import com.dbdeploy.DbDeploy;
+import com.dbdeploy.exceptions.ChangeScriptValidationFailedException;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 
 public class DirectToDbIntegrationTest {
@@ -45,6 +49,32 @@ public class DirectToDbIntegrationTest {
         assertThat(results, hasItems(new Object[] {6}, new Object[] {7}));
     }
 
+    @Test
+    public void shouldApplyValidateChangeScripts() throws Exception {
+        Database db = new Database("todb_custaom_validator_passing_test");
+        db.createSchemaVersionTable();
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setChangeListValidatorProviderClassName("com.dbdeploy.integration.ChangeScriptValidatorProviderImpl");
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/validation_passing_deltas"));
+        dbDeploy.go();
+
+        assertThat(db.getChangelogEntries(), hasItems(20150920220022L));
+    }
+
+
+    @Test(expected = ChangeScriptValidationFailedException.class)
+    public void shouldValidateChangeScriptsToBeAppliedProvidedByValidatorFactory() throws Exception {
+        Database db = new Database("todb__custom_validator_failing_test");
+        db.createSchemaVersionTable();
+
+        DbDeploy dbDeploy = new DbDeploy();
+        db.applyDatabaseSettingsTo(dbDeploy);
+        dbDeploy.setChangeListValidatorProviderClassName("com.dbdeploy.integration.ChangeScriptValidatorProviderImpl");
+        dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/validation_failing_deltas"));
+        dbDeploy.go();
+    }
 
 	@Test
 	public void shouldBeAbleToRecoverFromBadScriptsJustByRunningCorrectedScriptsAgain() throws Exception {

@@ -3,6 +3,7 @@ package com.dbdeploy.appliers;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
+import com.dbdeploy.exceptions.ChangeScriptApplierException;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
 import com.dbdeploy.scripts.StubChangeScript;
@@ -13,12 +14,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnit44Runner;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnit44Runner.class)
 public class DirectToDbApplierTest {
@@ -29,7 +34,8 @@ public class DirectToDbApplierTest {
 
 	@Before
 	public void setUp() {
-		applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter);
+
+        applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter, new ArrayList<String>());
 	}
 	
 	@Test
@@ -84,5 +90,33 @@ public class DirectToDbApplierTest {
 		verify(queryExecuter).commit();
 	}
 
+    @Test
+    public void shouldContinueOnErrorIfErrorToIgnoreAreProvided() throws Exception
+    {
+        applier = new DirectToDbApplier(queryExecuter, schemaVersionManager, splitter, Arrays.asList("ORA-0001: unique constraint"));
+
+        when(splitter.split("split1; content1")).thenReturn(Arrays.asList("split1", "content1"));
+        when(splitter.split("content2")).thenReturn(Arrays.asList("content2"));
+
+        ChangeScript script1 = new StubChangeScript(1, "script", "split1; content1");
+        ChangeScript script2 = new StubChangeScript(2, "script", "content2");
+
+        doThrow(new SQLException("ORA-0001: unique constraint")).when(queryExecuter).execute("split1");
+
+        ChangeScriptApplierException expectedException = null;
+        try {
+            applier.apply(Arrays.asList(script1, script2));
+
+        } catch (ChangeScriptApplierException e) {
+            expectedException = e;
+        }
+
+        verify(queryExecuter).execute("split1");
+        verify(queryExecuter).execute("content2");
+
+        ChangeScriptFailedException scriptException = expectedException.getChangeScriptExceptions().get(0);
+        assertThat(scriptException .getExecutedSql(), is("split1"));
+        assertThat(scriptException .getScript(), is(script1));
+    }
 
 }

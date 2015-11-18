@@ -1,6 +1,7 @@
 package com.dbdeploy.database;
 
 import com.dbdeploy.ChangeScriptApplier;
+import com.dbdeploy.ChangeScriptValidator;
 import com.dbdeploy.Controller;
 import com.dbdeploy.appliers.TemplateBasedApplier;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
@@ -11,6 +12,7 @@ import com.dbdeploy.scripts.StubChangeScript;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +47,8 @@ public class ScriptGenerationTest {
 
 		final StubSchemaManager schemaManager = new StubSchemaManager();
 		ChangeScriptApplier applier = new TemplateBasedApplier(writer, syntaxName, "changelog", ";", DelimiterType.normal, null);
-		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
+        List<ChangeScriptValidator> validators = new ArrayList<ChangeScriptValidator>();
+        Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null, validators);
 
 		controller.processChangeScripts(Long.MAX_VALUE);
 
