@@ -38,10 +38,10 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 
             } catch (ChangeScriptFailedException e) {
                 String errorMessage = e.getCause().getMessage();
-                if (!containsMessagePartToIgnore(exceptionsToContinueExecutionOn, errorMessage)) {
-                    throw e;
-                }
                 scriptFailedExceptions.add(e);
+                if (!containsMessagePartToIgnore(exceptionsToContinueExecutionOn, errorMessage)) {
+                    break;
+                }
             }
         }
 
