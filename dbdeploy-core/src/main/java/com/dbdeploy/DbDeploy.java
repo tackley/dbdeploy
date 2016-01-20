@@ -34,7 +34,7 @@ public class DbDeploy {
 	private String delimiter = ";";
 	private DelimiterType delimiterType = DelimiterType.normal;
 	private File templatedir;
-    private String changeListValidatorProviderClassName;
+    private ChangeScriptFilter changeScriptFilter;
     private List<String> exceptionsToContinueExecutionOn = new ArrayList<String>();
 
     public void setDriver(String driver) {
@@ -123,21 +123,11 @@ public class DbDeploy {
 
         }
 
-        List<ChangeScriptValidator> validators = getChangeScriptValidators();
-        Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier, undoScriptApplier, validators);
+        Controller controller = new Controller(changeScriptRepository, databaseSchemaVersionManager, doScriptApplier, undoScriptApplier, changeScriptFilter);
 
         controller.processChangeScripts(lastChangeToApply);
 
         queryExecuter.close();
-    }
-
-    private List<ChangeScriptValidator> getChangeScriptValidators() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        List<ChangeScriptValidator> validators = new ArrayList<ChangeScriptValidator>();
-        if (changeListValidatorProviderClassName != null && !"".equals(changeListValidatorProviderClassName)) {
-            ChangeScriptValidatorProvider validatorProvider = (ChangeScriptValidatorProvider) getClass().getClassLoader().loadClass(changeListValidatorProviderClassName).newInstance();
-            validators.addAll(validatorProvider.getValidators());
-        }
-        return validators;
     }
 
     private void validate() throws UsageException {
@@ -241,8 +231,8 @@ public class DbDeploy {
 		return lineEnding;
 	}
 
-    public void setChangeListValidatorProviderClassName(String changeListValidatorProviderClassName) {
-        this.changeListValidatorProviderClassName = changeListValidatorProviderClassName;
+    public void setChangeScriptFilter(ChangeScriptFilter changeScriptFilter) {
+        this.changeScriptFilter = changeScriptFilter;
     }
 
     public void setExceptionsToContinueExecutionOn(String exceptionsCsv) {

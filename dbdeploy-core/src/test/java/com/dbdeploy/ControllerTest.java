@@ -28,10 +28,14 @@ public class ControllerTest {
 
     private StubChangeScriptApplier applier = new StubChangeScriptApplier();
     private StubChangeScriptApplier undoApplier = new StubChangeScriptApplier();
-    private List<ChangeScriptValidator> validators = new ArrayList<ChangeScriptValidator>();
+    private ChangeScriptFilter changeScriptFilter = new ChangeScriptFilter() {
+        public void process(List<ChangeScript> changeScripts) {
+            //noop
+        }
+    };
     @Before
 	public void setUp() {
-		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, undoApplier, validators);
+		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, undoApplier, changeScriptFilter);
 
 		change1 = new ChangeScript(1);
 		change2 = new ChangeScript(2);
@@ -55,7 +59,7 @@ public class ControllerTest {
 
 	@Test
 	public void shouldNotCrashWhenPassedANullUndoApplier() throws Exception {
-		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, null, validators);
+		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, null, changeScriptFilter);
 
 		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 

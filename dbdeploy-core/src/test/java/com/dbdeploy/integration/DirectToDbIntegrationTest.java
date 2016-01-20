@@ -56,7 +56,7 @@ public class DirectToDbIntegrationTest {
 
         DbDeploy dbDeploy = new DbDeploy();
         db.applyDatabaseSettingsTo(dbDeploy);
-        dbDeploy.setChangeListValidatorProviderClassName("com.dbdeploy.integration.ChangeScriptValidatorProviderImpl");
+        dbDeploy.setChangeScriptFilter(new ChangeScriptValidatingFilter());
         dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/validation_passing_deltas"));
         dbDeploy.go();
 
@@ -71,7 +71,7 @@ public class DirectToDbIntegrationTest {
 
         DbDeploy dbDeploy = new DbDeploy();
         db.applyDatabaseSettingsTo(dbDeploy);
-        dbDeploy.setChangeListValidatorProviderClassName("com.dbdeploy.integration.ChangeScriptValidatorProviderImpl");
+        dbDeploy.setChangeScriptFilter(new ChangeScriptValidatingFilter());
         dbDeploy.setScriptdirectory(findScriptDirectory("src/it/db/validation_failing_deltas"));
         dbDeploy.go();
     }
