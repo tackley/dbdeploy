@@ -1,12 +1,16 @@
 package com.dbdeploy;
 
 import com.dbdeploy.exceptions.UsageException;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
+
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class DbDeployTest {
 	private final DbDeploy dbDeploy = new DbDeploy();
@@ -65,4 +69,13 @@ public class DbDeployTest {
 	}
 
 
+    @Test
+    public void shouldParseExceptionsListCsv() {
+        dbDeploy.setExceptionsToContinueExecutionOn("ORA-001,ORA-002: duplicate column,ORA-003");
+        List<String> exceptionsToIgnore = dbDeploy.getExceptionsToContinueExecutionOn();
+        assertEquals(3, exceptionsToIgnore.size());
+        assertEquals("ORA-001", exceptionsToIgnore.get(0));
+        assertEquals("ORA-002: duplicate column", exceptionsToIgnore.get(1));
+        assertEquals("ORA-003", exceptionsToIgnore.get(2));
+    }
 }

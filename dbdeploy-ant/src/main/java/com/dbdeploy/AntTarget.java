@@ -3,10 +3,12 @@ package com.dbdeploy;
 import com.dbdeploy.database.DelimiterType;
 import com.dbdeploy.database.LineEnding;
 import com.dbdeploy.exceptions.UsageException;
+import com.dbdeploy.scripts.ChangeScript;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
 import java.io.File;
+import java.util.List;
 
 public class AntTarget extends Task {
 	private DbDeploy dbDeploy = new DbDeploy();
@@ -102,5 +104,27 @@ public class AntTarget extends Task {
 	public void setLineEnding(LineEnding lineEnding) {
 		dbDeploy.setLineEnding(lineEnding);
 	}
+
+    public void setChangeScriptFilterClassName(String className) {
+        ChangeScriptFilter filter = newChangeSciptFilter(className);
+        dbDeploy.setChangeScriptFilter(filter);
+    }
+
+    public void setExceptionsToContinueExecutionOn(String exceptionsCsv) {
+        dbDeploy.setExceptionsToContinueExecutionOn(exceptionsCsv);
+    }
+
+    private ChangeScriptFilter newChangeSciptFilter(String filterClassName) {
+        try {
+            ChangeScriptFilter filter = null;
+            if (filterClassName != null && !"".equals(filterClassName)) {
+                filter = (ChangeScriptFilter) getClass().getClassLoader().loadClass(filterClassName).newInstance();
+            }
+            return filter;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
 

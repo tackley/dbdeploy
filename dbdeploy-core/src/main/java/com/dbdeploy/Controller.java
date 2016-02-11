@@ -14,19 +14,32 @@ public class Controller {
 	private final AppliedChangesProvider appliedChangesProvider;
 	private final ChangeScriptApplier changeScriptApplier;
 	private final ChangeScriptApplier undoScriptApplier;
+    private ChangeScriptFilter changeScriptFilter;
 
-	private final PrettyPrinter prettyPrinter = new PrettyPrinter();
+    private final PrettyPrinter prettyPrinter = new PrettyPrinter();
 
 	public Controller(AvailableChangeScriptsProvider availableChangeScriptsProvider,
-					  AppliedChangesProvider appliedChangesProvider,
-					  ChangeScriptApplier changeScriptApplier, ChangeScriptApplier undoScriptApplier) {
+                      AppliedChangesProvider appliedChangesProvider,
+                      ChangeScriptApplier changeScriptApplier, ChangeScriptApplier undoScriptApplier, ChangeScriptFilter changeScriptFilter) {
 		this.availableChangeScriptsProvider = availableChangeScriptsProvider;
 		this.appliedChangesProvider = appliedChangesProvider;
 		this.changeScriptApplier = changeScriptApplier;
 		this.undoScriptApplier = undoScriptApplier;
-	}
+        this.changeScriptFilter = maskNull(changeScriptFilter);
+    }
 
-	public void processChangeScripts(Long lastChangeToApply) throws DbDeployException, IOException {
+    private ChangeScriptFilter maskNull(ChangeScriptFilter changeScriptFilter) {
+        if (changeScriptFilter == null) {
+            return new ChangeScriptFilter() {
+                public void process(List<ChangeScript> changeScripts) {
+                    //no op
+                }
+            };
+        }
+        return changeScriptFilter;
+    }
+
+    public void processChangeScripts(Long lastChangeToApply) throws DbDeployException, IOException {
 		if (lastChangeToApply != Long.MAX_VALUE) {
 			info("Only applying changes up and including change script #" + lastChangeToApply);
 		}
@@ -34,6 +47,8 @@ public class Controller {
 		List<ChangeScript> scripts = availableChangeScriptsProvider.getAvailableChangeScripts();
 		List<Long> applied = appliedChangesProvider.getAppliedChanges();
 		List<ChangeScript> toApply = identifyChangesToApply(lastChangeToApply, scripts, applied);
+
+        applyFilter(toApply);
 
 		logStatus(scripts, applied, toApply);
 
@@ -45,6 +60,11 @@ public class Controller {
             undoScriptApplier.apply(Collections.unmodifiableList(toApply));
         }
 	}
+
+    private void applyFilter(List<ChangeScript> toApply) {
+        changeScriptFilter.process(toApply);
+    }
+
 
     private void logStatus(List<ChangeScript> scripts, List<Long> applied, List<ChangeScript> toApply) {
 		info("Changes currently applied to database:\n  " + prettyPrinter.format(applied));

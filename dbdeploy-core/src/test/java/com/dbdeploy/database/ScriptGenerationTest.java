@@ -2,6 +2,7 @@ package com.dbdeploy.database;
 
 import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.Controller;
+import com.dbdeploy.ChangeScriptFilter;
 import com.dbdeploy.appliers.TemplateBasedApplier;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.exceptions.SchemaVersionTrackingException;
@@ -10,7 +11,12 @@ import com.dbdeploy.scripts.ChangeScriptRepository;
 import com.dbdeploy.scripts.StubChangeScript;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +51,12 @@ public class ScriptGenerationTest {
 
 		final StubSchemaManager schemaManager = new StubSchemaManager();
 		ChangeScriptApplier applier = new TemplateBasedApplier(writer, syntaxName, "changelog", ";", DelimiterType.normal, null);
-		Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null);
+        ChangeScriptFilter chain = new ChangeScriptFilter() {
+            public void process(List<ChangeScript> changeScripts) {
+
+            }
+        };
+        Controller controller = new Controller(changeScriptRepository, schemaManager, applier, null, chain);
 
 		controller.processChangeScripts(Long.MAX_VALUE);
 

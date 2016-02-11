@@ -1,19 +1,20 @@
 package com.dbdeploy;
 
 import com.dbdeploy.scripts.ChangeScript;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnit44Runner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnit44Runner.class)
 public class ControllerTest {
@@ -27,10 +28,14 @@ public class ControllerTest {
 
     private StubChangeScriptApplier applier = new StubChangeScriptApplier();
     private StubChangeScriptApplier undoApplier = new StubChangeScriptApplier();
-
+    private ChangeScriptFilter changeScriptFilter = new ChangeScriptFilter() {
+        public void process(List<ChangeScript> changeScripts) {
+            //noop
+        }
+    };
     @Before
 	public void setUp() {
-		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, undoApplier);
+		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, undoApplier, changeScriptFilter);
 
 		change1 = new ChangeScript(1);
 		change2 = new ChangeScript(2);
@@ -54,7 +59,7 @@ public class ControllerTest {
 
 	@Test
 	public void shouldNotCrashWhenPassedANullUndoApplier() throws Exception {
-		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, null);
+		controller = new Controller(availableChangeScriptsProvider, appliedChangesProvider, applier, null, changeScriptFilter);
 
 		when(appliedChangesProvider.getAppliedChanges()).thenReturn(Collections.<Long>emptyList());
 

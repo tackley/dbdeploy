@@ -4,37 +4,68 @@ import com.dbdeploy.ChangeScriptApplier;
 import com.dbdeploy.database.QueryStatementSplitter;
 import com.dbdeploy.database.changelog.DatabaseSchemaVersionManager;
 import com.dbdeploy.database.changelog.QueryExecuter;
+import com.dbdeploy.exceptions.ChangeScriptApplierException;
 import com.dbdeploy.exceptions.ChangeScriptFailedException;
 import com.dbdeploy.scripts.ChangeScript;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DirectToDbApplier implements ChangeScriptApplier {
 	private final QueryExecuter queryExecuter;
 	private final DatabaseSchemaVersionManager schemaVersionManager;
     private final QueryStatementSplitter splitter;
+    private List<String> exceptionsToContinueExecutionOn;
 
-    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter) {
+    public DirectToDbApplier(QueryExecuter queryExecuter, DatabaseSchemaVersionManager schemaVersionManager, QueryStatementSplitter splitter, List<String> exceptionsToContinueExecutionOn) {
 		this.queryExecuter = queryExecuter;
 		this.schemaVersionManager = schemaVersionManager;
         this.splitter = splitter;
+        this.exceptionsToContinueExecutionOn = exceptionsToContinueExecutionOn;
     }
 
     public void apply(List<ChangeScript> changeScript) {
         begin();
 
+        List<ChangeScriptFailedException> scriptFailedExceptions = new ArrayList<ChangeScriptFailedException>();
         for (ChangeScript script : changeScript) {
             System.err.println("Applying " + script + "...");
 
-            applyChangeScript(script);
-            insertToSchemaVersionTable(script);
+            try {
 
-            commitTransaction();
+                apply(script);
+
+            } catch (ChangeScriptFailedException e) {
+                String errorMessage = e.getCause().getMessage();
+                scriptFailedExceptions.add(e);
+                if (!containsMessagePartToIgnore(exceptionsToContinueExecutionOn, errorMessage)) {
+                    break;
+                }
+            }
+        }
+
+        if (!scriptFailedExceptions.isEmpty()) {
+            throw new ChangeScriptApplierException(scriptFailedExceptions);
         }
     }
 
-	public void begin() {
+    private boolean containsMessagePartToIgnore(List<String> exceptionsToIgnore, String errorMessage) {
+        for (String ignoreToken : exceptionsToIgnore) {
+            if (errorMessage.contains(ignoreToken)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void apply(ChangeScript script) {
+        applyChangeScript(script);
+        insertToSchemaVersionTable(script);
+        commitTransaction();
+    }
+
+    public void begin() {
 		try {
 			queryExecuter.setAutoCommit(false);
 		} catch (SQLException e) {
@@ -69,6 +100,4 @@ public class DirectToDbApplier implements ChangeScriptApplier {
 			throw new RuntimeException();
 		}
 	}
-
-
 }
