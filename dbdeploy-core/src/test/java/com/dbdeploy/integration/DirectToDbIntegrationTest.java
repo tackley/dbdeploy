@@ -1,7 +1,7 @@
 package com.dbdeploy.integration;
 
 import com.dbdeploy.DbDeploy;
-import com.dbdeploy.exceptions.ChangeScriptValidationFailedException;
+import com.dbdeploy.ChangeScriptValidationFailedException;
 import org.junit.Test;
 
 import java.io.File;

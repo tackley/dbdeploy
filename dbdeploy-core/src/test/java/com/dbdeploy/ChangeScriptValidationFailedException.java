@@ -1,4 +1,6 @@
-package com.dbdeploy.exceptions;
+package com.dbdeploy;
+
+import com.dbdeploy.exceptions.DbDeployException;
 
 public class ChangeScriptValidationFailedException extends DbDeployException {
     public ChangeScriptValidationFailedException() {

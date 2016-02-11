@@ -3,7 +3,7 @@ package com.dbdeploy.integration;
 
 import com.dbdeploy.ChangeScriptValidator;
 import com.dbdeploy.ChangeScriptFilter;
-import com.dbdeploy.exceptions.ChangeScriptValidationFailedException;
+import com.dbdeploy.ChangeScriptValidationFailedException;
 import com.dbdeploy.exceptions.DbDeployException;
 import com.dbdeploy.scripts.ChangeScript;
 
