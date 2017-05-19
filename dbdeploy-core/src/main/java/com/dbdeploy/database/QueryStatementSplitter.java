@@ -22,7 +22,10 @@ public class QueryStatementSplitter {
 
         StrTokenizer lineTokenizer = new StrTokenizer(input);
         lineTokenizer.setDelimiterMatcher(StrMatcher.charSetMatcher("\r\n"));
-
+	
+	// find this problem when deploy multiline sql script in unix endline format
+	//lineTokenizer.setDelimiterMatcher(lineEnding);
+	    
         for (String line : lineTokenizer.getTokenArray()) {
 	        String strippedLine = StringUtils.stripEnd(line, null);
             if (!currentSql.isEmpty()) {
